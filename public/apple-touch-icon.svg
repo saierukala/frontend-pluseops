@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180" role="img" aria-label="PulseOps">
+  <rect width="180" height="180" rx="40" fill="#4F46E5"/>
+  <path d="M42 90 L72 90 L82 48 L100 132 L112 90 L138 90" fill="none" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="90" cy="90" r="10" fill="white"/>
+</svg>
