@@ -1,7 +1,12 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 /* =========================================================
    PulseOps Design Tokens — F01 Foundation
+   shadcn/ui primitives use these same CSS variables.
+   PulseOps tokens remain authoritative — shadcn is theming-neutral.
    Single source of truth for colors, spacing, radius, shadows,
    typography, and surfaces. Used via CSS variables + @theme inline.
    ========================================================= */
@@ -142,6 +147,34 @@
     --sidebar-border: #1e293b;
     --sidebar-accent: #1e293b;
   }
+}
+
+/* shadcn dark class — mirrors prefers-color-scheme so shadcn ThemeProvider / class toggle uses PulseOps tokens */
+.dark {
+  --background: #020617;
+  --foreground: #f1f5f9;
+  --card: #0f172a;
+  --card-foreground: #f1f5f9;
+  --popover: #0f172a;
+  --popover-foreground: #f1f5f9;
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+  --primary-hover: #4f46e5;
+  --secondary: #1e293b;
+  --secondary-foreground: #f1f5f9;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f1f5f9;
+  --destructive: #ef4444;
+  --destructive-foreground: #f1f5f9;
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #6366f1;
+  --sidebar-background: #020617;
+  --sidebar-foreground: #cbd5e1;
+  --sidebar-border: #1e293b;
+  --sidebar-accent: #1e293b;
 }
 
 /* — Base resets */

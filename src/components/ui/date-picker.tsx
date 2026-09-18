@@ -1,53 +1,73 @@
 "use client";
 
 import * as React from "react";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "./button";
+import { Calendar } from "./calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 export interface DatePickerProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> {
   value?: string;
   onValueChange?: (value: string) => void;
   error?: string;
   label?: string;
+  placeholder?: string;
 }
 
+// shadcn DatePicker: Calendar + Popover (with native fallback for form compat)
 export const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
-  ({ className, value, onValueChange, error, id: idProp, label, ...props }, ref) => {
+  ({ className, value, onValueChange, error, id: idProp, label, placeholder = "Pick a date", ...props }, ref) => {
     const autoId = React.useId();
     const inputId = idProp ?? autoId;
     const hasError = Boolean(error);
+    const dateValue = value ? new Date(value) : undefined;
+    const validDate = dateValue && !isNaN(dateValue.getTime()) ? dateValue : undefined;
+
     return (
       <div className="flex flex-col gap-1.5">
         {label ? (
-          <label htmlFor={inputId} className="text-sm font-medium leading-none">
+          <label htmlFor={inputId} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             {label}
           </label>
         ) : null}
-        <div
-          className={cn(
-            "relative flex h-9 w-full items-center rounded-lg border bg-background shadow-xs transition-colors",
-            "has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-ring",
-            hasError ? "border-destructive" : "border-input",
-            className
-          )}
-        >
-          <input
-            ref={ref}
-            id={inputId}
-            type="date"
-            value={value}
-            onChange={(e) => onValueChange?.(e.target.value)}
-            aria-invalid={hasError || undefined}
-            aria-describedby={hasError ? `${inputId}-error` : undefined}
-            className="h-full w-full rounded-lg bg-transparent px-3 pr-9 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60"
-            {...props}
-          />
-          <span className="pointer-events-none absolute right-3 text-muted-foreground" aria-hidden>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <path d="M16 2v4M8 2v4M3 10h18" />
-            </svg>
-          </span>
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              id={inputId}
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !validDate && "text-muted-foreground",
+                hasError && "border-destructive focus-visible:ring-destructive/20",
+                className
+              )}
+              aria-invalid={hasError || undefined}
+              aria-describedby={hasError ? `${inputId}-error` : undefined}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
+              {validDate ? format(validDate, "PPP") : <span>{placeholder}</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={validDate}
+              onSelect={(d) => {
+                if (d) {
+                  const iso = d.toISOString().slice(0, 10);
+                  onValueChange?.(iso);
+                } else {
+                  onValueChange?.("");
+                }
+              }}
+            />
+            {/* Hidden native input for form / autofill / ref */}
+            <input ref={ref} id={`${inputId}-native`} type="hidden" value={value ?? ""} readOnly {...(props as object)} />
+          </PopoverContent>
+        </Popover>
+        {/* Fallback visible native input for keyboard/manual entry — hidden by default but can be toggled via prop? Keep shadcn UX only */}
         {hasError ? (
           <p id={`${inputId}-error`} className="text-xs font-medium text-destructive" role="alert">
             {error}

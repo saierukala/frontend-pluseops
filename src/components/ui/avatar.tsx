@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
 
 export type AvatarSize = "sm" | "md" | "lg" | "xl";
@@ -12,6 +13,31 @@ const sizeMap: Record<AvatarSize, string> = {
   xl: "h-14 w-14 text-lg",
 };
 
+function AvatarRoot({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) {
+  return (
+    <AvatarPrimitive.Root
+      data-slot="avatar"
+      className={cn("relative flex size-8 shrink-0 overflow-hidden rounded-full", className)}
+      {...props}
+    />
+  );
+}
+
+function AvatarImage({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+  return <AvatarPrimitive.Image data-slot="avatar-image" className={cn("aspect-square size-full object-cover", className)} {...props} />;
+}
+
+function AvatarFallback({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+  return (
+    <AvatarPrimitive.Fallback
+      data-slot="avatar-fallback"
+      className={cn("bg-muted flex size-full items-center justify-center rounded-full text-muted-foreground font-medium select-none", className)}
+      {...props}
+    />
+  );
+}
+
+// PulseOps compat wrapper — preserves existing <Avatar src fallback size status> API
 export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
   src?: string;
   alt?: string;
@@ -21,7 +47,6 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 export function Avatar({ className, src, alt, fallback, size = "md", status, ...props }: AvatarProps) {
-  const [error, setError] = React.useState(false);
   const initials = React.useMemo(() => {
     if (fallback) return fallback.slice(0, 2).toUpperCase();
     if (alt) return alt.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -37,24 +62,10 @@ export function Avatar({ className, src, alt, fallback, size = "md", status, ...
 
   return (
     <span className={cn("relative inline-flex shrink-0", className)} {...props}>
-      <span
-        className={cn(
-          "inline-flex items-center justify-center overflow-hidden rounded-full border bg-muted font-medium text-muted-foreground select-none",
-          sizeMap[size]
-        )}
-      >
-        {src && !error ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={src}
-            alt={alt ?? "Avatar"}
-            className="h-full w-full object-cover"
-            onError={() => setError(true)}
-          />
-        ) : (
-          <span aria-hidden>{initials}</span>
-        )}
-      </span>
+      <AvatarRoot className={cn("border bg-muted", sizeMap[size])}>
+        {src ? <AvatarImage src={src} alt={alt ?? "Avatar"} /> : null}
+        <AvatarFallback className={sizeMap[size]}>{initials}</AvatarFallback>
+      </AvatarRoot>
       {status ? (
         <span
           className={cn(
@@ -68,3 +79,5 @@ export function Avatar({ className, src, alt, fallback, size = "md", status, ...
     </span>
   );
 }
+
+export { AvatarRoot as AvatarPrimitive, AvatarImage, AvatarFallback };

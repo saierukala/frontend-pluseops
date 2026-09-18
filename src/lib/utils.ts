@@ -1,32 +1,17 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 /**
  * cn — class name merger for design system
- * Lightweight without external deps: handles strings, conditional objects, arrays.
- * For Tailwind conflict resolution, ordering matters — caller should put overrides last.
+ * Uses clsx for conditional handling + tailwind-merge for Tailwind conflict resolution.
+ * Backward-compatible with existing PulseOps usage:
+ *   cn("a", { b: true }, ["c"], "d")
+ * Caller should put overrides last — twMerge resolves conflicts deterministically.
  */
-export type ClassValue =
-  | string
-  | boolean
-  | null
-  | undefined
-  | number
-  | ClassValue[]
-  | Record<string, boolean | null | undefined>;
-
-function toVal(mix: ClassValue): string {
-  if (typeof mix === "string" || typeof mix === "number") return String(mix);
-  if (typeof mix === "object" && mix !== null) {
-    if (Array.isArray(mix)) return mix.map(toVal).filter(Boolean).join(" ");
-    // Record
-    return Object.entries(mix)
-      .filter(([, v]) => Boolean(v))
-      .map(([k]) => k)
-      .join(" ");
-  }
-  return "";
-}
+export type { ClassValue };
 
 export function cn(...inputs: ClassValue[]): string {
-  return inputs.map(toVal).filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+  return twMerge(clsx(inputs));
 }
 
 /** Format currency with Intl, safe fallback */

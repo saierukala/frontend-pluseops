@@ -1,0 +1,1997 @@
+{
+  "base": "http://localhost:3001",
+  "results": [
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 375px",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 768px",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Home overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Home renders",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Home no JS errors",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 375px",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 768px",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Dashboard overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Dashboard renders",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Dashboard no JS errors",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 375px",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 768px",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Products overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Products renders",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Products no JS errors",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 375px",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 768px",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Platform overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Platform renders",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Platform no JS errors",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 375px",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 768px",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Storefront overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Storefront renders",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Storefront no JS errors",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 375px",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 768px",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Shell overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Shell renders",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Shell no JS errors",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 375px",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "375x812",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 768px",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "768x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "1024x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "1280x800",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "1536x900",
+      "mode": "light",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Responsive",
+      "check": "Design System overflow at 1536px",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Rendering",
+      "check": "Design System renders",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "body visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Console",
+      "check": "Design System no JS errors",
+      "viewport": "1536x900",
+      "mode": "dark",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Shell",
+      "check": "Tenant sidebar",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "aside visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Shell",
+      "check": "Tenant topbar",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "header visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Shell",
+      "check": "Navigation links",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "nav a count",
+      "observed": 25,
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Keyboard",
+      "check": "Tab focus",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "2x Tab",
+      "observed": "A Dashboard",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Mobile",
+      "check": "Hamburger visible at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "hamburger button",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Mobile",
+      "check": "Mobile drawer opens",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "click hamburger",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Platform",
+      "check": "Platform sidebar",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "aside visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Platform",
+      "check": "Platform topbar",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "header visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Storefront",
+      "check": "Storefront header",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "header visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Storefront",
+      "check": "Storefront footer",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "footer visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "F03 Shell",
+      "check": "Shell overview page",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "Shell overview text",
+      "observed": "not",
+      "status": "FAIL"
+    }
+  ],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "timestamp": "2026-09-18T20:06:34.770Z"
+}

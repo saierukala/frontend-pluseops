@@ -7,14 +7,34 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "block" | "text" | "circle" | "card";
 }
 
-export function Skeleton({ className, variant = "block", ...props }: SkeletonProps) {
+function Skeleton({ className, variant = "block", ...props }: SkeletonProps) {
+  return (
+    <div
+      data-slot="skeleton"
+      aria-busy="true"
+      aria-live="polite"
+      className={cn(
+        "bg-accent animate-pulse motion-reduce:animate-none",
+        variant === "block" && "rounded-md",
+        variant === "text" && "h-4 rounded-full",
+        variant === "circle" && "rounded-full",
+        variant === "card" && "rounded-xl",
+        !variant && "rounded-md",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+export function SkeletonCompat({ className, variant = "block", ...props }: SkeletonProps) {
   return (
     <div
       aria-busy="true"
       aria-live="polite"
+      data-slot="skeleton"
       className={cn(
-        "animate-pulse bg-muted",
-        "motion-reduce:animate-none",
+        "animate-pulse bg-muted motion-reduce:animate-none",
         variant === "block" && "rounded-md",
         variant === "text" && "h-4 rounded-full",
         variant === "circle" && "rounded-full",
@@ -30,7 +50,7 @@ export function SkeletonText({ lines = 3, className }: { lines?: number; classNa
   return (
     <div className={cn("flex flex-col gap-2", className)} aria-hidden>
       {Array.from({ length: lines }).map((_, i) => (
-        <Skeleton key={i} variant="text" className={cn(i === lines - 1 && "w-3/4")} />
+        <SkeletonCompat key={i} variant="text" className={cn(i === lines - 1 && "w-3/4")} />
       ))}
     </div>
   );
@@ -40,19 +60,19 @@ export function SkeletonTable({ rows = 5, cols = 4 }: { rows?: number; cols?: nu
   return (
     <div className="w-full rounded-xl border bg-card p-4">
       <div className="mb-4 flex gap-2">
-        <Skeleton className="h-9 flex-1" />
-        <Skeleton className="h-9 w-24" />
+        <SkeletonCompat className="h-9 flex-1" />
+        <SkeletonCompat className="h-9 w-24" />
       </div>
       <div className="space-y-3">
         <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
           {Array.from({ length: cols }).map((_, i) => (
-            <Skeleton key={i} className="h-4" />
+            <SkeletonCompat key={i} className="h-4" />
           ))}
         </div>
         {Array.from({ length: rows }).map((_, r) => (
           <div key={r} className="grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
             {Array.from({ length: cols }).map((_, c) => (
-              <Skeleton key={c} className="h-5" />
+              <SkeletonCompat key={c} className="h-5" />
             ))}
           </div>
         ))}
@@ -60,3 +80,5 @@ export function SkeletonTable({ rows = 5, cols = 4 }: { rows?: number; cols?: nu
     </div>
   );
 }
+
+export { Skeleton };

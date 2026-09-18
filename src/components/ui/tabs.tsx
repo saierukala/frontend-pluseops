@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 
 export interface TabItem {
   value: string;
@@ -21,6 +22,7 @@ export interface TabsProps {
   variant?: "underline" | "pill";
 }
 
+// shadcn Tabs (Radix) underneath — PulseOps visual variants preserved
 export function Tabs({
   items,
   value,
@@ -33,77 +35,61 @@ export function Tabs({
   const [internal, setInternal] = React.useState(defaultValue ?? items[0]?.value ?? "");
   const current = value !== undefined ? value : internal;
 
-  const onSelect = (v: string) => {
+  const handleChange = (v: string) => {
     if (items.find((i) => i.value === v)?.disabled) return;
     if (value === undefined) setInternal(v);
     onValueChange?.(v);
   };
 
   return (
-    <div className={cn("w-full", className)}>
-      <div
-        role="tablist"
-        aria-orientation="horizontal"
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      value={current}
+      onValueChange={handleChange}
+      className={cn("w-full", className)}
+    >
+      <TabsPrimitive.List
+        data-slot="tabs-list"
         className={cn(
           "flex w-full items-center gap-1 overflow-x-auto scrollbar-thin",
           variant === "underline" ? "border-b" : "rounded-lg bg-muted p-1",
           listClassName
         )}
       >
-        {items.map((item) => {
-          const active = item.value === current;
-          return (
-            <button
-              key={item.value}
-              role="tab"
-              aria-selected={active}
-              aria-disabled={item.disabled || undefined}
-              disabled={item.disabled}
-              onClick={() => onSelect(item.value)}
-              onKeyDown={(e) => {
-                if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-                  e.preventDefault();
-                  const idx = items.findIndex((i) => i.value === current);
-                  const dir = e.key === "ArrowRight" ? 1 : -1;
-                  let next = idx;
-                  for (let i = 0; i < items.length; i++) {
-                    next = (next + dir + items.length) % items.length;
-                    if (!items[next].disabled) break;
-                  }
-                  onSelect(items[next].value);
-                }
-              }}
-              className={cn(
-                "inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
-                variant === "underline"
-                  ? cn(
-                      "relative -mb-px border-b-2 px-3 py-2.5",
-                      active
-                        ? "border-primary text-primary"
-                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30"
-                    )
-                  : cn(
-                      "rounded-md px-3 py-1.5",
-                      active ? "bg-background text-foreground shadow-xs border" : "text-muted-foreground hover:text-foreground"
-                    )
-              )}
-            >
-              {item.icon ? <span aria-hidden>{item.icon}</span> : null}
-              {item.label}
-              {item.badge !== undefined ? (
-                <span
-                  className={cn(
-                    "rounded-full px-1.5 py-0.5 text-xs font-semibold",
-                    active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  {item.badge}
-                </span>
-              ) : null}
-            </button>
-          );
-        })}
-      </div>
-    </div>
+        {items.map((item) => (
+          <TabsPrimitive.Trigger
+            key={item.value}
+            value={item.value}
+            disabled={item.disabled}
+            className={cn(
+              "inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed data-[state=active]:outline-none",
+              variant === "underline"
+                ? cn(
+                    "relative -mb-px border-b-2 px-3 py-2.5 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:border-transparent data-[state=inactive]:text-muted-foreground hover:text-foreground",
+                    "data-[state=inactive]:hover:border-muted-foreground/30"
+                  )
+                : cn(
+                    "rounded-md px-3 py-1.5 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs data-[state=active]:border data-[state=inactive]:text-muted-foreground hover:text-foreground"
+                  )
+            )}
+          >
+            {item.icon ? <span aria-hidden>{item.icon}</span> : null}
+            {item.label}
+            {item.badge !== undefined ? (
+              <span
+                className={cn(
+                  "rounded-full px-1.5 py-0.5 text-xs font-semibold",
+                  current === item.value ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                )}
+              >
+                {item.badge}
+              </span>
+            ) : null}
+          </TabsPrimitive.Trigger>
+        ))}
+      </TabsPrimitive.List>
+    </TabsPrimitive.Root>
   );
 }
+
+export { Tabs as TabsPrimitive };

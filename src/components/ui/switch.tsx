@@ -1,66 +1,75 @@
 "use client";
 
 import * as React from "react";
+import * as SwitchPrimitive from "@radix-ui/react-switch";
 import { cn } from "@/lib/utils";
 
-export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "size"> {
+function SwitchRoot({ className, ...props }: React.ComponentProps<typeof SwitchPrimitive.Root>) {
+  return (
+    <SwitchPrimitive.Root
+      data-slot="switch"
+      className={cn(
+        "peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-input focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+        className
+      )}
+      {...props}
+    >
+      <SwitchPrimitive.Thumb
+        data-slot="switch-thumb"
+        className={cn(
+          "bg-background dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0"
+        )}
+      />
+    </SwitchPrimitive.Root>
+  );
+}
+
+// PulseOps compat: <Switch label description size>
+// Supports both Radix API (checked + onCheckedChange) and legacy F02 API (checked + onChange(e))
+export interface SwitchProps extends Omit<React.ComponentProps<typeof SwitchPrimitive.Root>, "size" | "onChange"> {
   label?: string;
   description?: string;
   size?: "sm" | "md";
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
-  ({ className, label, description, size = "md", id, disabled, checked, ...props }, ref) => {
-    const autoId = React.useId();
-    const inputId = id ?? autoId;
-    return (
-      <label
-        htmlFor={inputId}
-        className={cn(
-          "flex items-center gap-3",
-          disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
-          className
-        )}
-      >
-        <span className="relative inline-flex shrink-0">
-          <input
-            ref={ref}
-            id={inputId}
-            type="checkbox"
-            role="switch"
-            aria-checked={checked}
-            disabled={disabled}
-            checked={checked}
-            className="peer sr-only"
-            {...props}
-          />
-          <span
-            aria-hidden
-            className={cn(
-              "inline-flex items-center rounded-full border-2 border-transparent bg-input transition-colors duration-200",
-              "peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2",
-              "peer-checked:bg-primary",
-              size === "sm" ? "h-5 w-9" : "h-6 w-11"
-            )}
-          >
-            <span
-              className={cn(
-                "inline-block rounded-full bg-white shadow-xs transition-transform duration-200",
-                size === "sm" ? "h-4 w-4" : "h-5 w-5",
-                "translate-x-0 peer-checked:translate-x-5",
-                size === "sm" && "peer-checked:translate-x-4"
-              )}
-            />
-          </span>
+function Switch({ className, label, description, size = "md", id, onChange, onCheckedChange, ...props }: SwitchProps) {
+  const autoId = React.useId();
+  const switchId = id ?? autoId;
+  const handleCheckedChange = React.useCallback(
+    (checked: boolean) => {
+      onCheckedChange?.(checked);
+      if (onChange) {
+        const synthetic = { target: { checked } } as unknown as React.ChangeEvent<HTMLInputElement>;
+        onChange(synthetic);
+      }
+    },
+    [onChange, onCheckedChange]
+  );
+
+  return (
+    <label
+      htmlFor={switchId}
+      className={cn(
+        "flex items-center gap-3",
+        props.disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
+        className
+      )}
+    >
+      <SwitchRoot
+        id={switchId}
+        className={cn(size === "sm" && "h-5 w-9 [&_[data-slot=switch-thumb]]:size-4")}
+        onCheckedChange={handleCheckedChange}
+        {...props}
+      />
+      {(label || description) && (
+        <span className="flex flex-col">
+          {label ? <span className="text-sm font-medium leading-none">{label}</span> : null}
+          {description ? <span className="text-xs text-muted-foreground">{description}</span> : null}
         </span>
-        {(label || description) && (
-          <span className="flex flex-col">
-            {label ? <span className="text-sm font-medium leading-none">{label}</span> : null}
-            {description ? <span className="text-xs text-muted-foreground">{description}</span> : null}
-          </span>
-        )}
-      </label>
-    );
-  }
-);
-Switch.displayName = "Switch";
+      )}
+    </label>
+  );
+}
+
+export { Switch, SwitchRoot };

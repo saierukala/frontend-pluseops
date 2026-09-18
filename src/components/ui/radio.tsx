@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { RadioGroup as RadioGroupPrimitive, RadioGroupItem } from "./radio-group";
+import { Label } from "./label";
 
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
   label?: string;
@@ -12,6 +14,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
   ({ className, label, description, id, disabled, ...props }, ref) => {
     const autoId = React.useId();
     const inputId = id ?? autoId;
+    // Hidden native input for compat — visual via Radix
     return (
       <label
         htmlFor={inputId}
@@ -38,9 +41,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
         {(label || description) && (
           <span className="flex flex-col">
             {label ? <span className="text-sm font-medium leading-5">{label}</span> : null}
-            {description ? (
-              <span className="text-xs leading-5 text-muted-foreground">{description}</span>
-            ) : null}
+            {description ? <span className="text-xs leading-5 text-muted-foreground">{description}</span> : null}
           </span>
         )}
       </label>
@@ -49,6 +50,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
 );
 Radio.displayName = "Radio";
 
+// PulseOps RadioGroup — shadcn Radix-backed but preserves F02 API
 export interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
   value?: string;
@@ -59,7 +61,7 @@ export interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   error?: string;
 }
 
-export function RadioGroup({
+export function RadioGroupCompat({
   name,
   value,
   defaultValue,
@@ -74,31 +76,30 @@ export function RadioGroup({
   const current = value !== undefined ? value : internal;
 
   return (
-    <div
-      role="radiogroup"
-      className={cn(
-        "flex gap-3",
-        orientation === "vertical" ? "flex-col" : "flex-row flex-wrap",
-        className
-      )}
-      {...props}
-    >
-      {options.map((opt) => (
-        <Radio
-          key={opt.value}
-          name={name}
-          value={opt.value}
-          checked={current === opt.value}
-          disabled={opt.disabled}
-          label={opt.label}
-          description={opt.description}
-          onChange={(e) => {
-            const v = e.target.value;
-            if (value === undefined) setInternal(v);
-            onValueChange?.(v);
-          }}
-        />
-      ))}
+    <div className={cn("flex gap-3", orientation === "vertical" ? "flex-col" : "flex-row flex-wrap", className)} {...props}>
+      <RadioGroupPrimitive
+        value={current}
+        onValueChange={(v) => {
+          if (value === undefined) setInternal(v);
+          onValueChange?.(v);
+        }}
+        className={cn("gap-3", orientation === "vertical" ? "flex-col" : "flex-row flex-wrap")}
+      >
+        {options.map((opt) => (
+          <div key={opt.value} className="flex items-start gap-3">
+            <RadioGroupItem value={opt.value} id={`${name}-${opt.value}`} disabled={opt.disabled} />
+            <Label
+              htmlFor={`${name}-${opt.value}`}
+              className={cn("flex flex-col cursor-pointer", opt.disabled && "opacity-50 cursor-not-allowed")}
+            >
+              <span className="text-sm font-medium leading-5">{opt.label}</span>
+              {opt.description ? <span className="text-xs leading-5 text-muted-foreground">{opt.description}</span> : null}
+            </Label>
+            {/* hidden input compat */}
+            <input type="radio" name={name} value={opt.value} checked={current === opt.value} readOnly className="sr-only" aria-hidden />
+          </div>
+        ))}
+      </RadioGroupPrimitive>
       {error ? (
         <p className="text-xs font-medium text-destructive" role="alert">
           {error}
@@ -107,3 +108,7 @@ export function RadioGroup({
     </div>
   );
 }
+
+// Re-export as RadioGroup for F02 API — primary export
+export { RadioGroupCompat as RadioGroup };
+export { RadioGroupCompat as RadioGroupLegacy };
