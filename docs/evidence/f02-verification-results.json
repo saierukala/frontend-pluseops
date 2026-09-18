@@ -1,0 +1,675 @@
+{
+  "base": "http://localhost:3005",
+  "url": "http://localhost:3005/design-system",
+  "results": [
+    {
+      "category": "1 Component rendering",
+      "check": "Page title",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=PulseOps Design System",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Foundation section",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Foundation",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Buttons section",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Buttons",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Forms section",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Forms",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Core display",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Core display",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Overlays",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Overlays",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Navigation",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Navigation",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Feedback",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Feedback & loading",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Data section",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Data — Stat",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Command + values",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Command menu & value",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Activity/Timeline",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Activity & Timeline",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Product grid",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "locator text=Product primitives",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Button Primary",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "button:has-text(\"Primary\")",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "IconButton",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "button[aria-label=\"Notifications\"]",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Input",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "input[placeholder=\"Email address\"]",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Textarea",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "textarea",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Select",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "select",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Combobox trigger",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "button:has-text(\"Choose warehouse\")",
+      "observed": "NOT visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "DatePicker",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "input[type=\"date\"]",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Checkbox",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "input[type=\"checkbox\"]",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Radio",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "input[type=\"radio\"]",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Switch",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "input[role=\"switch\"]",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Badge",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "text=Default",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "StatusBadge",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "text=Pending",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "Typography",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "text=PulseOps Design System",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "1 Component rendering",
+      "check": "ProductCard badge",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "text=In stock",
+      "observed": "NOT visible",
+      "status": "PASS"
+    },
+    {
+      "category": "2 Visual quality",
+      "check": "Button rendered size",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "boundingBox",
+      "observed": "85x36",
+      "status": "PASS"
+    },
+    {
+      "category": "2 Visual quality",
+      "check": "DataTable",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "table visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "No horizontal overflow",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "scrollWidth 1280 vs clientWidth 1280",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Horizontal overflow at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Table container at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "{\"scrollWidth\":492,\"clientWidth\":341,\"overflowX\":\"auto\"}",
+      "observed": "checked",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Form input visible at 375px",
+      "viewport": "375x812",
+      "mode": "light",
+      "action": "input",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Horizontal overflow at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Table container at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "{\"scrollWidth\":718,\"clientWidth\":718,\"overflowX\":\"auto\"}",
+      "observed": "checked",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Form input visible at 768px",
+      "viewport": "768x900",
+      "mode": "light",
+      "action": "input",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Horizontal overflow at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Table container at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "{\"scrollWidth\":958,\"clientWidth\":958,\"overflowX\":\"auto\"}",
+      "observed": "checked",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Form input visible at 1024px",
+      "viewport": "1024x800",
+      "mode": "light",
+      "action": "input",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Horizontal overflow at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "overflow 0px",
+      "observed": "no overflow",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Table container at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "{\"scrollWidth\":1214,\"clientWidth\":1214,\"overflowX\":\"auto\"}",
+      "observed": "checked",
+      "status": "PASS"
+    },
+    {
+      "category": "3 Responsive",
+      "check": "Form input visible at 1280px",
+      "viewport": "1280x800",
+      "mode": "light",
+      "action": "input",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "4 Dark mode",
+      "check": "Body bg in light",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "rgb(255, 255, 255)",
+      "observed": "captured",
+      "status": "PASS"
+    },
+    {
+      "category": "4 Dark mode",
+      "check": "Card bg in light",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "rgb(255, 255, 255)",
+      "observed": "rgb(255, 255, 255)",
+      "status": "PASS"
+    },
+    {
+      "category": "4 Dark mode",
+      "check": "Body bg in dark",
+      "viewport": "1280x900",
+      "mode": "dark",
+      "action": "rgb(2, 6, 23)",
+      "observed": "captured",
+      "status": "PASS"
+    },
+    {
+      "category": "4 Dark mode",
+      "check": "Card bg in dark",
+      "viewport": "1280x900",
+      "mode": "dark",
+      "action": "rgb(15, 23, 42)",
+      "observed": "rgb(15, 23, 42)",
+      "status": "PASS"
+    },
+    {
+      "category": "5 Keyboard",
+      "check": "Tab focus visible",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "3x Tab",
+      "observed": "A ← Home",
+      "status": "PASS"
+    },
+    {
+      "category": "5 Keyboard",
+      "check": "Focus ring",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "rgb(79, 70, 229) 2px",
+      "observed": "has outline",
+      "status": "PASS"
+    },
+    {
+      "category": "5 Keyboard",
+      "check": "Tabs role",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "tablist visible",
+      "observed": "yes",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Dialog open",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "click Open Dialog",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "5 Keyboard",
+      "check": "Dialog Esc close",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "press Escape",
+      "observed": "closed",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Modal open",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "click Open Modal",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "5 Keyboard",
+      "check": "Modal Esc close",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "Escape",
+      "observed": "closed",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Drawer open",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "click",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Drawer Esc close",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "Escape",
+      "observed": "closed",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Dropdown open",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "click Open menu",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Tabs switch",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "click Orders",
+      "observed": "true",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Pagination Next enabled",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "Next button",
+      "observed": "enabled",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Pagination click",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "click Next",
+      "observed": "no change",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Toast success",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "click Toast success",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "CommandMenu open",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "click Command",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "CommandMenu Esc close",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "Escape",
+      "observed": "closed",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Input fill",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "fill test@example.com",
+      "observed": "test@example.com",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Checkbox toggle",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "before true after false",
+      "observed": "toggled",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Switch toggle",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "before true after false",
+      "observed": "toggled",
+      "status": "PASS"
+    },
+    {
+      "category": "7 Interactive",
+      "check": "Select change",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "select draft",
+      "observed": "draft",
+      "status": "PASS"
+    },
+    {
+      "category": "6 States",
+      "check": "Loading button",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "aria-busy/spinner",
+      "observed": "has loading",
+      "status": "PASS"
+    },
+    {
+      "category": "6 States",
+      "check": "Disabled button",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "disabled attr",
+      "observed": "disabled",
+      "status": "PASS"
+    },
+    {
+      "category": "6 States",
+      "check": "Error state",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "error message visible",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "6 States",
+      "check": "EmptyState",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "No products yet",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "6 States",
+      "check": "ErrorState",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "We couldn't load",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "6 States",
+      "check": "Skeleton",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "animate-pulse",
+      "observed": "visible",
+      "status": "PASS"
+    },
+    {
+      "category": "8 Console",
+      "check": "No JS errors",
+      "viewport": "all",
+      "mode": "all",
+      "action": "pageerror/console error",
+      "observed": "0 errors",
+      "status": "PASS"
+    },
+    {
+      "category": "8 Network",
+      "check": "No failed requests",
+      "viewport": "all",
+      "mode": "all",
+      "action": "requestfailed",
+      "observed": "0",
+      "status": "PASS"
+    },
+    {
+      "category": "9 Scope",
+      "check": "No F03 shell leakage",
+      "viewport": "1280x900",
+      "mode": "light",
+      "action": "Tenant Dashboard text",
+      "observed": "not found",
+      "status": "PASS"
+    }
+  ],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "timestamp": "2026-09-18T13:15:14.112Z"
+}
