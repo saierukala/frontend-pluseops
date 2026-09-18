@@ -1,0 +1,1132 @@
+{
+  "total": 187,
+  "pass": 180,
+  "fail": 7,
+  "browser": "Chromium",
+  "base": "http://localhost:3002",
+  "timestamp": "2026-09-18T17:58:30.894Z",
+  "results": [
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 375-mobile/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 375-mobile/light",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 375-mobile/light",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 375-mobile/light",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar hidden on mobile 375-mobile/light",
+      "pass": true,
+      "details": "{\"width\":0,\"display\":\"flex\",\"parentDisplay\":\"none\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 375-mobile/light",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 375-mobile/light",
+      "pass": false,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 375-mobile/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 375-mobile/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 375-mobile/light",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"16px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 375-mobile/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 375-mobile/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 375-mobile/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 375-mobile/dark",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 375-mobile/dark",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 375-mobile/dark",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar hidden on mobile 375-mobile/dark",
+      "pass": true,
+      "details": "{\"width\":0,\"display\":\"flex\",\"parentDisplay\":\"none\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 375-mobile/dark",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 375-mobile/dark",
+      "pass": false,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 375-mobile/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 375-mobile/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 375-mobile/dark",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"16px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 375-mobile/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 375-mobile/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 768-tablet/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 768-tablet/light",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 768-tablet/light",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 768-tablet/light",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar hidden on mobile 768-tablet/light",
+      "pass": true,
+      "details": "{\"width\":0,\"display\":\"flex\",\"parentDisplay\":\"none\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 768-tablet/light",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 768-tablet/light",
+      "pass": false,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "search visible 768-tablet/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 768-tablet/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 768-tablet/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "theme control pill 768-tablet/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 768-tablet/light",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"24px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 768-tablet/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 768-tablet/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 768-tablet/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 768-tablet/dark",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 768-tablet/dark",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 768-tablet/dark",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar hidden on mobile 768-tablet/dark",
+      "pass": true,
+      "details": "{\"width\":0,\"display\":\"flex\",\"parentDisplay\":\"none\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 768-tablet/dark",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 768-tablet/dark",
+      "pass": false,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "search visible 768-tablet/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 768-tablet/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 768-tablet/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "theme control pill 768-tablet/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 768-tablet/dark",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"24px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 768-tablet/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 768-tablet/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 1024-laptop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 1024-laptop/light",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 1024-laptop/light",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 1024-laptop/light",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar width 272px desktop 1024-laptop/light",
+      "pass": true,
+      "details": "{\"width\":272,\"display\":\"flex\",\"parentDisplay\":\"flex\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 1024-laptop/light",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 1024-laptop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "search visible 1024-laptop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 1024-laptop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 1024-laptop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "theme control pill 1024-laptop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 1024-laptop/light",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"32px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 1024-laptop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 1024-laptop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 1024-laptop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 1024-laptop/dark",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 1024-laptop/dark",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 1024-laptop/dark",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar width 272px desktop 1024-laptop/dark",
+      "pass": true,
+      "details": "{\"width\":272,\"display\":\"flex\",\"parentDisplay\":\"flex\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 1024-laptop/dark",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 1024-laptop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "search visible 1024-laptop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 1024-laptop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 1024-laptop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "theme control pill 1024-laptop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 1024-laptop/dark",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"32px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 1024-laptop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 1024-laptop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 1280-desktop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 1280-desktop/light",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 1280-desktop/light",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 1280-desktop/light",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar width 272px desktop 1280-desktop/light",
+      "pass": true,
+      "details": "{\"width\":272,\"display\":\"flex\",\"parentDisplay\":\"flex\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 1280-desktop/light",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 1280-desktop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "search visible 1280-desktop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 1280-desktop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 1280-desktop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "theme control pill 1280-desktop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 1280-desktop/light",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"32px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 1280-desktop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 1280-desktop/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 1280-desktop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 1280-desktop/dark",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 1280-desktop/dark",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 1280-desktop/dark",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar width 272px desktop 1280-desktop/dark",
+      "pass": true,
+      "details": "{\"width\":272,\"display\":\"flex\",\"parentDisplay\":\"flex\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 1280-desktop/dark",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 1280-desktop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "search visible 1280-desktop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 1280-desktop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 1280-desktop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "theme control pill 1280-desktop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 1280-desktop/dark",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"32px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 1280-desktop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 1280-desktop/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 1536-large/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 1536-large/light",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 1536-large/light",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 1536-large/light",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar width 272px desktop 1536-large/light",
+      "pass": true,
+      "details": "{\"width\":272,\"display\":\"flex\",\"parentDisplay\":\"flex\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 1536-large/light",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 1536-large/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "search visible 1536-large/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 1536-large/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 1536-large/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "theme control pill 1536-large/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 1536-large/light",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"32px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 1536-large/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 1536-large/light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "tenant /dashboard status 1536-large/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "no horizontal overflow /dashboard 1536-large/dark",
+      "pass": true,
+      "details": "diff=0"
+    },
+    {
+      "category": "visual",
+      "check": "branding present 1536-large/dark",
+      "pass": true,
+      "details": "brand=PulseOpsTenant"
+    },
+    {
+      "category": "visual",
+      "check": "typography h1 1536-large/dark",
+      "pass": true,
+      "details": "h1=Dashboard"
+    },
+    {
+      "category": "visual",
+      "check": "sidebar width 272px desktop 1536-large/dark",
+      "pass": true,
+      "details": "{\"width\":272,\"display\":\"flex\",\"parentDisplay\":\"flex\"}"
+    },
+    {
+      "category": "visual",
+      "check": "topbar height 56px 1536-large/dark",
+      "pass": true,
+      "details": "h=56"
+    },
+    {
+      "category": "visual",
+      "check": "tenant identity visible 1536-large/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "search visible 1536-large/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "notifications button 1536-large/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "user avatar 1536-large/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "theme control pill 1536-large/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "content spacing 1536-large/dark",
+      "pass": true,
+      "details": "{\"maxWidth\":\"1600px\",\"padding\":\"32px\"}"
+    },
+    {
+      "category": "console",
+      "check": "no console errors 1536-large/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests 1536-large/dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "F02-compliance",
+      "check": "PlatformShell bg-[#0f172a] present light",
+      "pass": true,
+      "details": "class=flex w-[272px] shrink-0 flex-col border-r bg-[#0f172a] text-slate-200 sticky top-0 h-screen overflow-hidden"
+    },
+    {
+      "category": "F02-compliance",
+      "check": "Platform sidebar computed bg light",
+      "pass": true,
+      "details": "bg=rgb(15, 23, 42)"
+    },
+    {
+      "category": "F02-compliance",
+      "check": "platform uses Badge primitive light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "platform tenant identity distinct light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "platform backend dependency visible light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "platform dark shell distinct from tenant light light",
+      "pass": true,
+      "details": "computed=rgb(15, 23, 42)"
+    },
+    {
+      "category": "F02-compliance",
+      "check": "PlatformShell bg-[#0f172a] present dark",
+      "pass": true,
+      "details": "class=flex w-[272px] shrink-0 flex-col border-r bg-[#0f172a] text-slate-200 sticky top-0 h-screen overflow-hidden"
+    },
+    {
+      "category": "F02-compliance",
+      "check": "Platform sidebar computed bg dark",
+      "pass": true,
+      "details": "bg=rgb(15, 23, 42)"
+    },
+    {
+      "category": "F02-compliance",
+      "check": "platform uses Badge primitive dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "platform tenant identity distinct dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "platform backend dependency visible dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "platform dark shell distinct from tenant light dark",
+      "pass": true,
+      "details": "computed=rgb(15, 23, 42)"
+    },
+    {
+      "category": "visual",
+      "check": "storefront header commerce light",
+      "pass": true,
+      "details": "header=Free shipping over ₹999 • Easy 7-day returnsHelp·Track orderPulseOps StoreStoreProductsCategories⌘KCart2StoreProductsCat"
+    },
+    {
+      "category": "visual",
+      "check": "storefront footer present light",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "storefront no tenant sidebar light",
+      "pass": true,
+      "details": "aside=0"
+    },
+    {
+      "category": "visual",
+      "check": "storefront h1 present light",
+      "pass": true,
+      "details": "h1=Store — Home"
+    },
+    {
+      "category": "visual",
+      "check": "storefront header commerce dark",
+      "pass": true,
+      "details": "header=Free shipping over ₹999 • Easy 7-day returnsHelp·Track orderPulseOps StoreStoreProductsCategories⌘KCart2StoreProductsCat"
+    },
+    {
+      "category": "visual",
+      "check": "storefront footer present dark",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "storefront no tenant sidebar dark",
+      "pass": true,
+      "details": "aside=0"
+    },
+    {
+      "category": "visual",
+      "check": "storefront h1 present dark",
+      "pass": true,
+      "details": "h1=Store — Home"
+    },
+    {
+      "category": "visual",
+      "check": "root shell cards present",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "visual",
+      "check": "showcase h1",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "F02-compliance",
+      "check": "Button component present (tenant)",
+      "pass": false,
+      "details": ""
+    },
+    {
+      "category": "F02-compliance",
+      "check": "Badge component present",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "F02-compliance",
+      "check": "Avatar/workspace identity present",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "F02-compliance",
+      "check": "SearchBar present",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "F02-compliance",
+      "check": "Dropdown/Popover (notifications) present",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "F02-compliance",
+      "check": "focus-visible present (Tab)",
+      "pass": true,
+      "details": "<button aria-haspopup=\"menu\" aria-expanded=\"false\" class=\"inline-flex items-center gap-2 rounded-lg border bg-card px-2 "
+    },
+    {
+      "category": "F02-compliance",
+      "check": "established radius/shadow (card)",
+      "pass": true,
+      "details": "{\"radius\":\"14px\",\"shadow\":\"rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px\",\"borderColor\":\"rgb(226, 232, 240)\"}"
+    },
+    {
+      "category": "navigation",
+      "check": "active nav on /dashboard",
+      "pass": true,
+      "details": "active=Dashboard"
+    },
+    {
+      "category": "navigation",
+      "check": "active nav moves to /products",
+      "pass": true,
+      "details": "active=Products"
+    },
+    {
+      "category": "navigation",
+      "check": "navigation hierarchy groups visible",
+      "pass": true,
+      "details": "groups=9"
+    },
+    {
+      "category": "responsive",
+      "check": "hamburger visible on 375",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "drawer opens on hamburger click (375)",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "drawer closes on Esc (375)",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "bottom nav visible on mobile",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "hamburger visible on 768",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "bottom nav visible on 768",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "hamburger hidden on 1024",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "responsive",
+      "check": "bottom nav hidden on 1024",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "keyboard",
+      "check": "Tab focuses first link",
+      "pass": true,
+      "details": "focused=/dashboard"
+    },
+    {
+      "category": "keyboard",
+      "check": "Tab second focus",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "keyboard",
+      "check": "Shift+Tab reverse",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "keyboard",
+      "check": "Enter opens notifications",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "keyboard",
+      "check": "Escape closes notifications",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "keyboard",
+      "check": "Space opens user menu",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "backend-contract",
+      "check": "no invented GET /platform/*",
+      "pass": false,
+      "details": "reqs=GET http://localhost:3002/dashboard|GET http://localhost:3002/_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2|GET http://localhost:3002/_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2|GET http://localhost:3002/_next/static/chunks/143o4mf8-z8e8.css|GET http://localhost:3002/_next/static/chunks/0rd5hehc9r5m1.js|GET http://localhost:3002/_next/static/chunks/3b3nw8wjhpb3_.js|GET http://localhost:3002/_next/static/chunks/06jxjnw8bfczc.js|GET http://localhost:3002/_next/static/"
+    },
+    {
+      "category": "backend-contract",
+      "check": "no invented GET /tenants",
+      "pass": false,
+      "details": ""
+    },
+    {
+      "category": "backend-contract",
+      "check": "no invented POST /switch-tenant",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no hydrations errors",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "category": "console",
+      "check": "no failed requests",
+      "pass": true,
+      "details": ""
+    }
+  ]
+}

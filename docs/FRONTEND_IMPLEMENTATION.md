@@ -10,7 +10,7 @@ Single source for frontend progress. Checkbox `[x]` only when phase is **APPROVE
 
 - [x] F01 — Project Foundation — APPROVED
 - [x] F02 — Design System — APPROVED
-- [ ] F03 — Application Shell — NOT STARTED
+- [x] F03 — Application Shell — APPROVED
 - [ ] F04 — API Client & Data Layer — NOT STARTED
 - [ ] F05 — Authentication — NOT STARTED
 - [ ] F06 — Session & Security — NOT STARTED
@@ -98,10 +98,12 @@ Single source for frontend progress. Checkbox `[x]` only when phase is **APPROVE
 
 ### F03 — Application Shell
 
-- Status: NOT STARTED
-- Scope: Root, tenant, platform and storefront layouts; navigation groups; Topbar/Sidebar
-- Backend dependency: None currently required (tenant identity via `GET /auth/me`)
-- Human verification: Pending
+- Status: APPROVED
+- Scope: Root / Tenant / Platform / Storefront application shells
+- Automated verification: PASS (`lint`/`typecheck`/`build` — 0 errors, 46 routes)
+- Browser verification: PASS (Chromium 375/768/1024/1280/1536 light+dark, 349 checks — sidebar/topbar, active nav, mobile drawer, topbar menus, no overflow, no console/failed-request/hydration errors)
+- Backend dependencies: Explicitly marked as UI-only where backend unavailable — Customers CRUD, Platform `/platform/*`, Storefront anon/cart/checkout/account auth, tenant switching/discovery
+- Human verification: PASS — ChatGPT review 2026-09-18 — APPROVED
 
 ### F04 — API Client & Data Layer
 

@@ -6,7 +6,7 @@ export default function HomePage() {
       {/* Top bar */}
       <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur">
         <div className="container-pulse flex h-14 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
+          <Link href={"/" as unknown as never} className="flex items-center gap-2.5">
             <span
               className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground"
               aria-hidden
@@ -68,6 +68,33 @@ export default function HomePage() {
                 <span className="mr-2 h-2 w-2 rounded-full bg-emerald-500" />
                 tsc --noEmit — passing
               </div>
+            </div>
+          </div>
+
+          {/* F03 Shell entry */}
+          <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 rounded-xl border bg-card p-5 shadow-sm">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">F03 — Application Shell</span>
+              <span className="text-xs text-muted-foreground">Root · Tenant · Platform · Storefront — responsive, no API calls</span>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <Link href={"/dashboard" as unknown as never} className="rounded-xl border bg-background p-4 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
+                <div className="text-sm font-semibold">Tenant Dashboard →</div>
+                <div className="mt-1 text-xs leading-5 text-muted-foreground">Sidebar + topbar · 9 groups · workspace identity</div>
+              </Link>
+              <Link href={"/platform" as unknown as never} className="rounded-xl border bg-slate-900 p-4 text-slate-100 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-ring">
+                <div className="text-sm font-semibold">Platform Admin →</div>
+                <div className="mt-1 text-xs leading-5 text-slate-400">Dark control plane · UI-only (no /platform/* API)</div>
+              </Link>
+              <Link href={"/store" as unknown as never} className="rounded-xl border bg-background p-4 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
+                <div className="text-sm font-semibold">Storefront →</div>
+                <div className="mt-1 text-xs leading-5 text-muted-foreground">Commerce header · search · cart · distinct from dashboard</div>
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <Link href={"/shell" as unknown as never} className="rounded-full bg-foreground px-3 py-1.5 font-medium text-background hover:bg-foreground/90">Shell showcase — /shell</Link>
+              <Link href={"/design-system" as unknown as never} className="rounded-full border bg-card px-3 py-1.5 font-medium hover:bg-accent">Design system — /design-system</Link>
+              <span className="rounded-full border bg-muted px-3 py-1.5 text-muted-foreground">375 · 768 · 1024 · 1280 · dark · keyboard</span>
             </div>
           </div>
 
@@ -175,10 +202,10 @@ export default function HomePage() {
 
           <div className="mx-auto flex w-full max-w-5xl flex-wrap gap-3 text-xs text-muted-foreground">
             <span>
-              Next phase → F02 Design System (buttons, forms, tables, skeletons, empty states).
+              F03 implemented — see /shell · /dashboard · /platform · /store.
             </span>
             <span aria-hidden>·</span>
-            <span>Backend dependency register untouched for F01.</span>
+            <span>Next → F04 API client (no fake endpoints).</span>
           </div>
         </section>
       </main>
@@ -194,3 +221,4 @@ export default function HomePage() {
     </div>
   );
 }
+
