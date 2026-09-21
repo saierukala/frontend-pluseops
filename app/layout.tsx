@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
+import { AuthProvider } from "@/lib/auth/auth-context";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -92,10 +94,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        {children}
+      <body suppressHydrationWarning className="min-h-screen bg-background font-sans text-foreground antialiased">
+        <AuthProvider>
+          {children}
+          <Toaster position="top-right" toastOptions={{ className: "bg-popover text-popover-foreground" }} />
+        </AuthProvider>
       </body>
     </html>
   );

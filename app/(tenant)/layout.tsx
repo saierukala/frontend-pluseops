@@ -1,11 +1,13 @@
-import type { Metadata } from "next";
-import { TenantShell } from "@/components/layout/tenant-shell";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Tenant",
-};
+import * as React from "react";
+import { TenantShell } from "@/components/layout/tenant-shell";
+import { ProtectedRoute } from "@/features/auth/components/protected-route";
 
 export default function TenantLayout({ children }: { children: React.ReactNode }) {
-  return <TenantShell>{children}</TenantShell>;
+  return (
+    <ProtectedRoute redirectTo="/login" requiredScope="tenant">
+      <TenantShell>{children}</TenantShell>
+    </ProtectedRoute>
+  );
 }
-

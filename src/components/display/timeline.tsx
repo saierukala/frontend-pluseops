@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 
 export interface TimelineItem {
   id: string;
@@ -69,10 +69,8 @@ export function Timeline({ className, items, orientation = "vertical", ...props 
             <p className="text-sm font-medium leading-none">{item.title}</p>
             {item.description ? <p className="mt-1 text-sm leading-5 text-muted-foreground">{item.description}</p> : null}
             {item.timestamp ? (
-              <p className="mt-1 text-xs text-muted-foreground">
-                {typeof item.timestamp === "string" || typeof item.timestamp === "number"
-                  ? new Date(item.timestamp).toLocaleString()
-                  : item.timestamp.toLocaleString()}
+              <p suppressHydrationWarning className="mt-1 text-xs text-muted-foreground">
+                {formatDate(item.timestamp)}
               </p>
             ) : null}
           </div>

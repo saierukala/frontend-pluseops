@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
@@ -71,6 +71,35 @@ function Button({
     default: "default",
   };
   const resolvedSize = sizeMap[size ?? "md"] ?? "md";
+
+  if (asChild) {
+    return (
+      <Slot
+        data-slot="button"
+        className={cn(
+          buttonVariants({ variant: variant as never, size: resolvedSize as never, className }),
+          variant !== "link" && "active:scale-[0.98]"
+        )}
+        aria-busy={loading || undefined}
+        aria-disabled={isDisabled || undefined}
+        {...props}
+      >
+        {loading ? (
+          <span className="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden />
+        ) : leftIcon ? (
+          <span className="inline-flex shrink-0" aria-hidden>
+            {leftIcon}
+          </span>
+        ) : null}
+        <Slottable>{children}</Slottable>
+        {!loading && rightIcon ? (
+          <span className="inline-flex shrink-0" aria-hidden>
+            {rightIcon}
+          </span>
+        ) : null}
+      </Slot>
+    );
+  }
 
   return (
     <Comp

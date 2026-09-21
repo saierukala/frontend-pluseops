@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { StorefrontBrand } from "./brand";
 import { storefrontNav } from "./nav-config";
+import { UserMenu as AuthUserMenu } from "@/features/auth/components/user-menu";
 
 function StorefrontHeader({ cartCount = 2, onMenuClick }: { cartCount?: number; onMenuClick?: () => void }) {
   const pathname = usePathname();
@@ -67,14 +68,12 @@ function StorefrontHeader({ cartCount = 2, onMenuClick }: { cartCount?: number; 
           </label>
         </div>
 
-        {/* Actions */}
+{/* Actions */}
         <div className="ml-auto flex items-center gap-1.5">
           <button aria-label="Search" onClick={() => setMobileSearchOpen((v) => !v)} className="inline-flex h-9 w-9 items-center justify-center rounded-full border bg-card hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring md:hidden">
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-3-3" /></svg>
           </button>
-          <Link href={"/account" as unknown as never} aria-label="Account" className="hidden h-9 w-9 items-center justify-center rounded-full border bg-card hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="3" /></svg>
-          </Link>
+          <AuthUserMenu />
           <Link href={"/cart" as unknown as never} aria-label={`Cart, ${cartCount} items`} className="relative inline-flex h-9 items-center gap-2 rounded-full border bg-card px-3 text-sm font-medium hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring">
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 7h12l-1 9H7L6 7z" /><path d="M9 7V5a3 3 0 0 1 6 0v2" /></svg>
             <span className="hidden sm:inline">Cart</span>

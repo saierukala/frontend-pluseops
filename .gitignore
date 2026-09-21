@@ -44,3 +44,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# evidence images - local only, never commit
+/docs/evidence/*.png
+/docs/evidence/*.jpg
+/docs/evidence/*.jpeg
+/docs/evidence/*.webp

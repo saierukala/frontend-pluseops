@@ -11,6 +11,7 @@ function Card({ className, interactive, ...props }: CardProps) {
   return (
     <div
       data-slot="card"
+      suppressHydrationWarning
       className={cn(
         "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-xs min-w-0 overflow-hidden transition-colors",
         interactive && "hover:shadow-md hover:border-ring/30 cursor-pointer",

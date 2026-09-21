@@ -5,9 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SearchBar } from "@/components/ui/search-bar";
-import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { UserMenu as AuthUserMenu } from "@/features/auth/components/user-menu";
+import { useAuth } from "@/lib/auth/auth-context";
 
 function TopbarSearch({ onSearch, className }: { onSearch?: (v: string) => void; className?: string }) {
   const [value, setValue] = React.useState("");
@@ -98,71 +99,7 @@ function NotificationsButton({ count = 3 }: { count?: number }) {
   );
 }
 
-function UserMenu() {
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    function onDoc(e: MouseEvent) {
-      if (!ref.current?.contains(e.target as Node)) setOpen(false);
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDoc);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, []);
-  return (
-    <div ref={ref} className="relative">
-      <button
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-2 rounded-lg border bg-card px-2 py-1.5 pr-2.5 text-left hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-      >
-        <Avatar fallback="AS" size="sm" />
-        <span className="hidden min-w-0 flex-col items-start sm:flex">
-          <span className="max-w-[120px] truncate text-sm font-medium leading-none">Aarav Shah</span>
-          <span className="max-w-[120px] truncate text-xs text-muted-foreground">Admin • Acme</span>
-        </span>
-        <svg viewBox="0 0 24 24" className="hidden h-3.5 w-3.5 text-muted-foreground sm:block" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <path d="M6 9l6 6 6-6" />
-        </svg>
-      </button>
-      {open ? (
-        <div role="menu" className="absolute right-0 top-[calc(100%+8px)] z-50 w-64 rounded-xl border bg-popover p-1 shadow-lg">
-          <div className="px-3 py-2.5">
-            <div className="text-sm font-semibold">Aarav Shah</div>
-            <div className="truncate text-xs text-muted-foreground">aarav@acme.test</div>
-            <div className="mt-1 inline-flex rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium">Role: tenant_admin</div>
-          </div>
-          <div className="my-1 h-px bg-border" />
-          <button role="menuitem" className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none" onClick={() => setOpen(false)}>
-            <span className="inline-flex h-4 w-4 items-center justify-center">👤</span> Profile
-          </button>
-          <button role="menuitem" className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm hover:bg-accent" onClick={() => setOpen(false)}>
-            <span className="inline-flex h-4 w-4 items-center justify-center">⚙️</span> Settings
-          </button>
-          <button role="menuitem" className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>
-            <span className="inline-flex h-4 w-4 items-center justify-center">🎨</span> Theme — system
-          </button>
-          <div className="my-1 h-px bg-border" />
-          <button
-            role="menuitem"
-            className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-sm text-destructive hover:bg-destructive/10"
-            onClick={() => setOpen(false)}
-          >
-            Sign out
-          </button>
-          <p className="px-2.5 py-1.5 text-[11px] leading-4 text-muted-foreground">Auth actions are UI only in F03 — no API calls.</p>
-        </div>
-      ) : null}
-    </div>
-  );
-}
+
 
 function ThemeToggle() {
   const [theme, setTheme] = React.useState<"light" | "dark" | "system">("system");
@@ -194,6 +131,7 @@ export function TenantTopbar({
   onSearch?: (v: string) => void;
 }) {
   const pathname = usePathname();
+  const { user } = useAuth();
   const breadcrumb = React.useMemo(() => {
     const segs = pathname.split("/").filter(Boolean);
     if (segs.length === 0) return "Overview";
@@ -216,7 +154,9 @@ export function TenantTopbar({
 
       <div className="hidden min-w-0 flex-col lg:flex">
         <div className="text-sm font-semibold leading-none tracking-tight">{breadcrumb}</div>
-        <div className="truncate text-xs text-muted-foreground">Tenant workspace • {pathname}</div>
+        <div className="truncate text-xs text-muted-foreground">
+          {user ? `${user.tenantId.slice(0,8)}… • ${user.email} • Tenant workspace` : `Tenant workspace • ${pathname}`}
+        </div>
       </div>
 
       <div className="flex flex-1 justify-center lg:justify-center">
@@ -230,11 +170,11 @@ export function TenantTopbar({
         </Button>
       </div>
 
-      <div className="flex items-center gap-1.5 sm:gap-2">
+<div className="flex items-center gap-1.5 sm:gap-2">
         <ThemeToggle />
         <NotificationsButton />
         <span className="hidden h-6 w-px bg-border sm:block" aria-hidden />
-        <UserMenu />
+        <AuthUserMenu />
       </div>
     </header>
   );

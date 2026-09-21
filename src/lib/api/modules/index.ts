@@ -6,6 +6,7 @@
 export * from "./health";
 export * from "./auth";
 export * from "./tenants";
+export * from "./platform";
 export * from "./users";
 export * from "./roles";
 export * from "./permissions";

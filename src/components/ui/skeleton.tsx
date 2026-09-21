@@ -13,6 +13,7 @@ function Skeleton({ className, variant = "block", ...props }: SkeletonProps) {
       data-slot="skeleton"
       aria-busy="true"
       aria-live="polite"
+      suppressHydrationWarning
       className={cn(
         "bg-accent animate-pulse motion-reduce:animate-none",
         variant === "block" && "rounded-md",
@@ -33,6 +34,7 @@ export function SkeletonCompat({ className, variant = "block", ...props }: Skele
       aria-busy="true"
       aria-live="polite"
       data-slot="skeleton"
+      suppressHydrationWarning
       className={cn(
         "animate-pulse bg-muted motion-reduce:animate-none",
         variant === "block" && "rounded-md",

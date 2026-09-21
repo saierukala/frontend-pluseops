@@ -19,13 +19,16 @@ export interface RegisterBody {
 export interface LoginBody {
   email: string;
   password: string;
+  scope?: "platform" | "tenant";
   tenantId?: string;
+  tenantSlug?: string;
 }
 
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   sessionId: string;
+  scope: "platform" | "tenant";
   user: User;
 }
 
@@ -33,6 +36,7 @@ export interface RefreshResponse {
   accessToken: string;
   refreshToken: string;
   sessionId: string;
+  scope: "platform" | "tenant";
   user: User;
 }
 
@@ -57,7 +61,7 @@ export const authApi = {
     );
   },
 
-  forgotPassword(body: { email: string; tenantId?: string }): Promise<{ success: boolean; message: string; devToken?: string }> {
+  forgotPassword(body: { email: string; tenantId?: string; tenantSlug?: string }): Promise<{ success: boolean; message: string; devToken?: string }> {
     return apiClient.post<{ success: boolean; message: string; devToken?: string }>(
       "/auth/forgot-password",
       body,

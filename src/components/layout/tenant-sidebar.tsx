@@ -7,6 +7,7 @@ import { tenantNavGroups } from "./nav-config";
 import { NavIcon } from "./nav-icon";
 import { PulseOpsBrand } from "./brand";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/lib/auth/auth-context";
 
 function isActive(pathname: string, href: string) {
   if (href === "/dashboard" && pathname === "/dashboard") return true;
@@ -19,6 +20,9 @@ function isActive(pathname: string, href: string) {
 
 export function TenantSidebar({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
+  const { user } = useAuth();
+  const initials = user ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase() || "WS" : "WS";
+  const tenantSlugHint = user ? user.tenantId.slice(0, 8) : "—";
 
   return (
     <aside className={cn("flex w-[272px] shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground", className)}>
@@ -31,21 +35,18 @@ export function TenantSidebar({ className, onNavigate }: { className?: string; o
         </span>
       </div>
 
-      {/* Workspace identity */}
+      {/* Workspace identity — backend-derived */}
       <div className="border-b px-3 py-3">
         <div className="flex items-center gap-3 rounded-xl border bg-card px-3 py-2.5 shadow-xs">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-semibold">AC</span>
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-semibold">{initials}</span>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-semibold leading-none">Acme Corp</div>
-            <div className="truncate text-xs text-muted-foreground">acme.pulseops.test</div>
+            <div className="truncate text-sm font-semibold leading-none">{user ? `${user.firstName} ${user.lastName}` : "Workspace"}</div>
+            <div className="truncate text-xs text-muted-foreground">{user ? user.email : "Tenant workspace"}</div>
+            {user && <div className="truncate text-[11px] text-muted-foreground">Tenant {tenantSlugHint}… • Tenant Admin</div>}
           </div>
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md border bg-background text-muted-foreground" aria-hidden>
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          </span>
+          <Badge variant="outline" className="shrink-0 text-[10px]">Tenant</Badge>
         </div>
-        <p className="mt-2 px-1 text-[11px] leading-4 text-muted-foreground">Tenant context from auth — switching is a backend dependency.</p>
+        <p className="mt-2 px-1 text-[11px] leading-4 text-muted-foreground">Tenant context is authoritative from JWT/session — not client-selected.</p>
       </div>
 
       {/* Nav */}

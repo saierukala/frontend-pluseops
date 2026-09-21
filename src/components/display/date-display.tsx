@@ -37,9 +37,25 @@ export function DateDisplay({
 }: DateDisplayProps) {
   const d = value instanceof Date ? value : new Date(value);
   const isValid = !Number.isNaN(d.getTime());
-  const display = isValid ? (relative ? relativeTime(d) : formatDate(d, format, locale)) : String(value);
+  // Avoid hydration mismatch for relative time (Date.now() drift server vs client):
+  // render stable absolute date on server, update to relative after mount.
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount flag to avoid Date.now() hydration drift
+    if (relative) setMounted(true);
+  }, [relative]);
+  const display = isValid
+    ? relative && mounted
+      ? relativeTime(d)
+      : formatDate(d, format, locale)
+    : String(value);
   return (
-    <time dateTime={isValid ? d.toISOString() : undefined} className={cn("text-sm", className)} {...props}>
+    <time
+      suppressHydrationWarning
+      dateTime={isValid ? d.toISOString() : undefined}
+      className={cn("text-sm", className)}
+      {...props}
+    >
       {prefix ? `${prefix} ${display}` : display}
     </time>
   );

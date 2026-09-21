@@ -66,6 +66,9 @@ export const publicEnv = {
     "NEXT_PUBLIC_SOCKET_URL",
     getOptionalEnvVar("NEXT_PUBLIC_SOCKET_URL", "http://localhost:3000")
   ),
+  // DEPRECATED: NEXT_PUBLIC_TENANT_ID / NEXT_PUBLIC_DEFAULT_TENANT_ID are no longer used for authorization.
+  // Backend is authoritative for tenant identity via JWT scope. Tenant login uses tenantSlug (Workspace).
+  // Kept only for backward-compat reading if needed externally — do NOT use for auth logic.
 } as const;
 
 // ---------------------------------------------------------------------------

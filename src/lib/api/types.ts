@@ -52,6 +52,8 @@ export interface Tenant {
   updatedAt?: IsoDateString;
 }
 
+export type AuthScope = "platform" | "tenant";
+
 export interface User {
   id: Uuid;
   tenantId: Uuid;
@@ -63,6 +65,7 @@ export interface User {
   lastLoginAt?: IsoDateString | null;
   createdAt: IsoDateString;
   updatedAt: IsoDateString;
+  scope?: AuthScope;
   roles?: Array<{ id: Uuid; name: string; isSystem: boolean }>;
 }
 

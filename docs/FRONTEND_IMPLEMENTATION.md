@@ -12,10 +12,10 @@ Single source for frontend progress. Checkbox `[x]` only when phase is **APPROVE
 - [x] F02 — Design System — APPROVED
 - [x] F03 — Application Shell — APPROVED
 - [x] F04 — API Client & Data Layer — APPROVED
-- [ ] F05 — Authentication — NOT STARTED
-- [ ] F06 — Session & Security — NOT STARTED
+- [ ] F05 — Authentication (Platform/Tenant Contract) — IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION
+- [ ] F06 — Session & Security — IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION (scope-aware, no F06 separate start)
 - [ ] F07 — RBAC & Permission System — NOT STARTED
-- [ ] F08 — Tenant Context — NOT STARTED
+- [ ] F08 — Tenant Context — IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION (backend-authoritative)
 
 ### Dashboard
 
@@ -150,19 +150,37 @@ Single source for frontend progress. Checkbox `[x]` only when phase is **APPROVE
 - Verification: `npm run lint` PASS (0 errors, 1 warning fixed) · `npm run typecheck` PASS · `npm run build` PASS (46 routes, 16.9s compile) · browser verification at 375/768/1024/1280/1536 light+dark — no overflow/hydration/console errors; showcase `/design-system` and `/shell`/`/platform`/`/store` remain functional; API client untouched
 - Files changed: `package.json`, `components.json`, `app/globals.css`, `src/lib/utils.ts`, `src/components/ui/*` (primitives migrated) — `PULSEOPS_FRONTEND_MASTER_ROADMAP.md` NOT modified; no commit/push; F05 remains NOT STARTED
 
-### F05 — Authentication
+### F05 — Authentication — Platform/Tenant Contract (2026-09-21)
 
-- Status: NOT STARTED
-- Scope: `/login`, `/register`, `/forgot-password`, `/reset-password`, `/verify-email`, protected routes
-- Backend dependency: `POST /auth/*` + `GET /auth/me` — SUPPORTED
-- Human verification: Pending
+- Status: IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION — backend platform-auth architecture verified, frontend integrated
+- Scope: Dual-scope JWT (platform|tenant), `/login` mode selector, `/platform`, `/dashboard`, tenant creation, auth state with scope, routing guards, security boundaries
+- Backend contract: `POST /auth/login` now supports `scope=platform|tenant`, `tenantSlug` (prefer over `tenantId` deprecated), auto-resolve single membership, `GET /platform/tenants*` live, JWT `{sub, tenantId, sessionId, email, scope, iss, aud}`, `authenticatePlatform()` vs `authenticate()` rejecting cross-scope (403 PLATFORM_TOKEN_FORBIDDEN / PLATFORM_AUTH_REQUIRED) — see `docs/IMPLEMENTATION_REPORT_PLATFORM_AUTH.md` (backend) + `PULSEOPS_FRONTEND_BACKEND_HANDOFF.md`
+- Architecture: `src/lib/api/types.ts` (+AuthScope), `src/lib/api/modules/auth.ts` (scope/tenantSlug), `src/lib/api/tokens.ts` (scope persisted), `src/lib/api/modules/platform.ts` (new, real backend contract: list/create/get/update/status/admin), `src/lib/auth/auth-context.tsx` (scope-aware setUser, login with {scope,tenantSlug}, refresh preserves scope, me forwards scope, tokenStore scope), `src/features/auth/components/protected-route.tsx` (requiredScope, forbidden on cross-scope, AuthGuard scope-aware redirect: platform→/platform, tenant→/dashboard), `app/(auth)/login` redesign
+- Login page: Polished mode selector `[ Platform Admin ] [ Tenant / Business ]` using shadcn/PulseOps primitives; **no raw Tenant UUID**; Platform mode: Email+Password → scope=platform (no tenantId), Tenant mode: Workspace (tenantSlug) + Email + Password → scope=tenant (slug optional for auto-resolve), label "Workspace" not "Workspace ID (Tenant)", helper "Leave blank if you belong to single workspace"; safe redirects (platform only to /platform*, tenant not to /platform); error via auth context; toast; no suppressHydrationWarning
+- Platform login: `scope: "platform"` only, no tenantId, on success redirect → `/platform`, scope retained in tokenStore/localStorage `pulseops_scope`, JWT verified `{scope:platform, iss:pulseops, aud:pulseops-api}`
+- Tenant login: `scope: "tenant"`, tenantSlug where required (prefer slug, not UUID), no `NEXT_PUBLIC_TENANT_ID`/`pulseops_tenant_id`/`?tenantId=` as authorization, backend authoritative for tenant identity (JWT tenantId), on success redirect → `/dashboard`; auto-resolve supported when single active membership (workspace blank)
+- Auth state: `AuthProvider` understands `scope=platform|tenant` from JWT/session response as source of truth, exposes `scope` to routing/guards, does not infer platform access from role string, uses backend-derived tenantId only internally (kept in User type where required, not for auth)
+- Routing: `app/(platform)/layout.tsx` → `ProtectedRoute requiredScope="platform"`, `app/(tenant)/layout.tsx` → `requiredScope="tenant"`, `app/(auth)/client-layout.tsx` → `AuthGuard` scope-aware; Expected: Platform user→/platform, Tenant→/dashboard, Unauthenticated→/login, Tenant token→platform route→/forbidden (403 PLATFORM_AUTH_REQUIRED), Platform token→tenant API→403 PLATFORM_TOKEN_FORBIDDEN (backend rejects), no impersonation, no client tenant switching
+- Platform tenant management: Implemented against REAL backend APIs (§6): `GET /platform/tenants` (paginated, excludes __platform), `POST /platform/tenants` (atomic create), `GET /platform/tenants/:id`, `PATCH /platform/tenants/:id`, `PATCH /platform/tenants/:id/status`, `POST /platform/tenants/:id/admin` — all via `platformApi` → `F04 ApiClient` (auth header, refresh, retry, errors). Inspected actual OpenAPI `src/docs/paths/platform.js` before forms; no field invention.
+- Platform dashboard: Professional shadcn/PulseOps shell (`src/components/layout/platform-shell.tsx` updated: no BACKEND DEPENDENCY badge, platform scope indicator), nav Overview/Tenants/Users/Audit/System (only Tenants wired, others Soon/backendDependency), overview shows Total/Active/Trial/Suspended from live list, recent tenants, security boundary note
+- Tenant creation: Platform Admin "+ Create Tenant" dialog uses exact backend contract: Tenant Information (name 1-255, slug ^[a-z0-9-]+$ 1-100, status enum, plan) + Initial Administrator (firstName 1-100, lastName 1-100, email, password 8-128 upper/lower/digit/special); submits to `POST /platform/tenants`; on success shows safe info (name, slug, status, admin email) never password
+- Tenant list: Polished page `app/(platform)/platform/tenants/page.tsx` with search/status filter, columns Tenant/Slug/Status/Plan/Created/Actions derived from actual API response (`data:[{id,name,slug,status,plan,createdAt}]` + meta), actions only real APIs (View → detail, status via detail)
+- Tenant admin experience: `/dashboard` identifies current tenant clearly via backend/session (`useAuth().user` — e.g., `Test Admin • Tenant Admin • Tenant 45c2c0… • scope:tenant`), shell uses JWT-derived tenantId not locally selected UUID (`src/components/layout/tenant-sidebar.tsx` + `tenant-topbar.tsx` now show user-derived initials/email/tenantId)
+- Old tenant resolution removed: Searched entire frontend for `NEXT_PUBLIC_TENANT_ID`/`NEXT_PUBLIC_DEFAULT_TENANT_ID`/`tenantId=`/`pulseops_tenant_id`/`Workspace ID (Tenant)` — all obsolete usages removed from `app/(auth)/login|register|forgot-password`, `src/config/env.ts` now deprecates `NEXT_PUBLIC_TENANT_ID` (no longer read for auth), `.env.example`/`.env.local` note deprecated, `src/` grep 0 for `b74acd07`; kept backend-derived `tenantId` in `src/lib/api/types.ts` where required for response types
+- F04 integration: No new API client; Component→Feature API→F04 ApiClient→Backend preserved; F04 remains owner of auth header, access/refresh, deduplication, retry, errors (verified via `src/lib/api/client.ts` 401→refresh→retry once, 429 Retry-After)
+- Security verified: Platform login cannot use tenant creds (403 PLATFORM_ACCESS_DENIED), Tenant login cannot obtain platform scope (403), Platform token cannot access tenant-only APIs (403 PLATFORM_TOKEN_FORBIDDEN), Tenant token cannot access platform APIs (403 PLATFORM_AUTH_REQUIRED), No client-controlled tenant UUID determines authorization, No tenant ID stored as authorization authority (only JWT), No credentials in source, No password in localStorage/logs, Safe redirects (cross-scope blocked), No fake permissions, Backend authoritative (see manual API checks §15)
+- Hydration: Previous `/login` browser run showed `bis_skin_checked`/`__processed_*`/`bis_register` attributes — verified in clean Playwright/Chromium: raw server HTML has no bis attributes (script cleans them), cleaning script present `(function(){document.querySelectorAll('[bis_skin_checked]')...})()` removes extension mutations; with script present, attributes disappear in clean browser → PASS (browser extension mutation, not hydration bug). Do NOT use `suppressHydrationWarning` to hide.
+- Automated verification: PASS (`lint` 0 errors, `typecheck` PASS, `build` PASS — 53 routes including `GET /platform/tenants/[id]`), browser checks (see `scripts/platform-tenant-verify2.mjs`): login mode selector PASS, no UUID exposure PASS, platform login 200→/platform PASS (when CORS includes 3001, rate limit not hit), tenant auto-resolve 200 PASS, slug login 200 PASS, invalid 401 PASS, platform tenant list 200 excludes __platform PASS, tenant creation 201 PASS, suspend/activate PASS, create admin 201 PASS, security cross-scope 403 PASS, no password in localStorage PASS, safe redirect PASS, responsive/theme/keyboard PASS; rate-limit 429 only when hammering limiter (now AUTH_RATE_LIMIT_MAX 100, verified via flush)
+- Backend dependencies update: Platform `GET /platform/tenants*` now SUPPORTED (was BACKEND DEPENDENCY), `POST /platform/tenants` with admin atomic SUPPORTED, `GET /tenants/:id` public still for tenant fetch but platform is authoritative; legacy `POST /tenants` public kept but deprecated
+- Files changed (this phase): `src/lib/api/types.ts`, `src/lib/api/modules/auth.ts`, `src/lib/api/tokens.ts`, `src/lib/auth/auth-context.tsx`, `src/lib/api/modules/platform.ts` (new), `src/lib/api/modules/index.ts`, `src/features/auth/components/protected-route.tsx`, `app/(auth)/login/page.tsx`, `app/(auth)/forgot-password/page.tsx`, `app/(auth)/register/page.tsx`, `app/(auth)/client-layout.tsx`, `app/(tenant)/layout.tsx`, `app/(platform)/layout.tsx`, `src/components/layout/platform-shell.tsx`, `src/components/layout/tenant-sidebar.tsx`, `src/components/layout/tenant-topbar.tsx`, `app/(tenant)/dashboard/page.tsx`, `app/(platform)/platform/page.tsx`, `app/(platform)/platform/tenants/page.tsx`, `app/(platform)/platform/tenants/[id]/page.tsx` (new), `src/config/env.ts`, `.env.example`, `.env.local`
+- Known issues: RHF `watch()` incompatible-library warning (known), `bis_*` attributes cleaned by injected script (not hydration bug), rate-limit 20/15m (now 100 for verification, flush via `redis FLUSHALL` if needed), CORS must include `http://localhost:3001` for Next dev (patched in `docker-compose.yml` for verification)
 
 ### F06 — Session & Security
 
-- Status: NOT STARTED
-- Scope: Access 15m / refresh 7d lifecycle, deduplication, 401→refresh→retry once
-- Backend dependency: JWT HS256 — SUPPORTED
-- Human verification: Pending
+- Status: IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION — via platform/tenant contract (no separate F06 start per instructions)
+- Scope: Access 15m / refresh 7d lifecycle, deduplication, 401→refresh→retry once, scope preserved on refresh, platform vs tenant token rejection, safe redirects, no password storage
+- Backend dependency: JWT HS256 with scope — SUPPORTED (verified via `POST /auth/refresh` preserves scope, 403 on cross-scope)
+- Human verification: Pending — automated checks PASS (see F05), browser refresh deduplication verified via F04 harness (3×401→1 refresh)
 
 ### F07 — RBAC & Permission System
 
@@ -173,10 +191,10 @@ Single source for frontend progress. Checkbox `[x]` only when phase is **APPROVE
 
 ### F08 — Tenant Context
 
-- Status: NOT STARTED
-- Scope: Tenant from auth; no discovery/switch until backend exists
-- Backend dependency: **BACKEND DEPENDENCY** — `GET /tenants` list / `POST /switch-tenant` NOT AVAILABLE
-- Human verification: Pending
+- Status: IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION — backend-authoritative
+- Scope: Tenant from JWT/session (user.tenantId + scope), no client-controlled tenant switching, tenant shell uses backend-derived identity, platform tenant __platform excluded and hidden
+- Backend dependency: **SUPPORTED** — tenant identity via JWT `tenantId` + `scope`; platform list excludes __platform; legacy `GET /tenants/:id` still public but not authoritative for auth
+- Human verification: Pending — tenant sidebar/topbar/dashboard show JWT-derived tenant (e.g., `Tenant 45c2c0… • Tenant Admin`), no localStorage tenant ID as authority
 
 ### F09 — Tenant Admin Dashboard
 
@@ -334,24 +352,24 @@ Single source for frontend progress. Checkbox `[x]` only when phase is **APPROVE
 
 ### F31 — Platform Admin
 
-- Status: NOT STARTED
-- Scope: Platform dashboard, tenants, subscriptions, users, audit, system
-- Backend dependency: **BACKEND DEPENDENCY** — platform RBAC not mounted (no `/platform/*` routes)
-- Human verification: Pending
+- Status: IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION — platform shell + overview live
+- Scope: Platform dashboard (stats, recent tenants, security note), tenants, subscriptions/users/audit/system (wired only tenants, others Soon)
+- Backend dependency: **SUPPORTED** — `GET /platform/tenants` + platform RBAC (`platform:tenant:read/create/update/suspend`) via `authenticatePlatform()` — see `src/modules/platform/platform.routes.js` (mounted at `/api/v1/platform`)
+- Human verification: Pending — overview shows live total/Badge, quick links, security note; nav tenants wired
 
 ### F32 — Tenant Management
 
-- Status: NOT STARTED
-- Scope: Tenant table/actions (open/edit/suspend/reactivate/delete)
-- Backend dependency: **PARTIALLY SUPPORTED** — `POST|GET|PATCH|DELETE /tenants/:id` exists; `GET /tenants` list NOT AVAILABLE
-- Human verification: Pending
+- Status: IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION — real backend APIs
+- Scope: Tenant table (Tenant/Slug/Status/Plan/Created/Actions), filters/search/pagination, +Create Tenant dialog, detail page with edit/status/admin
+- Backend dependency: **SUPPORTED** — `GET /platform/tenants` (paginated, excludes __platform), `POST /platform/tenants` (atomic + admin), `GET /platform/tenants/:id`, `PATCH /platform/tenants/:id`, `PATCH /platform/tenants/:id/status`, `POST /platform/tenants/:id/admin` — all verified 200/201/403/409
+- Human verification: Pending — list shows live data, create 201 with safe info (no password), detail status 200, admin 201
 
 ### F33 — Tenant Workspace Experience
 
 - Status: NOT STARTED
 - Scope: Platform → tenant workspace entry
-- Backend dependency: **BACKEND DEPENDENCY** — impersonation NOT AVAILABLE
-- Human verification: Pending
+- Backend dependency: **BACKEND DEPENDENCY** — impersonation NOT AVAILABLE (intentionally not implemented per §5 "Do not invent platform impersonation")
+- Human verification: Pending — correctly not implemented
 
 ### F34 — Global UX Polish
 
@@ -430,5 +448,5 @@ Single source for frontend progress. Checkbox `[x]` only when phase is **APPROVE
 - **Verification rule:** Implemented / automated verified ≠ human verified. Checkbox flipped only after human approval per roadmap §54.
 - **Detailed reports:** Not created per phase by default. If a major issue/release audit needs detail, create a separate report explicitly — otherwise keep this tracker concise.
 - **Evidence:** `docs/evidence/` preserved (e.g., `f02-*.png`, `f02-verification-results.json`). `docs/DESIGN_SYSTEM.md` and `docs/PULSEOPS_FRONTEND_MASTER_ROADMAP.md` and `docs/PULSEOPS_FRONTEND_AUDIT_REPORT.md` retained.
-- **F01–F04 remain APPROVED.** shadcn/ui is now the foundational component system for the entire PulseOps frontend. F05 remains NOT STARTED. No commit/push performed per task scope.
+- **F01–F04 remain APPROVED.** shadcn/ui is now the foundational component system for the entire PulseOps frontend. F05/F06/F08/F31/F32 now IMPLEMENTED / AUTOMATED VERIFIED / AWAITING HUMAN VERIFICATION per platform-auth contract (2026-09-21). No commit/push performed per task scope. Do not start F06 separately (already covered).
 

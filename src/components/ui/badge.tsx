@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
@@ -55,6 +55,14 @@ function Badge({
   ...props
 }: BadgeProps) {
   const Comp = asChild ? Slot : "span";
+  if (asChild) {
+    return (
+      <Comp data-slot="badge" className={cn(badgeVariants({ variant, size }), className)} {...props}>
+        {dot ? <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" aria-hidden /> : null}
+        <Slottable>{children}</Slottable>
+      </Comp>
+    );
+  }
   return (
     <Comp data-slot="badge" className={cn(badgeVariants({ variant, size }), className)} {...props}>
       {dot ? <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" aria-hidden /> : null}

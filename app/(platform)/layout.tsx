@@ -1,11 +1,13 @@
-import type { Metadata } from "next";
-import { PlatformShell } from "@/components/layout/platform-shell";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Platform",
-};
+import * as React from "react";
+import { PlatformShell } from "@/components/layout/platform-shell";
+import { ProtectedRoute } from "@/features/auth/components/protected-route";
 
 export default function PlatformLayout({ children }: { children: React.ReactNode }) {
-  return <PlatformShell>{children}</PlatformShell>;
+  return (
+    <ProtectedRoute redirectTo="/login" requiredScope="platform">
+      <PlatformShell>{children}</PlatformShell>
+    </ProtectedRoute>
+  );
 }
-
