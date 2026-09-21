@@ -98,6 +98,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans text-foreground antialiased">
+        <script
+          // Early bis_* cleanup — browser extensions inject bis_skin_checked / bis_register / __processed_* before React hydrates,
+          // causing hydration mismatch on Next.js dev overlay <div hidden>. Strip them before hydration.
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var c=function(){try{var d=document,s='[bis_skin_checked],[bis_register],[bis_version]',a=d.querySelectorAll(s);a.forEach(function(n){n.removeAttribute('bis_skin_checked');n.removeAttribute('bis_register');n.removeAttribute('bis_version');});var b=d.querySelectorAll('*');b.forEach(function(n){var r=n.attributes;for(var i=r.length-1;i>=0;i--){var k=r[i].name;if(k.indexOf('bis_')===0||k.indexOf('__processed')===0)n.removeAttribute(k)}})}catch{}};c();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',c,{once:true});var o=new MutationObserver(c);o.observe(document.documentElement,{attributes:true,subtree:true,attributeFilter:['bis_skin_checked','bis_register','bis_version']});}catch{}})();`,
+          }}
+        />
         <AuthProvider>
           {children}
           <Toaster position="top-right" toastOptions={{ className: "bg-popover text-popover-foreground" }} />

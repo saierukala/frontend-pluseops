@@ -12,10 +12,13 @@
 const ACCESS_KEY = "pulseops_access_token";
 const REFRESH_KEY = "pulseops_refresh_token";
 const SCOPE_KEY = "pulseops_scope";
+const SESSION_KEY = "pulseops_session_id";
+const USER_KEY = "pulseops_user";
 
 let memoryAccess: string | null = null;
 let memoryRefresh: string | null = null;
 let memoryScope: string | null = null;
+let memorySessionId: string | null = null;
 
 function isBrowser(): boolean {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
@@ -25,9 +28,12 @@ export interface TokenStore {
   getAccessToken(): string | null;
   getRefreshToken(): string | null;
   getScope(): string | null;
-  setTokens(tokens: { accessToken: string; refreshToken: string; scope?: string | null }): void;
+  getSessionId(): string | null;
+  getStoredUser(): unknown | null;
+  setTokens(tokens: { accessToken: string; refreshToken: string; scope?: string | null; sessionId?: string | null; user?: unknown }): void;
   setAccessToken(token: string): void;
   setScope(scope: string | null): void;
+  setSessionId(sessionId: string | null): void;
   clear(): void;
 }
 
@@ -68,10 +74,35 @@ export const tokenStore: TokenStore = {
     return null;
   },
 
-  setTokens({ accessToken, refreshToken, scope }): void {
+  getSessionId(): string | null {
+    if (memorySessionId) return memorySessionId;
+    if (isBrowser()) {
+      try {
+        return window.localStorage.getItem(SESSION_KEY);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  },
+
+  getStoredUser(): unknown | null {
+    if (isBrowser()) {
+      try {
+        const raw = window.localStorage.getItem(USER_KEY);
+        return raw ? (JSON.parse(raw) as unknown) : null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  },
+
+  setTokens({ accessToken, refreshToken, scope, sessionId, user }): void {
     memoryAccess = accessToken;
     memoryRefresh = refreshToken;
     if (scope !== undefined) memoryScope = scope;
+    if (sessionId !== undefined) memorySessionId = sessionId;
     if (isBrowser()) {
       try {
         window.localStorage.setItem(ACCESS_KEY, accessToken);
@@ -79,6 +110,14 @@ export const tokenStore: TokenStore = {
         if (scope !== undefined) {
           if (scope) window.localStorage.setItem(SCOPE_KEY, scope);
           else window.localStorage.removeItem(SCOPE_KEY);
+        }
+        if (sessionId !== undefined) {
+          if (sessionId) window.localStorage.setItem(SESSION_KEY, sessionId);
+          else window.localStorage.removeItem(SESSION_KEY);
+        }
+        if (user !== undefined) {
+          if (user) window.localStorage.setItem(USER_KEY, JSON.stringify(user));
+          else window.localStorage.removeItem(USER_KEY);
         }
       } catch {
         // quota / private mode — keep in memory only
@@ -109,15 +148,30 @@ export const tokenStore: TokenStore = {
     }
   },
 
+  setSessionId(sessionId: string | null): void {
+    memorySessionId = sessionId;
+    if (isBrowser()) {
+      try {
+        if (sessionId) window.localStorage.setItem(SESSION_KEY, sessionId);
+        else window.localStorage.removeItem(SESSION_KEY);
+      } catch {
+        // ignore
+      }
+    }
+  },
+
   clear(): void {
     memoryAccess = null;
     memoryRefresh = null;
     memoryScope = null;
+    memorySessionId = null;
     if (isBrowser()) {
       try {
         window.localStorage.removeItem(ACCESS_KEY);
         window.localStorage.removeItem(REFRESH_KEY);
         window.localStorage.removeItem(SCOPE_KEY);
+        window.localStorage.removeItem(SESSION_KEY);
+        window.localStorage.removeItem(USER_KEY);
       } catch {
         // ignore
       }

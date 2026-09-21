@@ -1,5 +1,5 @@
 /**
- * Central API client — F04
+ * Central API client — F04 + F06 Session & Security
  * Flow: Component -> Feature API -> Central API Client -> Backend
  *
  * Responsibilities:
@@ -8,10 +8,13 @@
  * - Request/correlation ID (X-Request-Id generate + echo)
  * - JSON parsing + envelope handling
  * - Centralized error normalization
- * - 401 -> refresh token once (deduplicated) -> retry once
+ * - 401 -> single-flight refresh -> retry once (F06)
+ * - 403 forced logout for tenant/platform scope failures
  * - 429 handling (Retry-After surfaced, no auto-retry)
  * - Timeout + abort
  * - Pagination/query wired via helpers but not assumed
+ * - Token lifecycle: access 15m, refresh 7d rotation, scope preserved
+ * - No tokens in URLs/logs/UI
  */
 
 import { apiConfig } from "./config";
@@ -63,7 +66,6 @@ export interface ApiClientOptions {
 
 function generateRequestId(): string {
   try {
-    // crypto.randomUUID is available in modern browsers + Node 19+
     if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
       return (crypto as unknown as { randomUUID: () => string }).randomUUID();
     }
@@ -93,7 +95,6 @@ function buildUrlWithParams(path: string, params?: Record<string, unknown>): str
       }
       continue;
     }
-    // Date to ISO
     if (v instanceof Date) {
       sp.append(k, v.toISOString());
       continue;
@@ -104,10 +105,35 @@ function buildUrlWithParams(path: string, params?: Record<string, unknown>): str
   return qs ? `${path}${path.includes("?") ? "&" : "?"}${qs}` : path;
 }
 
+/**
+ * Codes that MUST force logout per F06 spec E.
+ * These are backend error codes that indicate session cannot be recovered.
+ */
+export const FORCED_LOGOUT_CODES = new Set([
+  "INVALID_REFRESH_TOKEN",
+  "REFRESH_TOKEN_EXPIRED",
+  "REFRESH_TOKEN_REVOKED",
+  "USER_NOT_FOUND",
+  "TENANT_INACTIVE",
+  "PLATFORM_ACCESS_DENIED",
+]);
+
+/**
+ * 401 codes that are eligible for refresh retry (access token failures).
+ * Only these should trigger single-flight refresh.
+ */
+const REFRESH_ELIGIBLE_CODES = new Set([
+  "TOKEN_EXPIRED",
+  "INVALID_TOKEN",
+  "INVALID_TOKEN_CLAIMS",
+  "UNAUTHORIZED",
+  // Fallback: empty code from generic 401
+]);
+
 export class ApiClient {
   readonly baseUrl: string;
   readonly tokenStore: TokenStore;
-  readonly onAuthFailure?: (error: ApiError) => void;
+  onAuthFailure?: (error: ApiError) => void;
   private readonly fetchImpl: typeof fetch;
   private refreshPromise: Promise<boolean> | null = null;
 
@@ -116,6 +142,10 @@ export class ApiClient {
     this.tokenStore = opts.tokenStore ?? defaultTokenStore;
     this.onAuthFailure = opts.onAuthFailure;
     this.fetchImpl = opts.fetchImpl ?? fetch.bind(globalThis);
+  }
+
+  setAuthFailureHandler(handler: (error: ApiError) => void): void {
+    this.onAuthFailure = handler;
   }
 
   // -------------------------------------------------------------------------
@@ -150,7 +180,6 @@ export class ApiClient {
       ...opts,
       body: formData,
       method: "POST",
-      // Do not set Content-Type — browser/Node will set multipart boundary.
       headers: { ...(opts?.headers ?? {}) },
     } as RequestOptions & { method: HttpMethod });
   }
@@ -196,7 +225,7 @@ export class ApiClient {
       ...customHeaders,
     };
 
-    // Authorization
+    // Authorization — central Bearer injection, never in URL
     const accessToken = this.tokenStore.getAccessToken();
     if (accessToken && !headers["Authorization"] && !headers["authorization"]) {
       headers["Authorization"] = `Bearer ${accessToken}`;
@@ -208,7 +237,6 @@ export class ApiClient {
     if (body !== undefined && body !== null) {
       if (isFormData) {
         fetchBody = body as unknown as BodyInit;
-        // Remove JSON content-type for multipart
         delete headers["Content-Type"];
         delete headers["content-type"];
       } else if (typeof body === "string") {
@@ -225,7 +253,6 @@ export class ApiClient {
     const timeoutId = setTimeout(() => controller.abort(new DOMException("Timeout", "AbortError")), timeoutMs);
     const signal = externalSignal
       ? (() => {
-          // Merge external abort with timeout abort
           if (externalSignal.aborted) controller.abort(externalSignal.reason);
           else externalSignal.addEventListener("abort", () => controller.abort(externalSignal.reason), { once: true });
           return controller.signal;
@@ -261,7 +288,6 @@ export class ApiClient {
     // Binary passthrough
     if (rawResponse) {
       if (!response.ok) {
-        // Try to parse error envelope even for raw endpoints
         const text = await response.text().catch(() => "");
         let parsed: unknown = null;
         try {
@@ -271,7 +297,7 @@ export class ApiClient {
         }
         const p = parsed as { error?: { code?: string; message?: string }; requestId?: string } | null;
         const retryAfterMs = response.status === 429 ? parseRetryAfterMs(responseHeaders) : null;
-        throw toApiError({
+        const apiError = toApiError({
           status: response.status,
           backendCode: p?.error?.code ?? null,
           message: p?.error?.message ?? text ?? response.statusText,
@@ -280,9 +306,10 @@ export class ApiClient {
           headers: responseHeaders,
           retryAfterMs,
         });
+        // Forced logout for 401/403 with specific codes even on raw path
+        this.handleForcedLogoutIfNeeded(apiError, skipAuthRefresh);
+        throw apiError;
       }
-      // Caller handles blob/stream — return envelope-like for type compat
-      // but raw path bypasses envelope parsing.
       return {
         success: true,
         data: response as unknown as T,
@@ -311,7 +338,6 @@ export class ApiClient {
           try {
             json = JSON.parse(rawText) as unknown;
           } catch {
-            // Non-JSON success (e.g. text) — treat as data if 2xx else parse error handling below
             json = rawText;
             if (!response.ok) parseFailed = true;
           }
@@ -325,12 +351,47 @@ export class ApiClient {
 
     // Error path
     if (!response.ok) {
-      // Special: 401 -> attempt refresh once
+      const envelope = json as { success?: boolean; error?: { code?: string; message?: string; details?: unknown }; requestId?: string } | null;
+      const backendCode = (envelope?.error?.code ?? null) as string | null;
+      const normalizedCode = backendCode ? backendCode.toUpperCase() : null;
+
+      // Forced logout codes must NOT attempt refresh — clear immediately
+      // 403 TENANT_INACTIVE / PLATFORM_ACCESS_DENIED, 401 USER_NOT_FOUND / refresh failures
+      if (normalizedCode && FORCED_LOGOUT_CODES.has(normalizedCode)) {
+        // Refresh failure codes already indicate unrecoverable session
+        // But if this is the refresh endpoint itself, we still clear
+        const apiError = toApiError({
+          status: response.status,
+          backendCode,
+          message: envelope?.error?.message ?? response.statusText,
+          details: (envelope?.error as unknown) ?? json,
+          requestId: (envelope?.requestId as string | undefined) ?? responseRequestId,
+          headers: responseHeaders,
+          retryAfterMs: response.status === 429 ? parseRetryAfterMs(responseHeaders) : null,
+        });
+        // Clear local auth state to prevent stale token reuse (F06 G: backend has no access-token blocklist)
+        // Only if not skipAuthRefresh to avoid double-clear on logout call
+        if (!skipAuthRefresh || path.includes("/auth/refresh")) {
+          this.tokenStore.clear();
+        }
+        if (!skipAuthRefresh) {
+          this.onAuthFailure?.(apiError);
+        }
+        if (parseFailed) {
+          throw new ParseError(envelope?.error?.message ?? response.statusText, responseRequestId, responseHeaders, json);
+        }
+        throw apiError;
+      }
+
+      // Special: 401 -> attempt single-flight refresh once (F06 C/D)
       const isAuthRefreshEndpoint = path.includes("/auth/refresh");
       const shouldAttemptRefresh =
         response.status === 401 && !skipAuthRefresh && !_retried && !isAuthRefreshEndpoint;
 
-      if (shouldAttemptRefresh) {
+      // Only attempt refresh for eligible codes or generic 401
+      const isRefreshEligible = !normalizedCode || REFRESH_ELIGIBLE_CODES.has(normalizedCode) || normalizedCode === "UNAUTHORIZED";
+
+      if (shouldAttemptRefresh && isRefreshEligible) {
         const refreshed = await this.handleRefresh();
         if (refreshed) {
           // Retry exactly once with new token and same request (preserve method/body)
@@ -339,12 +400,12 @@ export class ApiClient {
             _retried: true,
           });
         }
-        // Refresh failed — surface original 401 after onAuthFailure
+        // Refresh failed — surface original 401 after onAuthFailure (handleRefresh already cleared + notified)
       }
 
-      // Normalize to typed error
-      const envelope = json as { success?: boolean; error?: { code?: string; message?: string; details?: unknown }; requestId?: string } | null;
-      const backendCode = envelope?.error?.code ?? null;
+      // Also handle 403 forced logout that is not in FORCED_LOGOUT_CODES but indicates auth failure
+      // e.g., generic 403 with tenant inactive — already handled above via code check
+
       const backendMessage = envelope?.error?.message ?? (typeof json === "string" ? json : null) ?? response.statusText;
       const details = (envelope?.error as unknown) ?? json;
       const retryAfterMs = response.status === 429 ? parseRetryAfterMs(responseHeaders) : null;
@@ -359,9 +420,9 @@ export class ApiClient {
         retryAfterMs,
       });
 
-      if (response.status === 401 && !skipAuthRefresh) {
-        this.onAuthFailure?.(apiError);
-      }
+      // 403 TENANT_INACTIVE / PLATFORM_ACCESS_DENIED should also trigger forced logout even without 401
+      // They are already handled above via FORCED_LOGOUT_CODES, but add fallback for status-based
+      this.handleForcedLogoutIfNeeded(apiError, skipAuthRefresh);
 
       if (parseFailed) {
         throw new ParseError(backendMessage, responseRequestId, responseHeaders, json);
@@ -373,9 +434,7 @@ export class ApiClient {
     // Success path — expect envelope {success:true, data:...}
     if (json !== null && typeof json === "object" && "success" in (json as Record<string, unknown>)) {
       const env = json as SuccessEnvelope<T> & { requestId?: string };
-      // Preserve requestId from header if body misses it
       if (!env.requestId) env.requestId = responseRequestId;
-      // Basic validation: success must be true here (we already checked !ok)
       if ((env as unknown as { success: boolean }).success === false) {
         const errEnv = json as unknown as { error?: { code?: string; message?: string }; requestId?: string };
         throw toApiError({
@@ -390,7 +449,6 @@ export class ApiClient {
       return env as SuccessEnvelope<T>;
     }
 
-    // Backend returned raw data without envelope (e.g. health) — wrap it
     if (parseFailed) {
       throw new ParseError("Unexpected response format.", responseRequestId, responseHeaders, json);
     }
@@ -401,22 +459,50 @@ export class ApiClient {
     };
   }
 
+  private handleForcedLogoutIfNeeded(apiError: ApiError, skipAuthRefresh: boolean): void {
+    if (skipAuthRefresh) return;
+    const code = (apiError.code ?? "").toUpperCase();
+    // Check forced logout set or specific status+code combos
+    if (FORCED_LOGOUT_CODES.has(code)) {
+      this.tokenStore.clear();
+      this.onAuthFailure?.(apiError);
+      return;
+    }
+    // 403 with TENANT_INACTIVE / PLATFORM_ACCESS_DENIED already covered, but also handle raw codes
+    if (apiError.status === 403 && (code === "TENANT_INACTIVE" || code === "PLATFORM_ACCESS_DENIED" || code === "FORBIDDEN")) {
+      // Only treat TENANT_INACTIVE / PLATFORM_ACCESS_DENIED as forced logout, not generic 403 permission denials
+      // Generic permission 403 should NOT logout. So check strictly.
+      if (code === "TENANT_INACTIVE" || code === "PLATFORM_ACCESS_DENIED") {
+        this.tokenStore.clear();
+        this.onAuthFailure?.(apiError);
+      }
+      return;
+    }
+    if (apiError.status === 401 && !skipAuthRefresh) {
+      // For generic 401, onAuthFailure is handled via refresh path; only call if we are not retrying
+      // This is called for non-refresh-eligible 401s (like USER_NOT_FOUND already handled)
+      // No-op for eligible ones — handleRefresh will decide
+    }
+  }
+
   // -------------------------------------------------------------------------
-  // Refresh handling — deduplicated, exactly once per burst
+  // Refresh handling — deduplicated, exactly once per burst (F06 C)
   // -------------------------------------------------------------------------
 
   private async handleRefresh(): Promise<boolean> {
     const refreshToken = this.tokenStore.getRefreshToken();
     if (!refreshToken) return false;
 
-    // Deduplicate concurrent refreshes
+    // Deduplicate concurrent refreshes — single-flight promise
     if (this.refreshPromise) {
       return this.refreshPromise;
     }
 
+    // Capture scope before refresh to detect scope switching
+    const scopeBefore = this.tokenStore.getScope();
+
     this.refreshPromise = (async () => {
       try {
-        // Direct fetch to avoid recursion through requestEnvelope intercept
         const url = `${this.baseUrl}/auth/refresh`;
         const res = await this.fetchImpl(url, {
           method: "POST",
@@ -429,42 +515,109 @@ export class ApiClient {
         });
 
         if (!res.ok) {
-          // Refresh failed — clear tokens to prevent retry loop
+          // Parse error code for forced logout
+          let errorCode: string | null = null;
+          try {
+            const errBody = (await res.json()) as { error?: { code?: string } };
+            errorCode = errBody?.error?.code ?? null;
+          } catch {
+            // ignore parse
+          }
+          const normalized = errorCode ? errorCode.toUpperCase() : null;
+          // Refresh failed — clear tokens to prevent stale refresh-token usage
           this.tokenStore.clear();
+          const apiError = toApiError({
+            status: res.status,
+            backendCode: normalized,
+            message: normalized ?? res.statusText,
+            details: null,
+            requestId: res.headers.get(apiConfig.headers.requestId) ?? null,
+            headers: headersToRecord(res.headers),
+          });
+          this.onAuthFailure?.(apiError);
           return false;
         }
 
         const body = (await res.json()) as SuccessEnvelope<{
           accessToken: string;
           refreshToken: string;
+          sessionId?: string;
+          scope?: string;
+          user?: unknown;
         }>;
-        const newAccess = (body as unknown as { data?: { accessToken?: string } })?.data?.accessToken;
-        const newRefresh = (body as unknown as { data?: { refreshToken?: string } })?.data?.refreshToken;
-
-        // Backend returns {success:true,data:{accessToken,refreshToken,...}} — handle both shapes
-        const accessToken = newAccess ?? (body as unknown as { accessToken?: string })?.accessToken;
-        const nextRefresh = newRefresh ?? (body as unknown as { refreshToken?: string })?.refreshToken;
+        // Handle both envelope and direct shapes
+        const data = (body as unknown as { data?: Record<string, unknown> })?.data ?? (body as unknown as Record<string, unknown>);
+        const accessToken = (data as { accessToken?: string })?.accessToken;
+        const nextRefresh = (data as { refreshToken?: string })?.refreshToken;
+        const sessionId = (data as { sessionId?: string })?.sessionId ?? null;
+        const returnedScope = (data as { scope?: string })?.scope ?? (data as { user?: { scope?: string } })?.user?.scope ?? null;
+        const user = (data as { user?: unknown })?.user ?? null;
 
         if (typeof accessToken === "string" && typeof nextRefresh === "string") {
-          this.tokenStore.setTokens({ accessToken, refreshToken: nextRefresh });
+          // Scope preservation check — MUST NOT allow scope switching (F06 H)
+          if (scopeBefore && returnedScope && scopeBefore !== returnedScope) {
+            // Scope switching attempt — force logout for security
+            this.tokenStore.clear();
+            const err = toApiError({
+              status: 401,
+              backendCode: "INVALID_REFRESH_TOKEN",
+              message: "Scope mismatch during refresh — session terminated for security",
+              requestId: null,
+              headers: {},
+            });
+            this.onAuthFailure?.(err);
+            return false;
+          }
+          const scopeToStore = returnedScope ?? scopeBefore ?? null;
+          this.tokenStore.setTokens({
+            accessToken,
+            refreshToken: nextRefresh,
+            scope: scopeToStore,
+            sessionId: typeof sessionId === "string" ? sessionId : null,
+            user: user ?? undefined,
+          });
+          // Emit event so socket can reconnect with new token (F06 I)
+          if (typeof window !== "undefined") {
+            try {
+              window.dispatchEvent(new CustomEvent("pulseops:token-refreshed", { detail: { accessToken, scope: scopeToStore } }));
+            } catch {
+              // ignore
+            }
+          }
           return true;
         }
         if (typeof accessToken === "string") {
-          // Some backends rotate only access — keep old refresh
+          // Fallback: backend rotated only access — keep old refresh but update access
           this.tokenStore.setAccessToken(accessToken);
+          if (sessionId && typeof sessionId === "string") {
+            this.tokenStore.setSessionId(sessionId);
+          }
           return true;
         }
         // Unexpected shape
         this.tokenStore.clear();
+        const err = toApiError({
+          status: res.status,
+          backendCode: "INVALID_REFRESH_TOKEN",
+          message: "Invalid refresh response",
+          requestId: null,
+          headers: {},
+        });
+        this.onAuthFailure?.(err);
         return false;
       } catch {
         this.tokenStore.clear();
+        const err = toApiError({
+          status: 401,
+          backendCode: "INVALID_REFRESH_TOKEN",
+          message: "Refresh failed",
+          requestId: null,
+          headers: {},
+        });
+        this.onAuthFailure?.(err);
         return false;
       } finally {
-        // Allow next refresh after a short microtask to avoid tight loop
-        // but clear promise so future 401s can attempt again (user may have re-logged)
         const p = this.refreshPromise;
-        // Defer clearing to avoid race where concurrent callers still await
         queueMicrotask(() => {
           if (this.refreshPromise === p) this.refreshPromise = null;
         });
@@ -472,6 +625,13 @@ export class ApiClient {
     })();
 
     return this.refreshPromise;
+  }
+
+  /**
+   * For testing: expose whether a refresh is in-flight
+   */
+  get isRefreshing(): boolean {
+    return this.refreshPromise !== null;
   }
 }
 

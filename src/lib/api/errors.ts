@@ -100,8 +100,8 @@ export class UnauthorizedError extends ApiError {
 }
 
 export class ForbiddenError extends ApiError {
-  constructor(message: string, details?: unknown, requestId?: string | null, headers?: Record<string, string>) {
-    super({ status: 403, code: "FORBIDDEN", message, details, requestId, headers });
+  constructor(message: string, details?: unknown, requestId?: string | null, headers?: Record<string, string>, code = "FORBIDDEN") {
+    super({ status: 403, code, message, details, requestId, headers });
     this.name = "ForbiddenError";
   }
 }
@@ -170,7 +170,10 @@ export function toApiError(args: {
     const mappedCode = code || "UNAUTHORIZED";
     return new UnauthorizedError(message, mappedCode, details, requestId, headers);
   }
-  if (status === 403) return new ForbiddenError(message, details, requestId, headers);
+  if (status === 403) {
+    const mappedCode = code || "FORBIDDEN";
+    return new ForbiddenError(message, details, requestId, headers, mappedCode);
+  }
   if (status === 404) return new NotFoundError(message, details, requestId, headers);
   if (status === 409) return new ConflictError(message, details, requestId, headers);
   if (status === 400 && (code === "VALIDATION_ERROR" || code === "INVALID_JSON")) {
