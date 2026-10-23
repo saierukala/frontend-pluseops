@@ -113,6 +113,8 @@ export const FORCED_LOGOUT_CODES = new Set([
   "INVALID_REFRESH_TOKEN",
   "REFRESH_TOKEN_EXPIRED",
   "REFRESH_TOKEN_REVOKED",
+  // Backend Phase 28: the login session was signed out, revoked or ended by a password change
+  "SESSION_REVOKED",
   "USER_NOT_FOUND",
   "TENANT_INACTIVE",
   "PLATFORM_ACCESS_DENIED",
