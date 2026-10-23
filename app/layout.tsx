@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
 import { AuthProvider } from "@/lib/auth/auth-context";
+import { PermissionProvider } from "@/lib/auth/permission-context";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -106,8 +107,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
         <AuthProvider>
-          {children}
-          <Toaster position="top-right" toastOptions={{ className: "bg-popover text-popover-foreground" }} />
+          <PermissionProvider>
+            {children}
+            <Toaster position="top-right" toastOptions={{ className: "bg-popover text-popover-foreground" }} />
+          </PermissionProvider>
         </AuthProvider>
       </body>
     </html>

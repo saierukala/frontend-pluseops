@@ -45,8 +45,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# evidence images - local only, never commit
-/docs/evidence/*.png
-/docs/evidence/*.jpg
-/docs/evidence/*.jpeg
-/docs/evidence/*.webp
+# verification evidence (screenshots + result JSON) - local only, never commit
+/docs/evidence/
+
+# local dev server log and one-off browser verification scripts (contain test credentials)
+dev.log
+/scripts/

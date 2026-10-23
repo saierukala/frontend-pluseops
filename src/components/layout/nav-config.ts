@@ -4,6 +4,9 @@ export type NavItem = {
   icon?: string;
   badge?: string;
   backendDependency?: boolean;
+  requiredPermission?: string;
+  requiredAnyPermissions?: string[];
+  requiredRole?: string;
   children?: NavItem[];
 };
 
@@ -16,64 +19,64 @@ export type NavGroup = {
 export const tenantNavGroups: NavGroup[] = [
   {
     label: "Overview",
-    items: [{ label: "Dashboard", href: "/dashboard", icon: "dashboard" }],
+    items: [{ label: "Dashboard", href: "/dashboard", icon: "dashboard", requiredPermission: "dashboard:read" }],
   },
   {
     label: "Catalog",
     items: [
-      { label: "Products", href: "/products", icon: "products" },
-      { label: "Categories", href: "/categories", icon: "categories" },
-      { label: "Attributes", href: "/attributes", icon: "attributes" },
+      { label: "Products", href: "/products", icon: "products", requiredPermission: "product:read" },
+      { label: "Categories", href: "/categories", icon: "categories", requiredPermission: "category:read" },
+      { label: "Attributes", href: "/attributes", icon: "attributes", requiredPermission: "attribute:read" },
     ],
   },
   {
     label: "Inventory",
     items: [
-      { label: "Stock", href: "/inventory", icon: "inventory" },
-      { label: "Warehouses", href: "/warehouses", icon: "warehouses" },
-      { label: "Movements", href: "/inventory/movements", icon: "movements" },
-      { label: "Low Stock", href: "/inventory/low-stock", icon: "lowstock" },
+      { label: "Stock", href: "/inventory", icon: "inventory", requiredPermission: "inventory:read" },
+      { label: "Warehouses", href: "/warehouses", icon: "warehouses", requiredPermission: "warehouse:read" },
+      { label: "Movements", href: "/inventory/movements", icon: "movements", requiredPermission: "inventory:read" },
+      { label: "Low Stock", href: "/inventory/low-stock", icon: "lowstock", requiredPermission: "inventory:read" },
     ],
   },
   {
     label: "Orders",
     items: [
-      { label: "All Orders", href: "/orders", icon: "orders" },
-      { label: "Create Order", href: "/orders/new", icon: "orders-new" },
+      { label: "All Orders", href: "/orders", icon: "orders", requiredPermission: "order:read" },
+      { label: "Create Order", href: "/orders/new", icon: "orders-new", requiredPermission: "order:create" },
     ],
   },
   {
     label: "Customers",
     items: [
-      { label: "Customers", href: "/customers", icon: "customers", badge: "Soon", backendDependency: true },
+      { label: "Customers", href: "/customers", icon: "customers", badge: "Soon", backendDependency: true, requiredPermission: "customer:read" },
     ],
   },
   {
     label: "Payments",
-    items: [{ label: "Payments", href: "/payments", icon: "payments" }],
+    items: [{ label: "Payments", href: "/payments", icon: "payments", requiredPermission: "payment:read" }],
   },
   {
     label: "Analytics",
     items: [
-      { label: "Analytics", href: "/analytics", icon: "analytics" },
-      { label: "Sales", href: "/analytics/sales", icon: "analytics-sales" },
-      { label: "Revenue", href: "/analytics/revenue", icon: "revenue" },
+      { label: "Analytics", href: "/analytics", icon: "analytics", requiredPermission: "analytics:read" },
+      { label: "Sales", href: "/analytics/sales", icon: "analytics-sales", requiredPermission: "analytics:read" },
+      { label: "Revenue", href: "/analytics/revenue", icon: "revenue", requiredPermission: "analytics:read" },
     ],
   },
   {
     label: "Administration",
     items: [
-      { label: "Users", href: "/admin/users", icon: "users" },
-      { label: "Roles", href: "/admin/roles", icon: "roles" },
-      { label: "Audit", href: "/admin/audit", icon: "audit" },
-      { label: "Activity", href: "/admin/activity", icon: "activity" },
+      { label: "Users", href: "/admin/users", icon: "users", requiredPermission: "user:read" },
+      { label: "Roles", href: "/admin/roles", icon: "roles", requiredPermission: "role:read" },
+      { label: "Audit", href: "/admin/audit", icon: "audit", requiredPermission: "audit:read" },
+      { label: "Activity", href: "/admin/activity", icon: "activity", requiredPermission: "activity:read" },
     ],
   },
   {
     label: "Settings",
     items: [
       { label: "Settings", href: "/settings", icon: "settings" },
-      { label: "Notifications", href: "/settings/notifications", icon: "notifications" },
+      { label: "Notifications", href: "/settings/notifications", icon: "notifications", requiredPermission: "notification:read" },
     ],
   },
 ];
