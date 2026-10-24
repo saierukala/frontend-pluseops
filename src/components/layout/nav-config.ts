@@ -128,15 +128,15 @@ export const platformNavGroups: NavGroup[] = [
     items: [
       { label: "Overview", href: "/platform", icon: LayoutDashboard },
       { label: "Tenants", href: "/platform/tenants", icon: Building2, keywords: ["workspaces", "customers"] },
-      { label: "System health", href: "/platform/system", icon: Server, keywords: ["status", "database", "redis", "queues"] },
+      { label: "Plans", href: "/platform/subscriptions", icon: Layers, keywords: ["subscriptions", "limits", "pricing"] },
     ],
   },
   {
-    label: "Coming soon",
+    label: "Administration",
     items: [
-      { label: "Subscriptions", href: "/platform/subscriptions", icon: Layers, badge: "Soon" },
-      { label: "Platform users", href: "/platform/users", icon: Users, badge: "Soon" },
-      { label: "Platform audit", href: "/platform/audit", icon: Activity, badge: "Soon" },
+      { label: "Platform admins", href: "/platform/users", icon: Users, keywords: ["staff", "roles"] },
+      { label: "Audit log", href: "/platform/audit", icon: Activity, keywords: ["history", "support sessions"] },
+      { label: "System health", href: "/platform/system", icon: Server, keywords: ["status", "database", "redis", "queues"] },
     ],
   },
 ];
