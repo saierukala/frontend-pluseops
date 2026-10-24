@@ -24,6 +24,9 @@ export const healthApi = {
   getHealthRedis(): Promise<HealthData> {
     return apiClient.get<HealthData>("/health/redis");
   },
+  getHealthBullmq(): Promise<HealthData> {
+    return apiClient.get<HealthData>("/health/bullmq");
+  },
   getReady(): Promise<HealthData> {
     return apiClient.get<HealthData>("/ready");
   },

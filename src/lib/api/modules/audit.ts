@@ -13,6 +13,10 @@ export interface AuditLog {
   action: string;
   resource: string;
   resourceId?: string | null;
+  oldValue?: Record<string, unknown> | null;
+  newValue?: Record<string, unknown> | null;
+  ipAddress?: string | null;
+  userAgent?: string | null;
   createdAt: string;
 }
 
@@ -22,6 +26,12 @@ export interface ActivityLog {
   userId?: string | null;
   action: string;
   description?: string | null;
+  resource?: string | null;
+  resourceId?: string | null;
+  oldValue?: Record<string, unknown> | null;
+  newValue?: Record<string, unknown> | null;
+  ipAddress?: string | null;
+  userAgent?: string | null;
   createdAt: string;
 }
 

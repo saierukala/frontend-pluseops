@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { PermissionProvider } from "@/lib/auth/permission-context";
 import { Toaster } from "@/components/ui/sonner";
+import { AppProviders } from "@/components/providers/app-providers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -82,7 +83,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -106,12 +107,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: `(function(){try{var c=function(){try{var d=document,s='[bis_skin_checked],[bis_register],[bis_version]',a=d.querySelectorAll(s);a.forEach(function(n){n.removeAttribute('bis_skin_checked');n.removeAttribute('bis_register');n.removeAttribute('bis_version');});var b=d.querySelectorAll('*');b.forEach(function(n){var r=n.attributes;for(var i=r.length-1;i>=0;i--){var k=r[i].name;if(k.indexOf('bis_')===0||k.indexOf('__processed')===0)n.removeAttribute(k)}})}catch{}};c();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',c,{once:true});var o=new MutationObserver(c);o.observe(document.documentElement,{attributes:true,subtree:true,attributeFilter:['bis_skin_checked','bis_register','bis_version']});}catch{}})();`,
           }}
         />
-        <AuthProvider>
-          <PermissionProvider>
-            {children}
-            <Toaster position="top-right" toastOptions={{ className: "bg-popover text-popover-foreground" }} />
-          </PermissionProvider>
-        </AuthProvider>
+        <AppProviders>
+          <AuthProvider>
+            <PermissionProvider>
+              {children}
+              <Toaster position="bottom-right" closeButton />
+            </PermissionProvider>
+          </AuthProvider>
+        </AppProviders>
       </body>
     </html>
   );

@@ -40,7 +40,7 @@ function Input({ className, type = "text", error, leftElement, rightElement, id,
           {...props}
         />
         {rightElement ? (
-          <span className="ml-2 inline-flex shrink-0 text-muted-foreground" aria-hidden>
+          <span className="ml-2 inline-flex shrink-0 text-muted-foreground">
             {rightElement}
           </span>
         ) : null}

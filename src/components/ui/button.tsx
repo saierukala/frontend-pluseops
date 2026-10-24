@@ -120,7 +120,7 @@ function Button({
           {leftIcon}
         </span>
       ) : null}
-      {children ? <span className="truncate">{children}</span> : null}
+      {children ? <span className="inline-flex min-w-0 items-center gap-[inherit] truncate">{children}</span> : null}
       {!loading && rightIcon ? (
         <span className="inline-flex shrink-0" aria-hidden>
           {rightIcon}

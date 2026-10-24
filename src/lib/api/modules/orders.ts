@@ -17,8 +17,39 @@ export interface Order {
   shippingTotal: string;
   total: string;
   currency: string;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
+  customer?: { id: string; email: string; firstName: string; lastName: string };
+  items?: OrderItem[];
+  statusHistory?: OrderStatusHistory[];
+}
+
+export type OrderStatus = "DRAFT" | "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED" | "REFUNDED" | "PARTIALLY_REFUNDED";
+
+export const ORDER_STATUSES: OrderStatus[] = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", "REFUNDED", "PARTIALLY_REFUNDED"];
+
+/** Mirrors the backend state machine (handoff §3, orders). Cancel goes through POST /orders/:id/cancel. */
+export const ORDER_NEXT_STATUS: Partial<Record<string, OrderStatus>> = {
+  PENDING: "CONFIRMED",
+  CONFIRMED: "PROCESSING",
+  PROCESSING: "SHIPPED",
+  SHIPPED: "DELIVERED",
+};
+
+export const ORDER_CANCELLABLE = ["PENDING", "CONFIRMED", "PROCESSING"];
+
+export interface OrderItem {
+  id: string;
+  productVariantId: string;
+  productNameSnapshot: string;
+  variantNameSnapshot?: string | null;
+  skuSnapshot: string;
+  unitPrice: string;
+  quantity: number;
+  discount: string;
+  tax: string;
+  lineTotal: string;
 }
 
 export interface OrderStatusHistory {

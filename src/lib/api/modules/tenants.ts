@@ -21,3 +21,13 @@ export const tenantsApi = {
     return apiClient.del<null>(`/tenants/${id}`, { skipAuthRefresh: true });
   },
 };
+
+/** The signed-in user's own tenant. Only the display name is editable by tenant admins. */
+export const workspaceApi = {
+  get(): Promise<Tenant> {
+    return apiClient.get<Tenant>("/workspace");
+  },
+  rename(name: string): Promise<Tenant> {
+    return apiClient.patch<Tenant>("/workspace", { name });
+  },
+};

@@ -84,4 +84,38 @@ export const authApi = {
   me(): Promise<User> {
     return apiClient.get<User>("/auth/me");
   },
+
+  updateMe(body: { firstName?: string; lastName?: string }): Promise<User> {
+    return apiClient.patch<User>("/auth/me", body);
+  },
+
+  changePassword(body: { currentPassword: string; newPassword: string }): Promise<{ success: boolean; message: string }> {
+    return apiClient.post<{ success: boolean; message: string }>("/auth/change-password", body);
+  },
+
+  resendVerification(): Promise<{ success: boolean; message: string }> {
+    return apiClient.post<{ success: boolean; message: string }>("/auth/resend-verification", {});
+  },
+
+  listSessions(): Promise<AuthSession[]> {
+    return apiClient.get<AuthSession[]>("/auth/sessions");
+  },
+
+  revokeSession(sessionId: string): Promise<{ success: boolean; message: string }> {
+    return apiClient.del<{ success: boolean; message: string }>(`/auth/sessions/${sessionId}`);
+  },
+
+  logoutAll(): Promise<{ success: boolean; message: string }> {
+    return apiClient.post<{ success: boolean; message: string }>("/auth/logout-all", {});
+  },
 };
+
+export interface AuthSession {
+  id: string;
+  current: boolean;
+  userAgent: string | null;
+  ipAddress: string | null;
+  createdAt: string;
+  lastUsedAt: string | null;
+  expiresAt: string;
+}

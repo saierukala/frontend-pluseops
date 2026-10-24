@@ -103,6 +103,8 @@ export interface Category {
   isActive: boolean;
   createdAt: IsoDateString;
   updatedAt: IsoDateString;
+  children?: Category[];
+  _count?: { productCategories: number };
 }
 
 export interface Product {
@@ -116,6 +118,9 @@ export interface Product {
   createdAt: IsoDateString;
   updatedAt: IsoDateString;
   deletedAt?: IsoDateString | null;
+  categories?: Array<{ categoryId: Uuid; isPrimary: boolean; category: { id: Uuid; name: string; slug: string } }>;
+  variants?: ProductVariant[];
+  _count?: { variants: number };
 }
 
 export interface ProductVariant {

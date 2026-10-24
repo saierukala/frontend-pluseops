@@ -1,12 +1,14 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // PulseOps uses CSS variables + prefers-color-scheme / .dark class — sonner inherits via --border/--popover tokens
+  // Follows the next-themes choice so toasts match the app, not just the OS
+  const { theme = "system" } = useTheme();
   return (
     <Sonner
-      theme={(props.theme as ToasterProps["theme"]) ?? "system"}
+      theme={theme as ToasterProps["theme"]}
       className="toaster group"
       style={
         {

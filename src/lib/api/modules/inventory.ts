@@ -16,6 +16,8 @@ export interface InventoryRow {
   reservedQuantity: number;
   createdAt: string;
   updatedAt: string;
+  productVariant?: { id: string; sku: string; barcode?: string | null; price: string; productId: string };
+  warehouse?: { id: string; name: string; code: string };
 }
 
 export interface InventoryMovement {
@@ -30,8 +32,13 @@ export interface InventoryMovement {
   reason?: string | null;
   referenceType?: string | null;
   referenceId?: string | null;
+  createdBy?: string | null;
   createdAt: string;
+  productVariant?: { id: string; sku: string };
+  warehouse?: { id: string; name: string; code: string };
 }
+
+export const MOVEMENT_TYPES = ["ADJUSTMENT", "TRANSFER", "ORDER_RESERVATION", "ORDER_RELEASE", "ORDER_FULFILLMENT", "RETURN", "DAMAGED", "LOST", "COUNT"] as const;
 
 export const inventoryApi = {
   list(params?: QueryParams): Promise<InventoryRow[]> {

@@ -46,4 +46,8 @@ export const usersApi = {
   assignRoles(userId: string, roleIds: string[]): Promise<Role[]> {
     return apiClient.post<Role[]>(`/users/${userId}/roles`, { roleIds });
   },
+
+  removeRole(userId: string, roleId: string): Promise<unknown> {
+    return apiClient.del<unknown>(`/users/${userId}/roles/${roleId}`);
+  },
 };

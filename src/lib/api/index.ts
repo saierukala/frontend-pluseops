@@ -39,7 +39,7 @@ export type { SuccessEnvelope, ErrorEnvelope, ApiEnvelope } from "./types";
 // Feature modules
 export { healthApi } from "./modules/health";
 export { authApi } from "./modules/auth";
-export { tenantsApi } from "./modules/tenants";
+export { tenantsApi, workspaceApi } from "./modules/tenants";
 export { usersApi } from "./modules/users";
 export { rolesApi } from "./modules/roles";
 export { permissionsApi } from "./modules/permissions";
@@ -57,3 +57,4 @@ export { notificationsApi } from "./modules/notifications";
 export { auditApi } from "./modules/audit";
 export { jobsApi } from "./modules/jobs";
 export { productImagesApi, storageApi } from "./modules/storage";
+export { customersApi } from "./modules/customers";
