@@ -42,6 +42,18 @@ export interface WorkspaceDomain {
   updatedAt: string;
 }
 
+export interface PaymentGateway {
+  provider: "razorpay";
+  configured: boolean;
+  enabled: boolean;
+  keyId: string | null;
+  mode: "test" | "live" | null;
+  webhookSecretSet: boolean;
+  /** Path to append to the API origin; enter the full URL in the Razorpay dashboard. */
+  webhookUrlPath: string;
+  updatedAt: string | null;
+}
+
 export interface Workspace extends Tenant {
   settings: WorkspaceSettings;
   domains: WorkspaceDomain[];
@@ -76,5 +88,20 @@ export const workspaceApi = {
   },
   removeDomain(domainId: string): Promise<unknown> {
     return apiClient.del<unknown>(`/workspace/domains/${domainId}`);
+  },
+
+  // Phase 35: the shop's own Razorpay account. Secrets are write-only.
+  getPaymentGateway(): Promise<PaymentGateway> {
+    return apiClient.get<PaymentGateway>("/workspace/payment-gateway");
+  },
+  /** Razorpay checks the keys first: 422 RAZORPAY_KEYS_INVALID, 502 when Razorpay can't be reached. */
+  savePaymentGateway(body: { keyId: string; keySecret: string; webhookSecret?: string; enabled?: boolean }): Promise<PaymentGateway> {
+    return apiClient.put<PaymentGateway>("/workspace/payment-gateway", body);
+  },
+  setPaymentGatewayEnabled(enabled: boolean): Promise<PaymentGateway> {
+    return apiClient.patch<PaymentGateway>("/workspace/payment-gateway", { enabled });
+  },
+  removePaymentGateway(): Promise<unknown> {
+    return apiClient.del<unknown>("/workspace/payment-gateway");
   },
 };

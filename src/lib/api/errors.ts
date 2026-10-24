@@ -86,8 +86,8 @@ export class NetworkError extends ApiError {
 }
 
 export class ValidationError extends ApiError {
-  constructor(message: string, details?: unknown, requestId?: string | null, headers?: Record<string, string>) {
-    super({ status: 400, code: "VALIDATION_ERROR", message, details, requestId, headers });
+  constructor(message: string, details?: unknown, requestId?: string | null, headers?: Record<string, string>, code = "VALIDATION_ERROR", status = 400) {
+    super({ status, code, message, details, requestId, headers });
     this.name = "ValidationError";
   }
 }
@@ -107,15 +107,15 @@ export class ForbiddenError extends ApiError {
 }
 
 export class NotFoundError extends ApiError {
-  constructor(message: string, details?: unknown, requestId?: string | null, headers?: Record<string, string>) {
-    super({ status: 404, code: "NOT_FOUND", message, details, requestId, headers });
+  constructor(message: string, details?: unknown, requestId?: string | null, headers?: Record<string, string>, code = "NOT_FOUND") {
+    super({ status: 404, code, message, details, requestId, headers });
     this.name = "NotFoundError";
   }
 }
 
 export class ConflictError extends ApiError {
-  constructor(message: string, details?: unknown, requestId?: string | null, headers?: Record<string, string>) {
-    super({ status: 409, code: "CONFLICT", message, details, requestId, headers });
+  constructor(message: string, details?: unknown, requestId?: string | null, headers?: Record<string, string>, code = "CONFLICT") {
+    super({ status: 409, code, message, details, requestId, headers });
     this.name = "ConflictError";
   }
 }
@@ -174,20 +174,17 @@ export function toApiError(args: {
     const mappedCode = code || "FORBIDDEN";
     return new ForbiddenError(message, details, requestId, headers, mappedCode);
   }
-  if (status === 404) return new NotFoundError(message, details, requestId, headers);
-  if (status === 409) return new ConflictError(message, details, requestId, headers);
-  if (status === 400 && (code === "VALIDATION_ERROR" || code === "INVALID_JSON")) {
-    return new ValidationError(message, details, requestId, headers);
-  }
+  // Keep the backend's code (PAYMENT_ALREADY_PENDING, CART_EMPTY, …): the UI branches on it
+  if (status === 404) return new NotFoundError(message, details, requestId, headers, code || "NOT_FOUND");
+  if (status === 409) return new ConflictError(message, details, requestId, headers, code || "CONFLICT");
   if (status === 400) {
-    // Business 400s (INSUFFICIENT_STOCK etc.) — keep backend code
-    return new ValidationError(message, details, requestId, headers);
+    return new ValidationError(message, details, requestId, headers, code || "VALIDATION_ERROR");
   }
   if (status === 413) {
     return new ApiError({ status, code: code || "PAYLOAD_TOO_LARGE", message, details, requestId, headers });
   }
   if (status === 422) {
-    return new ValidationError(message, details, requestId, headers);
+    return new ValidationError(message, details, requestId, headers, code || "VALIDATION_ERROR", 422);
   }
   if (status >= 500) {
     return new ServerError(message, status, code || "SERVER_ERROR", details, requestId, headers);

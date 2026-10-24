@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Building2, CheckCircle2, KeyRound, LogOut, Monitor, ShieldCheck, Smartphone, UserRound } from "lucide-react";
+import { Building2, CheckCircle2, Store, KeyRound, LogOut, Monitor, ShieldCheck, Smartphone, UserRound } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,8 @@ import { StatusPill } from "@/components/app/status-pill";
 import { UserAvatar } from "@/components/layout/app-sidebar";
 import { authApi, type AuthSession } from "@/lib/api/modules/auth";
 import { WorkspaceSettingsCard } from "@/features/workspace/settings-card";
+import { PaymentGatewayCard } from "@/features/workspace/payment-gateway-card";
+import { DomainsCard } from "@/features/workspace/domains-card";
 import { workspaceApi } from "@/lib/api/modules/tenants";
 import { useAuth } from "@/lib/auth/auth-context";
 import { usePermission } from "@/lib/auth/permission-context";
@@ -47,6 +49,11 @@ export default function SettingsPage() {
               <Building2 /> Workspace
             </TabsTrigger>
           ) : null}
+          {hasPermission("tenant:read") ? (
+            <TabsTrigger value="store">
+              <Store /> Store & payments
+            </TabsTrigger>
+          ) : null}
         </TabsList>
         <TabsContent value="profile" className="flex flex-col gap-6">
           <ProfileCard />
@@ -58,6 +65,10 @@ export default function SettingsPage() {
         <TabsContent value="workspace" className="flex flex-col gap-6">
           <WorkspaceCard />
           <WorkspaceSettingsCard />
+        </TabsContent>
+        <TabsContent value="store" className="flex flex-col gap-6">
+          <PaymentGatewayCard />
+          <DomainsCard />
         </TabsContent>
       </Tabs>
     </PageBody>
