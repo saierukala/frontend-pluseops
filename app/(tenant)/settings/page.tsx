@@ -18,6 +18,7 @@ import { ConfirmDialog } from "@/components/app/confirm-dialog";
 import { StatusPill } from "@/components/app/status-pill";
 import { UserAvatar } from "@/components/layout/app-sidebar";
 import { authApi, type AuthSession } from "@/lib/api/modules/auth";
+import { WorkspaceSettingsCard } from "@/features/workspace/settings-card";
 import { workspaceApi } from "@/lib/api/modules/tenants";
 import { useAuth } from "@/lib/auth/auth-context";
 import { usePermission } from "@/lib/auth/permission-context";
@@ -56,6 +57,7 @@ export default function SettingsPage() {
         </TabsContent>
         <TabsContent value="workspace" className="flex flex-col gap-6">
           <WorkspaceCard />
+          <WorkspaceSettingsCard />
         </TabsContent>
       </Tabs>
     </PageBody>

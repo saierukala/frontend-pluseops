@@ -17,16 +17,21 @@ import { PageBody, PageHeader } from "@/components/app/page-header";
 import { Field } from "@/components/app/form-dialog";
 import { ComboboxField } from "@/components/app/combobox-field";
 import { CustomerDialog } from "@/features/customers/customer-dialog";
+import { AddressDialog, formatAddress } from "@/features/customers/address-dialog";
 import { useVariantLookup, useWarehouseOptions } from "@/features/catalog/lookups";
-import { customersApi } from "@/lib/api/modules/customers";
+import { customersApi, type AddressType } from "@/lib/api/modules/customers";
 import { ordersApi } from "@/lib/api/modules/orders";
 import { usePermission } from "@/lib/auth/permission-context";
 import { useUrlState } from "@/hooks/use-url-state";
 import { formatMoney, fullName } from "@/lib/format";
 import { errorMessage } from "@/lib/api-errors";
 
+const NO_ADDRESS = "none";
+
 const schema = z.object({
   customerId: z.string().min(1, "Choose a customer"),
+  shippingAddressId: z.string(),
+  billingAddressId: z.string(),
   items: z
     .array(
       z.object({
@@ -53,11 +58,30 @@ export default function NewOrderPage() {
 
   const form = useForm<Values>({
     resolver: zodResolver(schema),
-    defaultValues: { customerId: get("customer"), items: [{ variantId: "", warehouseId: "", quantity: 1 }], shippingTotal: "" },
+    defaultValues: { customerId: get("customer"), shippingAddressId: NO_ADDRESS, billingAddressId: NO_ADDRESS, items: [{ variantId: "", warehouseId: "", quantity: 1 }], shippingTotal: "" },
   });
   const { fields, append, remove } = useFieldArray({ control: form.control, name: "items" });
   const items = useWatch({ control: form.control, name: "items" });
   const shipping = useWatch({ control: form.control, name: "shippingTotal" });
+  const customerId = useWatch({ control: form.control, name: "customerId" });
+  const [addingAddress, setAddingAddress] = React.useState<AddressType | null>(null);
+  const addresses = useQuery({
+    queryKey: ["customer", customerId, "addresses"],
+    queryFn: () => customersApi.listAddresses(customerId),
+    enabled: Boolean(customerId),
+  });
+
+  // Pre-select the customer's default shipping/billing address once per chosen customer, so a refetch after
+  // adding an address doesn't overwrite what the user picked
+  const defaultsAppliedFor = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (!addresses.data || defaultsAppliedFor.current === customerId) return;
+    defaultsAppliedFor.current = customerId;
+    const list = addresses.data;
+    const pick = (type: AddressType) => (list.find((a) => a.type === type && a.isDefault) ?? list.find((a) => a.type === type))?.id ?? NO_ADDRESS;
+    form.setValue("shippingAddressId", pick("SHIPPING"));
+    form.setValue("billingAddressId", pick("BILLING"));
+  }, [addresses.data, customerId, form]);
 
   // Fill empty warehouse slots with the default once warehouses load
   React.useEffect(() => {
@@ -74,6 +98,8 @@ export default function NewOrderPage() {
     mutationFn: (v: Values) =>
       ordersApi.create({
         customerId: v.customerId,
+        shippingAddressId: v.shippingAddressId === NO_ADDRESS ? undefined : v.shippingAddressId,
+        billingAddressId: v.billingAddressId === NO_ADDRESS ? undefined : v.billingAddressId,
         items: v.items.map((i) => ({ productVariantId: i.variantId, warehouseId: i.warehouseId, quantity: i.quantity })),
         shippingTotal: v.shippingTotal || undefined,
       }),
@@ -88,6 +114,10 @@ export default function NewOrderPage() {
   });
 
   const { errors } = form.formState;
+  const addressOptions = (type: AddressType) => [
+    { value: NO_ADDRESS, label: "No address" },
+    ...(addresses.data ?? []).filter((a) => a.type === type).map((a) => ({ value: a.id, label: `${a.label ? `${a.label} — ` : ""}${formatAddress(a)}` })),
+  ];
   const customerOptions = (customers.data?.data ?? []).map((c) => ({ value: c.id, label: fullName(c), hint: c.email }));
   const variantOptions = variants.options.filter((o) => o.variant.status === "ACTIVE").map((o) => ({ value: o.variant.id, label: o.label, hint: formatMoney(o.variant.price) }));
 
@@ -128,6 +158,26 @@ export default function NewOrderPage() {
                   render={({ field }) => <ComboboxField value={field.value} onChange={field.onChange} options={customerOptions} invalid={Boolean(errors.customerId)} placeholder={customers.isLoading ? "Loading customers…" : "Search customers"} emptyText="No customers found" />}
                 />
               </Field>
+              {customerId ? (
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  {(["SHIPPING", "BILLING"] as const).map((type) => (
+                    <Field key={type} label={type === "SHIPPING" ? "Ship to" : "Billing address"}>
+                      <div className="flex gap-2">
+                        <Controller
+                          control={form.control}
+                          name={type === "SHIPPING" ? "shippingAddressId" : "billingAddressId"}
+                          render={({ field }) => <Select options={addressOptions(type)} value={field.value} onValueChange={field.onChange} triggerClassName="min-w-0" />}
+                        />
+                        {hasPermission("customer:update") ? (
+                          <Button type="button" variant="outline" size="icon" className="shrink-0" aria-label={`Add ${type.toLowerCase()} address`} onClick={() => setAddingAddress(type)}>
+                            <Plus />
+                          </Button>
+                        ) : null}
+                      </div>
+                    </Field>
+                  ))}
+                </div>
+              ) : null}
             </CardContent>
           </Card>
 
@@ -195,6 +245,15 @@ export default function NewOrderPage() {
         </div>
       </form>
 
+      {customerId && addingAddress ? (
+        <AddressDialog
+          open
+          onOpenChange={(o) => !o && setAddingAddress(null)}
+          customerId={customerId}
+          defaultType={addingAddress}
+          onSaved={(a) => form.setValue(a.type === "SHIPPING" ? "shippingAddressId" : "billingAddressId", a.id)}
+        />
+      ) : null}
       <CustomerDialog open={addingCustomer} onOpenChange={setAddingCustomer} onSaved={(c) => form.setValue("customerId", c.id, { shouldValidate: true })} />
     </PageBody>
   );

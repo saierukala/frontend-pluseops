@@ -24,10 +24,16 @@ export interface Customer {
   addresses?: CustomerAddress[];
 }
 
+export type AddressType = "SHIPPING" | "BILLING";
+
 export interface CustomerAddress {
   id: string;
-  type: "SHIPPING" | "BILLING";
+  type: AddressType;
   label?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  company?: string | null;
+  phone?: string | null;
   line1: string;
   line2?: string | null;
   city: string;
@@ -36,6 +42,12 @@ export interface CustomerAddress {
   country: string;
   isDefault: boolean;
 }
+
+/** Writable address fields; country is an ISO 3166-1 alpha-2 code. */
+export type AddressBody = Omit<CustomerAddress, "id" | "isDefault"> & { isDefault?: boolean };
+
+/** Immutable copy stored on an order when it was placed. */
+export type AddressSnapshot = Omit<CustomerAddress, "id" | "isDefault"> & { addressId: string };
 
 export interface CustomerBody {
   email: string;
@@ -62,5 +74,17 @@ export const customersApi = {
   },
   remove(id: string): Promise<null> {
     return apiClient.del<null>(`/customers/${id}`);
+  },
+  listAddresses(id: string, type?: AddressType): Promise<CustomerAddress[]> {
+    return apiClient.get<CustomerAddress[]>(`/customers/${id}/addresses`, { params: { type } });
+  },
+  createAddress(id: string, body: AddressBody): Promise<CustomerAddress> {
+    return apiClient.post<CustomerAddress>(`/customers/${id}/addresses`, body);
+  },
+  updateAddress(id: string, addressId: string, body: Partial<AddressBody>): Promise<CustomerAddress> {
+    return apiClient.patch<CustomerAddress>(`/customers/${id}/addresses/${addressId}`, body);
+  },
+  removeAddress(id: string, addressId: string): Promise<unknown> {
+    return apiClient.del<unknown>(`/customers/${id}/addresses/${addressId}`);
   },
 };

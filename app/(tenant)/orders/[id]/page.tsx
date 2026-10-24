@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, Ban, CreditCard, Mail, RotateCcw, UserRound } from "lucide-react";
+import { ArrowLeft, ArrowRight, Ban, CreditCard, Mail, MapPin, RotateCcw, UserRound } from "lucide-react";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,6 +18,7 @@ import { ConfirmDialog } from "@/components/app/confirm-dialog";
 import { EmptyState, ErrorState } from "@/components/app/states";
 import { UserAvatar } from "@/components/layout/app-sidebar";
 import { RecordPaymentDialog, RefundDialog } from "@/features/orders/payment-dialogs";
+import { formatAddress } from "@/features/customers/address-dialog";
 import { ordersApi, ORDER_CANCELLABLE, ORDER_NEXT_STATUS } from "@/lib/api/modules/orders";
 import { paymentsApi, type Payment } from "@/lib/api/modules/payments";
 import { usePermission } from "@/lib/auth/permission-context";
@@ -255,6 +256,25 @@ export default function OrderDetailPage() {
                       </p>
                     </div>
                   </div>
+                  {o.shippingAddress || o.billingAddress ? (
+                    <dl className="flex flex-col gap-3 border-t pt-4 text-sm">
+                      {(["shippingAddress", "billingAddress"] as const).map((key) => {
+                        const a = o[key];
+                        if (!a) return null;
+                        return (
+                          <div key={key}>
+                            <dt className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                              <MapPin className="size-3.5" /> {key === "shippingAddress" ? "Ship to" : "Bill to"}
+                            </dt>
+                            <dd className="mt-1 leading-6">
+                              {[a.firstName, a.lastName].filter(Boolean).join(" ") || a.label ? <span className="block font-medium">{[a.firstName, a.lastName].filter(Boolean).join(" ") || a.label}</span> : null}
+                              <span className="text-muted-foreground">{formatAddress(a)}</span>
+                            </dd>
+                          </div>
+                        );
+                      })}
+                    </dl>
+                  ) : null}
                   <Button variant="outline" size="sm" asChild>
                     <Link href={`/orders?customer=${o.customer.id}` as never}>
                       <UserRound /> View their orders

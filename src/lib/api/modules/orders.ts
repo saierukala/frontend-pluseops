@@ -5,6 +5,7 @@
 
 import { apiClient } from "../client";
 import type { QueryParams } from "../query";
+import type { AddressSnapshot } from "./customers";
 
 export interface Order {
   id: string;
@@ -18,6 +19,8 @@ export interface Order {
   total: string;
   currency: string;
   metadata?: Record<string, unknown>;
+  shippingAddress?: AddressSnapshot | null;
+  billingAddress?: AddressSnapshot | null;
   createdAt: string;
   updatedAt: string;
   customer?: { id: string; email: string; firstName: string; lastName: string };
@@ -66,6 +69,8 @@ export interface OrderStatusHistory {
 export const ordersApi = {
   create(body: {
     customerId: string;
+    shippingAddressId?: string;
+    billingAddressId?: string;
     items: Array<{
       productVariantId: string;
       warehouseId: string;

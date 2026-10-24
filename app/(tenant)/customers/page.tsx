@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Pencil, Plus, ShoppingCart, Trash2, UserRound } from "lucide-react";
+import { MapPin, Pencil, Plus, Star, ShoppingCart, Trash2, UserRound } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,10 +18,11 @@ import { CustomerDialog } from "@/features/customers/customer-dialog";
 import { EmptyState } from "@/components/app/states";
 import { Can } from "@/components/auth/can";
 import { UserAvatar } from "@/components/layout/app-sidebar";
-import { customersApi, type Customer } from "@/lib/api/modules/customers";
+import { customersApi, type Customer, type CustomerAddress } from "@/lib/api/modules/customers";
+import { AddressDialog, formatAddress } from "@/features/customers/address-dialog";
 import { usePermission } from "@/lib/auth/permission-context";
 import { useUrlState } from "@/hooks/use-url-state";
-import { formatDate, formatMoney, formatRelative, fullName, shortId } from "@/lib/format";
+import { formatDate, formatMoney, formatRelative, fullName, humanize, shortId } from "@/lib/format";
 import { toastError } from "@/lib/api-errors";
 
 export default function CustomersPage() {
@@ -195,10 +196,78 @@ function CustomerSheet({ customer, onOpenChange }: { customer: Customer | null; 
               ) : (
                 <EmptyState icon={ShoppingCart} title="No orders yet" className="rounded-lg border border-dashed py-10" />
               )}
+              <AddressBook customerId={customer.id} />
             </div>
           </>
         ) : null}
       </SheetContent>
     </Sheet>
+  );
+}
+
+function AddressBook({ customerId }: { customerId: string }) {
+  const queryClient = useQueryClient();
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission("customer:update");
+  const [dialog, setDialog] = React.useState<{ open: boolean; address?: CustomerAddress }>({ open: false });
+  const addresses = useQuery({ queryKey: ["customer", customerId, "addresses"], queryFn: () => customersApi.listAddresses(customerId) });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["customer", customerId, "addresses"] });
+
+  const makeDefault = useMutation({
+    mutationFn: (a: CustomerAddress) => customersApi.updateAddress(customerId, a.id, { isDefault: true }),
+    onSuccess: invalidate,
+    onError: (e) => toastError(e, "Couldn't update address"),
+  });
+  const remove = useMutation({
+    mutationFn: (a: CustomerAddress) => customersApi.removeAddress(customerId, a.id),
+    onSuccess: () => {
+      toast.success("Address removed");
+      invalidate();
+    },
+    onError: (e) => toastError(e, "Couldn't remove address"),
+  });
+
+  return (
+    <div className="flex flex-col gap-3 pb-6 pt-3">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold">Addresses</h3>
+        {canEdit ? (
+          <Button size="sm" variant="outline" onClick={() => setDialog({ open: true })}>
+            <Plus /> Add address
+          </Button>
+        ) : null}
+      </div>
+      {addresses.isLoading ? (
+        <Skeleton className="h-16 w-full" />
+      ) : addresses.data?.length ? (
+        <ul className="flex flex-col gap-2">
+          {addresses.data.map((a) => (
+            <li key={a.id} className="group flex items-start gap-3 rounded-lg border p-3">
+              <MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+              <div className="min-w-0 flex-1 text-sm">
+                <p className="flex flex-wrap items-center gap-1.5 font-medium">
+                  {a.label || humanize(a.type)}
+                  <StatusPill tone={a.type === "SHIPPING" ? "info" : "brand"} label={humanize(a.type)} />
+                  {a.isDefault ? <StatusPill tone="success" label="Default" /> : null}
+                </p>
+                <p className="mt-0.5 text-muted-foreground">{formatAddress(a)}</p>
+              </div>
+              {canEdit ? (
+                <RowActions
+                  actions={[
+                    { label: "Edit", icon: Pencil, onSelect: () => setDialog({ open: true, address: a }) },
+                    { label: "Make default", icon: Star, onSelect: () => makeDefault.mutate(a), hidden: a.isDefault },
+                    { label: "Remove", icon: Trash2, destructive: true, onSelect: () => remove.mutate(a) },
+                  ]}
+                />
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <EmptyState icon={MapPin} title="No saved addresses" className="rounded-lg border border-dashed py-8" />
+      )}
+      <AddressDialog open={dialog.open} onOpenChange={(o) => setDialog((s) => ({ ...s, open: o }))} customerId={customerId} address={dialog.address} />
+    </div>
   );
 }
