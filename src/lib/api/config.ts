@@ -18,3 +18,11 @@ export const apiConfig = {
 } as const;
 
 export type ApiConfig = typeof apiConfig;
+
+/**
+ * Signed file URLs from the API are relative (`/api/v1/storage/signed?…`) with local storage and absolute with S3.
+ * Relative ones belong to the API's origin, not the web app's.
+ */
+export function apiAssetUrl(url: string): string {
+  return url.startsWith("/") ? `${publicEnv.apiUrl}${url}` : url;
+}

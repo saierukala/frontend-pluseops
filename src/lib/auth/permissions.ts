@@ -68,6 +68,15 @@ export const TENANT_PERMISSIONS: readonly string[] = [
   "notification:update",
   "dashboard:read",
   "analytics:read",
+  // Background jobs, reports, message templates
+  "jobs:read",
+  "jobs:manage",
+  "report:create",
+  "report:read",
+  "notification_template:create",
+  "notification_template:read",
+  "notification_template:update",
+  "notification_template:delete",
 ] as const;
 
 export const PLATFORM_PERMISSIONS: readonly string[] = [
@@ -75,8 +84,13 @@ export const PLATFORM_PERMISSIONS: readonly string[] = [
   "platform:tenant:read",
   "platform:tenant:update",
   "platform:tenant:suspend",
+  "platform:tenant:delete",
+  "platform:tenant:access",
   "platform:billing:read",
   "platform:billing:update",
+  "platform:admin:read",
+  "platform:admin:manage",
+  "platform:audit:read",
 ] as const;
 
 /** Backend system roles — tenant scope */
@@ -152,6 +166,24 @@ export const TENANT_PERMISSION_GROUPS: PermissionGroup[] = [
     resource: "audit",
     permissions: ["audit:read", "activity:read", "notification:read", "notification:update"],
     description: "Audits, activity and notifications",
+  },
+  {
+    label: "Reports",
+    resource: "report",
+    permissions: ["report:create", "report:read"],
+    description: "CSV exports and report schedules (each export also needs read access to its data)",
+  },
+  {
+    label: "Message templates",
+    resource: "notification_template",
+    permissions: ["notification_template:create", "notification_template:read", "notification_template:update", "notification_template:delete"],
+    description: "Wording of emails, SMS and in-app messages",
+  },
+  {
+    label: "Background jobs",
+    resource: "jobs",
+    permissions: ["jobs:read", "jobs:manage"],
+    description: "Job status and manual triggers",
   },
 ];
 
