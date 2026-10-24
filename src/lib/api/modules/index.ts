@@ -25,3 +25,5 @@ export * from "./audit";
 export * from "./jobs";
 export * from "./storage";
 export * from "./customers";
+export * from "./reports";
+export * from "./templates";

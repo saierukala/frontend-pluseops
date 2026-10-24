@@ -23,6 +23,7 @@ import { productsApi } from "@/lib/api/modules/products";
 import { variantsApi } from "@/lib/api/modules/variants";
 import { inventoryApi } from "@/lib/api/modules/inventory";
 import { productImagesApi, storageApi, type ProductImage } from "@/lib/api/modules/storage";
+import { apiAssetUrl } from "@/lib/api/config";
 import type { ProductVariant } from "@/lib/api/types";
 import { usePermission } from "@/lib/auth/permission-context";
 import { formatDateTime, formatMoney, formatNumber } from "@/lib/format";
@@ -337,5 +338,5 @@ function SignedImage({ productId, image }: { productId: string; image: ProductIm
   });
   if (!signed.data) return <Skeleton className="aspect-square w-full rounded-none" />;
   // eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL from the API, not optimizable
-  return <img src={signed.data.url} alt={image.altText ?? ""} className="aspect-square w-full object-cover" loading="lazy" />;
+  return <img src={apiAssetUrl(signed.data.url)} alt={image.altText ?? ""} className="aspect-square w-full object-cover" loading="lazy" />;
 }
