@@ -66,6 +66,8 @@ export interface User {
   createdAt: IsoDateString;
   updatedAt: IsoDateString;
   scope?: AuthScope;
+  /** Present on /auth/me for tenant users. */
+  tenant?: Pick<Tenant, "id" | "name" | "slug" | "status" | "plan">;
   roles?: Array<{ id: Uuid; name: string; isSystem: boolean }>;
 }
 

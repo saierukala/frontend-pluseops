@@ -19,7 +19,6 @@ import { EmptyState } from "@/components/app/states";
 import { Can } from "@/components/auth/can";
 import { UserAvatar } from "@/components/layout/app-sidebar";
 import { customersApi, type Customer } from "@/lib/api/modules/customers";
-import { ordersApi } from "@/lib/api/modules/orders";
 import { usePermission } from "@/lib/auth/permission-context";
 import { useUrlState } from "@/hooks/use-url-state";
 import { formatDate, formatMoney, formatRelative, fullName, shortId } from "@/lib/format";
@@ -64,7 +63,7 @@ export default function CustomersPage() {
       ),
     },
     { key: "phone", header: "Phone", cell: (c) => <span className="text-muted-foreground">{c.phone || "—"}</span>, headerClassName: "hidden md:table-cell", className: "hidden md:table-cell" },
-    { key: "orders", header: "Orders", cell: (c) => <span className="tabular">{c._count?.orders ?? 0}</span> },
+    { key: "account", header: "Store account", cell: (c) => (c.lastLoginAt || c.emailVerifiedAt ? <StatusPill tone="success" label="Active" /> : <span className="text-muted-foreground">—</span>), headerClassName: "hidden lg:table-cell", className: "hidden lg:table-cell" },
     { key: "since", header: "Customer since", cell: (c) => <span className="text-muted-foreground">{formatDate(c.createdAt)}</span>, headerClassName: "hidden sm:table-cell", className: "hidden sm:table-cell" },
     {
       key: "actions",
@@ -137,7 +136,7 @@ export default function CustomersPage() {
 function CustomerSheet({ customer, onOpenChange }: { customer: Customer | null; onOpenChange: (o: boolean) => void }) {
   const orders = useQuery({
     queryKey: ["orders", { customerId: customer?.id }],
-    queryFn: () => ordersApi.listEnvelope({ customerId: customer!.id, limit: 10 }),
+    queryFn: () => customersApi.listOrdersEnvelope(customer!.id, { limit: 10 }),
     enabled: Boolean(customer),
   });
 

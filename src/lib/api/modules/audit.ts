@@ -26,6 +26,7 @@ export interface ActivityLog {
   userId?: string | null;
   action: string;
   description?: string | null;
+  metadata?: Record<string, unknown> | null;
   resource?: string | null;
   resourceId?: string | null;
   oldValue?: Record<string, unknown> | null;

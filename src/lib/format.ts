@@ -64,10 +64,10 @@ export function fullName(person: { firstName?: string | null; lastName?: string 
   return [person.firstName, person.lastName].filter(Boolean).join(" ") || "—";
 }
 
-/** "PARTIALLY_REFUNDED" -> "Partially refunded" */
+/** "PARTIALLY_REFUNDED" -> "Partially refunded", "order.status_update" -> "Order status update" */
 export function humanize(value: string | null | undefined): string {
   if (!value) return "—";
-  const text = value.replace(/[_:-]+/g, " ").toLowerCase();
+  const text = value.replace(/[_:.-]+/g, " ").toLowerCase();
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 

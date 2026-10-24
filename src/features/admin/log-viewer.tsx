@@ -23,6 +23,9 @@ interface LogRow {
   action: string;
   resource?: string | null;
   resourceId?: string | null;
+  /** Activity rows describe the event in words instead of a resource. */
+  description?: string | null;
+  metadata?: Record<string, unknown> | null;
   oldValue?: Record<string, unknown> | null;
   newValue?: Record<string, unknown> | null;
   ipAddress?: string | null;
@@ -30,15 +33,20 @@ interface LogRow {
   createdAt: string;
 }
 
-const ACTIONS = ["CREATE", "UPDATE", "DELETE", "LOGIN", "LOGOUT", "EXPORT", "IMPORT"];
+export const AUDIT_ACTIONS = ["CREATE", "UPDATE", "DELETE", "LOGIN", "LOGOUT", "EXPORT", "IMPORT"];
 
-/** Shared table + detail sheet for audit and activity logs (same row shape, different endpoint). */
+/**
+ * Shared table + detail sheet for audit logs (action + resource + field diff) and activity logs
+ * (dotted event name + description). `actions` enables the action filter.
+ */
 export function LogViewer({
   queryKey,
   fetchPage,
+  actions,
 }: {
   queryKey: string;
   fetchPage: (params: QueryParams) => Promise<SuccessEnvelope<LogRow[]>>;
+  actions?: string[];
 }) {
   const { hasPermission } = usePermission();
   const { get, set, page } = useUrlState();
@@ -72,16 +80,19 @@ export function LogViewer({
         );
       },
     },
-    { key: "action", header: "Action", cell: (l) => <StatusPill status={l.action} /> },
+    { key: "action", header: "Action", cell: (l) => <StatusPill status={l.action} label={l.action.includes(".") ? humanize(l.action) : undefined} tone={l.action.includes(".") ? "neutral" : undefined} /> },
     {
       key: "resource",
-      header: "Resource",
-      cell: (l) => (
-        <span>
-          {humanize(l.resource)}
-          {l.resourceId ? <span className="ml-1.5 font-mono text-xs text-muted-foreground">{shortId(l.resourceId)}</span> : null}
-        </span>
-      ),
+      header: actions ? "Resource" : "Details",
+      cell: (l) =>
+        l.description ? (
+          <span className="line-clamp-1 text-muted-foreground">{l.description}</span>
+        ) : (
+          <span>
+            {humanize(l.resource)}
+            {l.resourceId ? <span className="ml-1.5 font-mono text-xs text-muted-foreground">{shortId(l.resourceId)}</span> : null}
+          </span>
+        ),
     },
     { key: "ip", header: "IP", cell: (l) => <span className="font-mono text-xs text-muted-foreground">{l.ipAddress ?? "—"}</span>, headerClassName: "hidden lg:table-cell", className: "hidden lg:table-cell" },
   ];
@@ -90,7 +101,7 @@ export function LogViewer({
     <>
       <Card className="gap-0 py-0">
         <TableToolbar>
-          <FilterSelect value={action} onChange={(v) => set({ action: v })} allLabel="All actions" options={ACTIONS.map((a) => ({ value: a, label: humanize(a) }))} />
+          {actions ? <FilterSelect value={action} onChange={(v) => set({ action: v })} allLabel="All actions" options={actions.map((a) => ({ value: a, label: humanize(a) }))} /> : null}
           {users.data ? <FilterSelect value={userId} onChange={(v) => set({ user: v })} allLabel="All actors" options={users.data.data.map((u) => ({ value: u.id, label: fullName(u) }))} className="sm:w-52" /> : null}
         </TableToolbar>
         <DataTable
@@ -112,7 +123,7 @@ export function LogViewer({
             <>
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
-                  <StatusPill status={selected.action} /> {humanize(selected.resource)}
+                  <StatusPill status={selected.action} label={selected.action.includes(".") ? humanize(selected.action) : undefined} /> {selected.description ? null : humanize(selected.resource)}
                 </SheetTitle>
                 <SheetDescription>
                   {formatDateTime(selected.createdAt)} · {actor(selected.userId) ? fullName(actor(selected.userId)) : selected.userId ? `User ${shortId(selected.userId)}` : "System"}
@@ -127,7 +138,11 @@ export function LogViewer({
                   <dt className="text-muted-foreground">User agent</dt>
                   <dd className="break-all text-xs">{selected.userAgent ?? "—"}</dd>
                 </dl>
-                <ChangeDiff before={selected.oldValue} after={selected.newValue} />
+                {selected.description ? <p>{selected.description}</p> : null}
+                {selected.metadata && Object.keys(selected.metadata).length ? (
+                  <pre className="overflow-x-auto rounded-lg border bg-muted/40 p-3 font-mono text-xs">{JSON.stringify(selected.metadata, null, 2)}</pre>
+                ) : null}
+                {selected.oldValue || selected.newValue ? <ChangeDiff before={selected.oldValue} after={selected.newValue} /> : null}
               </div>
             </>
           ) : null}

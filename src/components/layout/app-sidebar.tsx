@@ -175,13 +175,16 @@ function BrandMark({ variant }: { variant: Variant }) {
 }
 
 function WorkspaceBlock({ variant }: { variant: Variant }) {
+  const { user } = useAuth();
   const { hasPermission } = usePermission();
-  const { data: tenant } = useQuery({
+  const { data: workspace } = useQuery({
     queryKey: ["workspace"],
     queryFn: () => workspaceApi.get(),
     enabled: variant === "tenant" && hasPermission("tenant:read"),
     staleTime: 5 * 60_000,
   });
+  // /auth/me carries the tenant summary, so roles without tenant:read still see their workspace
+  const tenant = workspace ?? user?.tenant;
 
   const title = variant === "platform" ? "PulseOps Platform" : tenant?.name ?? "PulseOps";
   const subtitle = variant === "platform" ? "Internal console" : tenant ? `${humanize(tenant.plan)} plan · ${tenant.slug}` : "Workspace";

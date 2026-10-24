@@ -47,7 +47,7 @@ export default function NewOrderPage() {
   const { get } = useUrlState();
   const variants = useVariantLookup();
   const warehouses = useWarehouseOptions();
-  const customers = useQuery({ queryKey: ["customers", "options"], queryFn: () => customersApi.listEnvelope({ limit: 100, sortBy: "firstName", sortOrder: "asc" }) });
+  const customers = useQuery({ queryKey: ["customers", "options"], queryFn: () => customersApi.listEnvelope({ limit: 100, sortBy: "lastName", sortOrder: "asc" }) });
   const [addingCustomer, setAddingCustomer] = React.useState(false);
   const [serverError, setServerError] = React.useState<string | null>(null);
 
