@@ -14,6 +14,8 @@ import { platformApi } from "@/lib/api/modules/platform";
 import type { Tenant } from "@/lib/api/types";
 import { toast } from "sonner";
 import { Select } from "@/components/ui/select";
+import { TenantPlanCard } from "@/features/platform/tenant-plan-card";
+import { SupportSessionCard } from "@/features/platform/support-session-card";
 
 export default function TenantDetailPage() {
   const params = useParams<{ id: string }>();
@@ -73,7 +75,6 @@ export default function TenantDetailPage() {
       const body: Record<string,string> = {};
       if (editData.name.trim() && editData.name.trim() !== tenant.name) body.name = editData.name.trim();
       if (editData.slug.trim() && editData.slug.trim() !== tenant.slug) body.slug = editData.slug.trim();
-      if (editData.plan.trim() && editData.plan.trim() !== (tenant as unknown as {plan?:string}).plan) body.plan = editData.plan.trim();
       if (Object.keys(body).length === 0) { setEditMode(false); setEditSaving(false); return; }
       const updated = await platformApi.updateTenant(tenant.id, body);
       setTenant(updated);
@@ -162,10 +163,6 @@ export default function TenantDetailPage() {
                     <Label htmlFor="edit-slug">Slug</Label>
                     <Input id="edit-slug" value={editData.slug} onChange={(e)=>setEditData({...editData, slug:e.target.value})} placeholder="acme-store" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-plan">Plan</Label>
-                    <Input id="edit-plan" value={editData.plan} onChange={(e)=>setEditData({...editData, plan:e.target.value})} />
-                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={handleEdit} disabled={editSaving}>{editSaving?"Saving...":"Save"}</Button>
@@ -226,6 +223,10 @@ export default function TenantDetailPage() {
             </form>
           </CardContent>
         </Card>
+      </div>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TenantPlanCard tenantId={tenant.id} onChanged={() => load()} />
+        <SupportSessionCard tenantId={tenant.id} tenantName={tenant.name} />
       </div>
     </div>
   );

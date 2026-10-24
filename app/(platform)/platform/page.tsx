@@ -2,160 +2,121 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { Building2, ShoppingCart, Users, Wallet } from "lucide-react";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { platformApi } from "@/lib/api/modules/platform";
+import { PageBody, PageHeader } from "@/components/app/page-header";
+import { KpiCard } from "@/components/app/kpi-card";
+import { DataTable, type Column } from "@/components/app/data-table";
+import { StatusPill } from "@/components/app/status-pill";
+import { ErrorState } from "@/components/app/states";
+import { platformApi, type MoneyByCurrency, type PlatformAuditEntry } from "@/lib/api/modules/platform";
 import type { Tenant } from "@/lib/api/types";
+import { formatDateTime, formatMoney, formatNumber, formatRelative, humanize } from "@/lib/format";
 
+const money = (list?: MoneyByCurrency) => (list?.length ? list.map((m) => formatMoney(m.amount, m.currency)).join(" · ") : formatMoney(0));
+
+function Breakdown({ title, counts, total }: { title: string; counts?: Record<string, number>; total?: number }) {
+  const entries = Object.entries(counts ?? {}).sort((a, b) => b[1] - a[1]);
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        {!counts ? <Skeleton className="h-24" /> : null}
+        {entries.map(([key, count]) => (
+          <div key={key} className="flex flex-col gap-1">
+            <div className="flex justify-between text-sm">
+              <span>{humanize(key)}</span>
+              <span className="tabular text-muted-foreground">{formatNumber(count)}</span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary" style={{ width: `${total ? (count / total) * 100 : 0}%` }} />
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Platform overview (GET /platform/overview), newest tenants and the latest platform actions. */
 export default function PlatformOverviewPage() {
-  const [tenants, setTenants] = React.useState<Tenant[]>([]);
-  const [total, setTotal] = React.useState<number>(0);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const router = useRouter();
+  const overview = useQuery({ queryKey: ["platform", "overview"], queryFn: () => platformApi.getOverview() });
+  const tenants = useQuery({ queryKey: ["platform", "tenants", "recent"], queryFn: () => platformApi.listTenantsEnvelope({ page: 1, limit: 5 }) });
+  const audit = useQuery({ queryKey: ["platform", "audit", "recent"], queryFn: () => platformApi.listAuditLogsEnvelope({ page: 1, limit: 6 }) });
+  const o = overview.data;
 
-  React.useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        setLoading(true);
-        const envelope = await platformApi.listTenantsEnvelope({ page: 1, limit: 20 });
-        if (cancelled) return;
-        setTenants(envelope.data as unknown as Tenant[]);
-        setTotal((envelope.meta?.total as number) ?? (envelope.data as unknown as Tenant[]).length);
-      } catch (e) {
-        if (cancelled) return;
-        const msg = e instanceof Error ? e.message : "Failed to load platform overview";
-        setError(msg);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    load();
-    return () => { cancelled = true; };
-  }, []);
-
-  const stats = React.useMemo(() => {
-    const byStatus = { ACTIVE: 0, TRIAL: 0, SUSPENDED: 0, CANCELLED: 0 };
-    tenants.forEach((t) => {
-      const s = t.status as keyof typeof byStatus;
-      if (s in byStatus) byStatus[s]++;
-    });
-    return byStatus;
-  }, [tenants]);
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[1,2,3,4].map((i)=> <Skeleton key={i} className="h-28" />)}
-        </div>
-        <Skeleton className="h-80" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card className="border-destructive/30">
-        <CardHeader>
-          <CardTitle className="text-destructive">Failed to load overview</CardTitle>
-          <CardDescription>{error}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-xs text-muted-foreground">Verify platform JWT has scope=platform and platform:tenant:read permission.</p>
-          <p className="mt-2 text-xs">Request ID is available in response headers for troubleshooting.</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const tenantColumns: Column<Tenant & { usersCount?: number; lastActivityAt?: string | null }>[] = [
+    { key: "name", header: "Tenant", cell: (t) => <div><p className="font-medium">{t.name}</p><p className="font-mono text-xs text-muted-foreground">{t.slug}</p></div> },
+    { key: "plan", header: "Plan", cell: (t) => <span className="capitalize">{(t as { plan?: string }).plan ?? "free"}</span> },
+    { key: "users", header: "Users", cell: (t) => <span className="tabular">{formatNumber(t.usersCount ?? 0)}</span>, headerClassName: "hidden sm:table-cell", className: "hidden sm:table-cell" },
+    { key: "status", header: "Status", cell: (t) => <StatusPill status={t.status} /> },
+    { key: "active", header: "Last activity", cell: (t) => <span className="text-muted-foreground">{t.lastActivityAt ? formatRelative(t.lastActivityAt) : "—"}</span>, headerClassName: "hidden md:table-cell", className: "hidden md:table-cell" },
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Platform Overview</h1>
-          <p className="text-sm text-muted-foreground">Control plane — tenant provisioning, administration and operations.</p>
-        </div>
-        <Button asChild>
-          <Link href="/platform/tenants">Manage tenants</Link>
-        </Button>
-      </div>
-
+    <PageBody>
+      <PageHeader
+        title="Platform overview"
+        description="Every workspace on PulseOps at a glance."
+        actions={<Button asChild><Link href="/platform/tenants">Manage tenants</Link></Button>}
+      />
+      {overview.error ? <ErrorState error={overview.error} onRetry={() => overview.refetch()} /> : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard label="Tenants" icon={Building2} loading={overview.isLoading} value={formatNumber(o?.tenants.total)} hint={`${formatNumber(o?.tenants.byStatus.ACTIVE ?? 0)} active`} />
+        <KpiCard label="Active users" icon={Users} loading={overview.isLoading} value={formatNumber(o?.users.active)} />
+        <KpiCard label="Orders" icon={ShoppingCart} loading={overview.isLoading} value={formatNumber(o?.orders.total)} hint={`${formatNumber(o?.orders.last30Days ?? 0)} in the last 30 days`} />
+        <KpiCard label="Revenue (completed)" icon={Wallet} tone="success" loading={overview.isLoading} value={money(o?.revenue.total)} hint={`${money(o?.revenue.last30Days)} in the last 30 days`} />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Breakdown title="Tenants by status" counts={o?.tenants.byStatus} total={o?.tenants.total} />
+        <Breakdown title="Tenants by plan" counts={o?.tenants.byPlan} total={o?.tenants.total} />
         <Card>
-          <CardHeader className="pb-2"><CardDescription>Total tenants</CardDescription><CardTitle className="text-3xl">{total}</CardTitle></CardHeader>
-          <CardContent><p className="text-xs text-muted-foreground">Excluding internal __platform</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2"><CardDescription>Active</CardDescription><CardTitle className="text-3xl text-emerald-600">{stats.ACTIVE}</CardTitle></CardHeader>
-          <CardContent><Badge variant="outline" className="text-emerald-700 border-emerald-200 bg-emerald-50">ACTIVE</Badge></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2"><CardDescription>Trial</CardDescription><CardTitle className="text-3xl text-blue-600">{stats.TRIAL}</CardTitle></CardHeader>
-          <CardContent><Badge variant="outline" className="text-blue-700 border-blue-200 bg-blue-50">TRIAL</Badge></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2"><CardDescription>Suspended / Cancelled</CardDescription><CardTitle className="text-3xl text-amber-600">{stats.SUSPENDED + stats.CANCELLED}</CardTitle></CardHeader>
-          <CardContent><p className="text-xs text-muted-foreground">Operational risk group</p></CardContent>
+          <CardHeader>
+            <CardTitle className="text-base">New tenants per month</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            {!o ? <Skeleton className="h-24" /> : null}
+            {o?.tenants.newByMonth.slice(-6).map((m) => (
+              <div key={m.month} className="flex justify-between text-sm">
+                <span>{m.month}</span>
+                <span className="tabular text-muted-foreground">{formatNumber(m.count)}</span>
+              </div>
+            ))}
+          </CardContent>
         </Card>
       </div>
-
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-5">
+        <Card className="gap-0 py-0 lg:col-span-3">
+          <CardHeader className="border-b py-4">
+            <CardTitle className="text-base">Newest tenants</CardTitle>
+            <CardAction><Button variant="ghost" size="sm" asChild><Link href="/platform/tenants">All tenants</Link></Button></CardAction>
+          </CardHeader>
+          <DataTable columns={tenantColumns} rows={tenants.data?.data as never} rowKey={(t) => t.id} loading={tenants.isFetching} error={tenants.error} onRetry={() => tenants.refetch()} onRowClick={(t) => router.push(`/platform/tenants/${t.id}` as never)} skeletonRows={5} />
+        </Card>
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Recent tenants</CardTitle>
-            <CardDescription>Latest 5 platform tenants by creation date</CardDescription>
+            <CardTitle className="text-base">Recent platform actions</CardTitle>
+            <CardDescription>Who changed what across tenants.</CardDescription>
+            <CardAction><Button variant="ghost" size="sm" asChild><Link href="/platform/audit">Audit log</Link></Button></CardAction>
           </CardHeader>
-          <CardContent>
-            {tenants.length === 0 ? (
-              <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-                No tenants yet. Create the first workspace to get started.
+          <CardContent className="flex flex-col gap-3">
+            {audit.isLoading ? <Skeleton className="h-40" /> : null}
+            {audit.data?.data.map((a: PlatformAuditEntry) => (
+              <div key={a.id} className="flex flex-col gap-0.5 border-b pb-3 last:border-0 last:pb-0">
+                <p className="text-sm"><span className="font-medium">{humanize(a.action)}</span>{a.tenant ? <span className="text-muted-foreground"> · {a.tenant.name}</span> : null}</p>
+                <p className="text-xs text-muted-foreground">{a.actor?.email ?? "system"} · {formatDateTime(a.createdAt)}</p>
               </div>
-            ) : (
-              <div className="space-y-3">
-                {tenants.slice(0,5).map((t) => (
-                  <Link key={t.id} href={`/platform/tenants/${t.id}` as unknown as never} className="flex items-center justify-between rounded-lg border px-4 py-3 hover:bg-accent transition-colors focus-visible:ring-2 focus-visible:ring-ring">
-                    <div className="min-w-0">
-                      <div className="text-sm font-medium truncate">{t.name}</div>
-                      <div className="text-xs text-muted-foreground truncate">{t.slug} • {t.plan ?? "free"}</div>
-                    </div>
-                    <Badge variant={t.status === "ACTIVE" ? "default" : t.status === "TRIAL" ? "secondary" : "outline"}>{t.status}</Badge>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Platform scope</CardTitle>
-            <CardDescription>Security boundary</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
-            <p><span className="font-medium text-foreground">JWT scope=platform</span> is required for all /platform/* calls.</p>
-            <p>Tenant tokens (<code className="rounded bg-muted px-1">scope=tenant</code>) are rejected with 403 PLATFORM_TOKEN_FORBIDDEN.</p>
-            <p>Tenant identity is authoritative from JWT — no client-controlled tenantId determines authorization.</p>
-            <div className="pt-2">
-              <Button variant="outline" size="sm" asChild><Link href="/platform/tenants">Go to tenants</Link></Button>
-            </div>
+            ))}
           </CardContent>
         </Card>
       </div>
-
-      <Card className="border-dashed">
-        <CardHeader>
-          <CardTitle className="text-base">Quick links</CardTitle>
-          <CardDescription>Only wired items use real backend APIs. Unwired items are explicitly marked as Soon.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          <Badge variant="secondary">Tenants — live</Badge>
-          <Badge variant="outline">Users — Soon</Badge>
-          <Badge variant="outline">Audit — Soon</Badge>
-          <Badge variant="outline">System — Soon</Badge>
-        </CardContent>
-      </Card>
-    </div>
+    </PageBody>
   );
 }
