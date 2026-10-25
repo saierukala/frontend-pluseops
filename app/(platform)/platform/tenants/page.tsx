@@ -1,289 +1,218 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Building2, Eye, Plus } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Select } from "@/components/ui/select";
-import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PageBody, PageHeader } from "@/components/app/page-header";
+import { DataTable, FilterSelect, SearchInput, TableToolbar, ALL, type Column } from "@/components/app/data-table";
+import { StatusPill } from "@/components/app/status-pill";
+import { RowActions } from "@/components/app/row-actions";
+import { FormDialog, Field } from "@/components/app/form-dialog";
+import { EmptyState } from "@/components/app/states";
 import { platformApi } from "@/lib/api/modules/platform";
 import type { Tenant } from "@/lib/api/types";
-import { toast } from "sonner";
+import { useUrlState } from "@/hooks/use-url-state";
+import { formatDate, humanize } from "@/lib/format";
+import { applyApiFieldErrors, toastError } from "@/lib/api-errors";
 
-function StatusBadge({ status }: { status: Tenant["status"] }) {
-  const m: Record<string, string> = {
-    ACTIVE: "bg-emerald-500 text-white border-transparent",
-    TRIAL: "bg-blue-500 text-white border-transparent",
-    SUSPENDED: "bg-amber-500 text-white border-transparent",
-    CANCELLED: "bg-zinc-500 text-white border-transparent",
-  };
-  return <Badge className={m[status] ?? ""}>{status}</Badge>;
-}
+const STATUSES = ["ACTIVE", "TRIAL", "SUSPENDED", "CANCELLED"] as const;
 
 export default function PlatformTenantsPage() {
+  const { get, set, page } = useUrlState();
+  const search = get("q");
+  const status = get("status", ALL);
   const router = useRouter();
-  const [tenants, setTenants] = React.useState<Tenant[]>([]);
-  const [meta, setMeta] = React.useState<{ page:number; limit:number; total:number; totalPages:number } | null>(null);
-  const [page, setPage] = React.useState(1);
-  const [limit] = React.useState(20);
-  const [status, setStatus] = React.useState<string>("all");
-  const [search, setSearch] = React.useState("");
-  const [searchInput, setSearchInput] = React.useState("");
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
-  const [createOpen, setCreateOpen] = React.useState(false);
-  const [createLoading, setCreateLoading] = React.useState(false);
-  const [createError, setCreateError] = React.useState<string | null>(null);
-  const [createdInfo, setCreatedInfo] = React.useState<{ name:string; slug:string; status:string; adminEmail:string } | null>(null);
-  const [form, setForm] = React.useState({ name:"", slug:"", plan:"free", status:"TRIAL" as Tenant["status"], adminEmail:"", adminPassword:"", adminFirstName:"", adminLastName:"" });
+  const [creating, setCreating] = React.useState(false);
 
-  const load = React.useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const params: Record<string, unknown> = { page, limit };
-      if (status !== "all") params.status = status;
-      if (search) params.search = search;
-      const env = await platformApi.listTenantsEnvelope(params as never);
-      setTenants(env.data as unknown as Tenant[]);
-      setMeta(env.meta as unknown as { page:number; limit:number; total:number; totalPages:number });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Failed to load tenants";
-      setError(msg);
-    } finally { setLoading(false); }
-  }, [page, limit, status, search]);
+  const query = useQuery({
+    queryKey: ["platform", "tenants", { page, search, status }],
+    queryFn: () => platformApi.listTenantsEnvelope({ page, limit: 20, search: search || undefined, status: status === ALL ? undefined : status } as never),
+    placeholderData: keepPreviousData,
+  });
 
-  React.useEffect(()=>{
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
-
-  const handleSearch = () => { setSearch(searchInput.trim()); setPage(1); };
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setCreateError(null);
-    setCreateLoading(true);
-    try {
-      const payload = {
-        name: form.name.trim(),
-        slug: form.slug.trim(),
-        status: form.status,
-        plan: form.plan.trim() || "free",
-        admin: { email: form.adminEmail.trim(), password: form.adminPassword, firstName: form.adminFirstName.trim(), lastName: form.adminLastName.trim() },
-      };
-      if (!payload.name || !payload.slug || !payload.admin.email || !payload.admin.password || !payload.admin.firstName || !payload.admin.lastName) {
-        setCreateError("All fields are required");
-        setCreateLoading(false);
-        return;
-      }
-      if (!/^[a-z0-9-]+$/.test(payload.slug)) { setCreateError("Slug must be lowercase a-z, 0-9, hyphen"); setCreateLoading(false); return; }
-      const res = await platformApi.createTenant(payload);
-      const t = (res as unknown as { tenant: Tenant }).tenant;
-      setCreatedInfo({ name: t.name, slug: t.slug, status: t.status, adminEmail: payload.admin.email });
-      toast.success(`Tenant ${t.name} created`);
-      setCreateOpen(false);
-      setForm({ name:"", slug:"", plan:"free", status:"TRIAL", adminEmail:"", adminPassword:"", adminFirstName:"", adminLastName:"" });
-      load();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to create tenant";
-      setCreateError(msg);
-    } finally { setCreateLoading(false); }
-  };
+  const columns: Column<Tenant>[] = [
+    {
+      key: "name",
+      header: "Workspace",
+      cell: (t) => (
+        <Link href={`/platform/tenants/${t.id}` as never} className="flex items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/50 text-muted-foreground">
+            <Building2 className="size-4" />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate font-medium hover:underline">{t.name}</span>
+            <span className="block font-mono text-xs text-muted-foreground">{t.slug}</span>
+          </span>
+        </Link>
+      ),
+    },
+    { key: "status", header: "Status", cell: (t) => <StatusPill status={t.status} label={humanize(t.status)} /> },
+    { key: "plan", header: "Plan", cell: (t) => <span>{humanize(t.plan ?? "free")}</span>, headerClassName: "hidden sm:table-cell", className: "hidden sm:table-cell" },
+    {
+      key: "created",
+      header: "Created",
+      cell: (t) => <span className="text-muted-foreground">{formatDate(t.createdAt)}</span>,
+      headerClassName: "hidden md:table-cell",
+      className: "hidden md:table-cell",
+    },
+    {
+      key: "actions",
+      header: <span className="sr-only">Actions</span>,
+      className: "w-12",
+      cell: (t) => <RowActions actions={[{ label: "Open", icon: Eye, onSelect: () => router.push(`/platform/tenants/${t.id}` as never) }]} />,
+    },
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Tenants</h1>
-          <p className="text-sm text-muted-foreground">Platform tenant management • real backend APIs • excludes __platform</p>
-        </div>
-        <Button onClick={()=>{ setCreateError(null); setCreatedInfo(null); setCreateOpen(true); }}>+ Create Tenant</Button>
-      </div>
-
-      {createdInfo && (
-        <Alert className="border-emerald-500/30 bg-emerald-500/10">
-          <AlertDescription className="text-sm">
-            Tenant created successfully — {createdInfo.name} ({createdInfo.slug}) · Status {createdInfo.status} · Admin {createdInfo.adminEmail}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Filters</CardTitle>
-          <CardDescription>Search by name or slug, filter by status</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <div className="flex-1 space-y-2">
-            <Label htmlFor="search">Search</Label>
-            <div className="flex gap-2">
-              <Input id="search" placeholder="acme, store..." value={searchInput} onChange={(e)=>setSearchInput(e.target.value)} onKeyDown={(e)=>e.key==="Enter"&&handleSearch()} />
-              <Button variant="outline" onClick={handleSearch}>Search</Button>
-              {search ? <Button variant="ghost" onClick={()=>{setSearch(""); setSearchInput(""); setPage(1);}}>Clear</Button> : null}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Status</Label>
-            <Select
-              options={[
-                { value: "all", label: "All" },
-                { value: "ACTIVE", label: "ACTIVE" },
-                { value: "TRIAL", label: "TRIAL" },
-                { value: "SUSPENDED", label: "SUSPENDED" },
-                { value: "CANCELLED", label: "CANCELLED" },
-              ]}
-              value={status}
-              onValueChange={(v)=>{ setStatus(v); setPage(1); }}
-              placeholder="All"
+    <PageBody>
+      <PageHeader
+        title="Tenants"
+        description="Every business on PulseOps, its plan and status. Open one to manage it or start a support session."
+        actions={
+          <Button onClick={() => setCreating(true)}>
+            <Plus /> Create tenant
+          </Button>
+        }
+      />
+      <Card className="gap-0 py-0">
+        <TableToolbar>
+          <SearchInput value={search} onChange={(q) => set({ q })} placeholder="Search by name or slug…" />
+          <FilterSelect value={status} onChange={(v) => set({ status: v })} allLabel="All statuses" options={STATUSES.map((s) => ({ value: s, label: humanize(s) }))} className="sm:ml-auto sm:w-40" />
+        </TableToolbar>
+        <DataTable
+          columns={columns}
+          rows={query.data?.data}
+          rowKey={(t) => t.id}
+          loading={query.isFetching}
+          error={query.error}
+          onRetry={() => query.refetch()}
+          meta={query.data?.meta}
+          onPageChange={(p) => set({ page: p })}
+          empty={
+            <EmptyState
+              icon={Building2}
+              title={search || status !== ALL ? "No matching tenants" : "No tenants yet"}
+              description={search || status !== ALL ? "Try clearing the filters." : "Create the first business to get started."}
             />
-          </div>
-          <div className="text-xs text-muted-foreground pb-2">Total: {meta?.total ?? (loading?"…":0)}</div>
-        </CardContent>
+          }
+        />
       </Card>
+      <CreateTenantDialog open={creating} onOpenChange={setCreating} />
+    </PageBody>
+  );
+}
 
-      {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
+const PASSWORD_RULES = [/.{8,}/, /[A-Z]/, /[a-z]/, /[0-9]/, /[^A-Za-z0-9]/];
 
-      <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0">
-          <div>
-            <CardTitle>Tenant list</CardTitle>
-            <CardDescription>Columns derived from actual API response (name, slug, status, plan, created)</CardDescription>
-          </div>
-          <Button variant="outline" size="sm" onClick={load} disabled={loading}>Refresh</Button>
-        </CardHeader>
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="p-6 space-y-3"><Skeleton className="h-10 w-full" /><Skeleton className="h-10 w-full" /><Skeleton className="h-10 w-full" /></div>
-          ) : tenants.length===0 ? (
-            <div className="p-12 text-center text-sm text-muted-foreground">No tenants found. {search||status!=="all" ? "Try clearing filters." : "Create the first tenant."}</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Tenant</TableHead>
-                    <TableHead>Slug</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Plan</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tenants.map((t)=> {
-                    const created = (t as unknown as { created_at?: string; createdAt?: string }).created_at ?? (t as unknown as { createdAt: string }).createdAt;
-                    return (
-                      <TableRow key={t.id}>
-                        <TableCell className="min-w-[180px]">
-                          <div className="font-medium truncate">{t.name}</div>
-                          <div className="text-xs text-muted-foreground truncate">{t.id.slice(0,8)}…</div>
-                        </TableCell>
-                        <TableCell><code className="rounded bg-muted px-1.5 py-0.5 text-xs">{t.slug}</code></TableCell>
-                        <TableCell><StatusBadge status={t.status} /></TableCell>
-                        <TableCell><span className="text-sm">{(t as unknown as {plan?:string}).plan ?? "free"}</span></TableCell>
-                        <TableCell><span className="text-xs text-muted-foreground">{created ? new Date(created).toLocaleDateString() : "—"}</span></TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-1">
-                            <Button size="sm" variant="ghost" onClick={()=>router.push(`/platform/tenants/${t.id}` as never)}>View</Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-          {meta && meta.totalPages > 1 && (
-            <div className="flex items-center justify-between border-t p-4 text-sm">
-              <span className="text-muted-foreground">Page {meta.page} of {meta.totalPages} • {meta.total} tenants</span>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled={page<=1} onClick={()=>setPage(p=>Math.max(1,p-1))}>Previous</Button>
-                <Button variant="outline" size="sm" disabled={page>=meta.totalPages} onClick={()=>setPage(p=>p+1)}>Next</Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+const schema = z.object({
+  name: z.string().trim().min(1, "Business name is required").max(255),
+  slug: z
+    .string()
+    .trim()
+    .min(1, "Slug is required")
+    .max(100)
+    .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers and hyphens"),
+  status: z.enum(["ACTIVE", "TRIAL", "SUSPENDED"]),
+  plan: z.string().min(1),
+  firstName: z.string().trim().min(1, "Required").max(100),
+  lastName: z.string().trim().min(1, "Required").max(100),
+  email: z.string().trim().email("Enter a valid email"),
+  password: z.string().refine((p) => PASSWORD_RULES.every((r) => r.test(p)), "At least 8 characters with upper and lower case, a number and a symbol"),
+});
 
-      <DialogRoot open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[620px]">
-          <DialogHeader>
-            <DialogTitle>Create Tenant</DialogTitle>
-            <DialogDescription>Creates tenant, seeded roles/permissions, tenant admin and membership atomically. Admin password is never displayed after submission.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleCreate} className="space-y-6">
-            {createError && <Alert variant="destructive"><AlertDescription>{createError}</AlertDescription></Alert>}
-            <div className="space-y-4">
-              <div className="text-sm font-semibold">Tenant Information</div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="t-name">Tenant name *</Label>
-                  <Input id="t-name" value={form.name} onChange={(e)=>setForm({...form, name:e.target.value})} placeholder="Acme Store" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="t-slug">Tenant slug *</Label>
-                  <Input id="t-slug" value={form.slug} onChange={(e)=>setForm({...form, slug:e.target.value})} placeholder="acme-store" required />
-                  <p className="text-xs text-muted-foreground">Lowercase, a-z 0-9 hyphen, 1-100. Must be unique.</p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="t-status">Status</Label>
-                  <Select
-                    id="t-status"
-                    options={[
-                      { value: "ACTIVE", label: "ACTIVE" },
-                      { value: "TRIAL", label: "TRIAL" },
-                      { value: "SUSPENDED", label: "SUSPENDED" },
-                    ]}
-                    value={form.status}
-                    onValueChange={(v)=>setForm({...form, status: v as Tenant["status"]})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="t-plan">Plan</Label>
-                  <Input id="t-plan" value={form.plan} onChange={(e)=>setForm({...form, plan:e.target.value})} placeholder="free" />
-                </div>
-              </div>
-            </div>
+type Values = z.infer<typeof schema>;
+const EMPTY: Values = { name: "", slug: "", status: "ACTIVE", plan: "free", firstName: "", lastName: "", email: "", password: "" };
 
-            <div className="space-y-4 border-t pt-4">
-              <div className="text-sm font-semibold">Initial Tenant Administrator</div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="a-first">First name *</Label>
-                  <Input id="a-first" value={form.adminFirstName} onChange={(e)=>setForm({...form, adminFirstName:e.target.value})} required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="a-last">Last name *</Label>
-                  <Input id="a-last" value={form.adminLastName} onChange={(e)=>setForm({...form, adminLastName:e.target.value})} required />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="a-email">Admin email *</Label>
-                <Input id="a-email" type="email" value={form.adminEmail} onChange={(e)=>setForm({...form, adminEmail:e.target.value})} placeholder="admin@acme.example.com" required />
-                <p className="text-xs text-muted-foreground">Must be globally unique (409 if duplicate).</p>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="a-pass">Password *</Label>
-                <Input id="a-pass" type="password" value={form.adminPassword} onChange={(e)=>setForm({...form, adminPassword:e.target.value})} placeholder="••••••••" required />
-                <p className="text-xs text-muted-foreground">Min 8, upper/lower/digit/special. Stored as Argon2id, never returned.</p>
-              </div>
-            </div>
+function CreateTenantDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const queryClient = useQueryClient();
+  const form = useForm<Values>({ resolver: zodResolver(schema), defaultValues: EMPTY });
+  const { errors } = form.formState;
+  const plans = useQuery({ queryKey: ["platform", "plans"], queryFn: () => platformApi.listPlans(), enabled: open, staleTime: 60_000 });
+  const status = useWatch({ control: form.control, name: "status" });
+  const plan = useWatch({ control: form.control, name: "plan" });
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={()=>setCreateOpen(false)} disabled={createLoading}>Cancel</Button>
-              <Button type="submit" disabled={createLoading}>{createLoading?"Creating...":"Create tenant"}</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </DialogRoot>
-    </div>
+  const create = useMutation({
+    mutationFn: (v: Values) =>
+      platformApi.createTenant({
+        name: v.name,
+        slug: v.slug,
+        status: v.status,
+        plan: v.plan,
+        admin: { email: v.email, password: v.password, firstName: v.firstName, lastName: v.lastName },
+      }),
+    onSuccess: ({ tenant }, v) => {
+      toast.success(`${tenant.name} is ready`, { description: `${v.email} can now sign in.` });
+      queryClient.invalidateQueries({ queryKey: ["platform", "tenants"] });
+      form.reset(EMPTY);
+      onOpenChange(false);
+    },
+    onError: (e) => {
+      if (!applyApiFieldErrors(e, form.setError, ["name", "slug", "plan", "status"])) toastError(e, "Couldn't create tenant");
+    },
+  });
+
+  return (
+    <FormDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Create tenant"
+      description="Sets up the business with its built-in roles and a first admin who can sign in straight away."
+      submitLabel="Create tenant"
+      pending={create.isPending}
+      onSubmit={form.handleSubmit((v) => create.mutate(v))}
+      className="sm:max-w-xl"
+    >
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Business name" htmlFor="t-name" error={errors.name?.message}>
+          <Input id="t-name" placeholder="Acme Retail" {...form.register("name")} />
+        </Field>
+        <Field label="Slug" htmlFor="t-slug" error={errors.slug?.message} hint="Used to sign in and in the shop address.">
+          <Input id="t-slug" placeholder="acme" className="font-mono" {...form.register("slug")} />
+        </Field>
+        <Field label="Status" htmlFor="t-status">
+          <Select
+            id="t-status"
+            value={status}
+            onValueChange={(v) => form.setValue("status", v as Values["status"])}
+            options={(["ACTIVE", "TRIAL", "SUSPENDED"] as const).map((s) => ({ value: s, label: humanize(s) }))}
+          />
+        </Field>
+        <Field label="Plan" htmlFor="t-plan">
+          <Select
+            id="t-plan"
+            value={plan}
+            onValueChange={(v) => form.setValue("plan", v)}
+            options={(plans.data ?? [{ code: "free", name: "Free" }]).map((p) => ({ value: p.code, label: p.name }))}
+          />
+        </Field>
+      </div>
+      <div className="flex flex-col gap-4 border-t pt-4">
+        <p className="text-sm font-medium">First admin</p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="First name" htmlFor="a-first" error={errors.firstName?.message}>
+            <Input id="a-first" {...form.register("firstName")} />
+          </Field>
+          <Field label="Last name" htmlFor="a-last" error={errors.lastName?.message}>
+            <Input id="a-last" {...form.register("lastName")} />
+          </Field>
+        </div>
+        <Field label="Email" htmlFor="a-email" error={errors.email?.message}>
+          <Input id="a-email" type="email" placeholder="owner@acme.in" {...form.register("email")} />
+        </Field>
+        <Field label="Password" htmlFor="a-pass" error={errors.password?.message} hint="Share it with them securely; it isn't shown again.">
+          <Input id="a-pass" type="password" autoComplete="new-password" {...form.register("password")} />
+        </Field>
+      </div>
+    </FormDialog>
   );
 }

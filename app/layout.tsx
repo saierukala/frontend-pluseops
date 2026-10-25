@@ -6,7 +6,9 @@ import { AuthProvider } from "@/lib/auth/auth-context";
 import { PermissionProvider } from "@/lib/auth/permission-context";
 import { Toaster } from "@/components/ui/sonner";
 import { AppProviders } from "@/components/providers/app-providers";
+import { themeBootScript } from "@/features/appearance/themes";
 import "./globals.css";
+import "./themes.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -100,6 +102,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans text-foreground antialiased">
+        {/* Saved sidebar palette and accent color, set before the first paint */}
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <script
           // Early bis_* cleanup — browser extensions inject bis_skin_checked / bis_register / __processed_* before React hydrates,
           // causing hydration mismatch on Next.js dev overlay <div hidden>. Strip them before hydration.

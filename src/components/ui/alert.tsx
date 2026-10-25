@@ -5,7 +5,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-  "relative w-full rounded-xl border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  // Icon column is auto-width (0 when there is no icon), so the layout never depends on :has()
+  "relative w-full rounded-xl border px-4 py-3 text-sm grid grid-cols-[auto_1fr] gap-y-0.5 items-start [&>svg]:mr-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
   {
     variants: {
       variant: {
@@ -46,6 +47,14 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function AlertCompat({ className, variant = "default", title, icon, children, dismissible, onDismiss, ...props }: AlertProps) {
+  // shadcn-style composition (<Alert><Icon /><AlertTitle/><AlertDescription/></Alert>): lay the children out directly
+  if (!title && !icon && !dismissible) {
+    return (
+      <Alert variant={variant} className={className} {...props}>
+        {children}
+      </Alert>
+    );
+  }
   return (
     <Alert variant={variant} className={className} {...props}>
       {icon ? <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center" aria-hidden>{icon}</span> : null}

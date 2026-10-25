@@ -1,0 +1,191 @@
+/* =========================================================
+   UI themes, picked under Settings → Appearance (or the user menu → Appearance).
+   The choice is set on <html> before the page paints (see src/features/appearance/themes.ts):
+     data-sidebar-theme="…"  sidebar palette   (none = "pulse", the default in globals.css)
+     data-accent="…"         brand/accent hue  (none = "indigo", the default in globals.css)
+   Imported after globals.css, so a named sidebar palette wins over the .dark sidebar colors.
+   ========================================================= */
+
+/* ---------- Sidebar palettes ---------- */
+
+[data-sidebar-theme="khaki"] {
+  --sidebar: #d3d1b9;
+  --sidebar-foreground: #151f24;
+  --sidebar-primary: #e82339;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgb(21 31 36 / 0.09);
+  --sidebar-accent-foreground: #151f24;
+  --sidebar-border: rgb(21 31 36 / 0.12);
+  --sidebar-ring: #1927e8;
+}
+
+[data-sidebar-theme="teal"] {
+  --sidebar: #284e55;
+  --sidebar-foreground: #f2f3f3;
+  --sidebar-primary: #a95641;
+  --sidebar-primary-foreground: #f2f3f3;
+  --sidebar-accent: rgb(242 243 243 / 0.13);
+  --sidebar-accent-foreground: #f2f3f3;
+  --sidebar-border: rgb(242 243 243 / 0.14);
+  --sidebar-ring: #4bb4e0;
+}
+
+[data-sidebar-theme="snow"] {
+  --sidebar: #fbfcfc;
+  --sidebar-foreground: #292c41;
+  --sidebar-primary: #8d746c;
+  --sidebar-primary-foreground: #fbfcfc;
+  --sidebar-accent: rgb(76 161 228 / 0.16);
+  --sidebar-accent-foreground: #292c41;
+  --sidebar-border: rgb(41 44 65 / 0.1);
+  --sidebar-ring: #4ca1e4;
+}
+
+[data-sidebar-theme="slate"] {
+  --sidebar: #2e3f47;
+  --sidebar-foreground: #f4f1f1;
+  --sidebar-primary: #716452;
+  --sidebar-primary-foreground: #f4f1f1;
+  --sidebar-accent: rgb(163 199 225 / 0.16);
+  --sidebar-accent-foreground: #f4f1f1;
+  --sidebar-border: rgb(244 241 241 / 0.12);
+  --sidebar-ring: #a3c7e1;
+}
+
+[data-sidebar-theme="midnight"] {
+  --sidebar: #292c41;
+  --sidebar-foreground: #fefefe;
+  --sidebar-primary: #ef6b41;
+  --sidebar-primary-foreground: #fefefe;
+  --sidebar-accent: rgb(238 222 222 / 0.14);
+  --sidebar-accent-foreground: #fefefe;
+  --sidebar-border: rgb(238 222 222 / 0.14);
+  --sidebar-ring: #96c08e;
+}
+
+[data-sidebar-theme="dusk"] {
+  --sidebar: #373f55;
+  --sidebar-foreground: #f7f8f7;
+  --sidebar-primary: #9d6759;
+  --sidebar-primary-foreground: #f7f8f7;
+  --sidebar-accent: rgb(162 186 212 / 0.18);
+  --sidebar-accent-foreground: #f7f8f7;
+  --sidebar-border: rgb(247 248 247 / 0.12);
+  --sidebar-ring: #a2bad4;
+}
+
+[data-sidebar-theme="navy"] {
+  --sidebar: #232f57;
+  --sidebar-foreground: #f1f4f2;
+  --sidebar-primary: #ee8888;
+  --sidebar-primary-foreground: #0f0f0f;
+  --sidebar-accent: rgb(111 133 181 / 0.35);
+  --sidebar-accent-foreground: #f1f4f2;
+  --sidebar-border: rgb(136 158 175 / 0.2);
+  --sidebar-ring: #889eaf;
+}
+
+[data-sidebar-theme="mist"] {
+  --sidebar: #f9f9f9;
+  --sidebar-foreground: #28282a;
+  --sidebar-primary: #bdbd61;
+  --sidebar-primary-foreground: #28282a;
+  --sidebar-accent: rgb(160 156 171 / 0.22);
+  --sidebar-accent-foreground: #28282a;
+  --sidebar-border: rgb(60 58 69 / 0.1);
+  --sidebar-ring: #a09cab;
+}
+
+/* ---------- Accent colors (light, then dark) ----------
+   Only the brand hue changes; --accent tints and --sidebar-primary follow it from globals.css. */
+
+:root[data-accent="blue"] {
+  --primary: oklch(0.546 0.245 262.881);
+  --primary-hover: oklch(0.488 0.243 264.376);
+  --ring: oklch(0.623 0.214 259.815);
+  --chart-1: oklch(0.623 0.214 259.815);
+}
+:root.dark[data-accent="blue"] {
+  --primary: oklch(0.707 0.165 254.624);
+  --primary-hover: oklch(0.756 0.14 254);
+  --ring: oklch(0.707 0.165 254.624);
+  --chart-1: oklch(0.707 0.165 254.624);
+}
+
+:root[data-accent="violet"] {
+  --primary: oklch(0.541 0.281 293.009);
+  --primary-hover: oklch(0.491 0.27 292.581);
+  --ring: oklch(0.606 0.25 292.717);
+  --chart-1: oklch(0.606 0.25 292.717);
+}
+:root.dark[data-accent="violet"] {
+  --primary: oklch(0.702 0.183 293.541);
+  --primary-hover: oklch(0.75 0.16 293.5);
+  --ring: oklch(0.702 0.183 293.541);
+  --chart-1: oklch(0.702 0.183 293.541);
+}
+
+:root[data-accent="teal"] {
+  --primary: oklch(0.6 0.118 184.704);
+  --primary-hover: oklch(0.511 0.096 186.391);
+  --ring: oklch(0.6 0.118 184.704);
+  --chart-1: oklch(0.6 0.118 184.704);
+}
+:root.dark[data-accent="teal"] {
+  --primary: oklch(0.704 0.14 182.503);
+  --primary-hover: oklch(0.777 0.152 181.912);
+  --ring: oklch(0.704 0.14 182.503);
+  --chart-1: oklch(0.704 0.14 182.503);
+}
+
+:root[data-accent="emerald"] {
+  --primary: oklch(0.596 0.145 163.225);
+  --primary-hover: oklch(0.508 0.118 165.612);
+  --ring: oklch(0.596 0.145 163.225);
+  --chart-1: oklch(0.596 0.145 163.225);
+}
+:root.dark[data-accent="emerald"] {
+  --primary: oklch(0.696 0.17 162.48);
+  --primary-hover: oklch(0.765 0.177 163.223);
+  --ring: oklch(0.696 0.17 162.48);
+  --chart-1: oklch(0.696 0.17 162.48);
+}
+
+:root[data-accent="orange"] {
+  --primary: oklch(0.646 0.222 41.116);
+  --primary-hover: oklch(0.553 0.195 38.402);
+  --ring: oklch(0.705 0.213 47.604);
+  --chart-1: oklch(0.705 0.213 47.604);
+}
+:root.dark[data-accent="orange"] {
+  --primary: oklch(0.75 0.183 55.934);
+  --primary-hover: oklch(0.8 0.15 60);
+  --ring: oklch(0.75 0.183 55.934);
+  --chart-1: oklch(0.75 0.183 55.934);
+}
+
+:root[data-accent="rose"] {
+  --primary: oklch(0.586 0.253 17.585);
+  --primary-hover: oklch(0.514 0.222 16.935);
+  --ring: oklch(0.645 0.246 16.439);
+  --chart-1: oklch(0.645 0.246 16.439);
+}
+:root.dark[data-accent="rose"] {
+  --primary: oklch(0.712 0.194 13.428);
+  --primary-hover: oklch(0.76 0.17 13);
+  --ring: oklch(0.712 0.194 13.428);
+  --chart-1: oklch(0.712 0.194 13.428);
+}
+
+:root[data-accent="graphite"] {
+  --primary: oklch(0.274 0.006 286.033);
+  --primary-hover: oklch(0.21 0.006 285.885);
+  --ring: oklch(0.552 0.016 285.938);
+  --chart-1: oklch(0.442 0.017 285.786);
+}
+:root.dark[data-accent="graphite"] {
+  --primary: oklch(0.92 0.004 286.32);
+  --primary-hover: oklch(0.967 0.001 286.375);
+  --ring: oklch(0.705 0.015 286.067);
+  --chart-1: oklch(0.871 0.006 286.286);
+}

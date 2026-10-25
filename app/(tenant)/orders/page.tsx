@@ -38,14 +38,16 @@ export default function OrdersPage() {
   const counts = overview.data && !isSectionError(overview.data.orders) ? overview.data.orders : undefined;
 
   const columns: Column<Order>[] = [
-    { key: "id", header: "Order", cell: (o) => <span className="font-mono text-[13px] font-medium">#{shortId(o.id)}</span> },
+    { key: "id", header: "Order", cell: (o) => <span className="font-mono text-[13px] font-medium">#{shortId(o.id)}</span>, headerClassName: "hidden sm:table-cell", className: "hidden sm:table-cell" },
     {
       key: "customer",
       header: "Customer",
       cell: (o) => (
         <div className="min-w-0">
           <p className="truncate font-medium">{fullName(o.customer)}</p>
-          <p className="truncate text-xs text-muted-foreground">{o.customer?.email}</p>
+          <p className="hidden truncate text-xs text-muted-foreground sm:block">{o.customer?.email}</p>
+          {/* Phones drop the Order column, so the number moves under the name */}
+          <p className="font-mono text-xs text-muted-foreground sm:hidden">#{shortId(o.id)}</p>
         </div>
       ),
     },

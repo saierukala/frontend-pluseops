@@ -24,7 +24,7 @@ export default function RevenueAnalyticsPage() {
   const { params, groupBy, range } = useAnalyticsRange();
   const revenue = useQuery({ queryKey: ["analytics", "revenue", params], queryFn: () => analyticsApi.getRevenue({ ...params, limit: 100 }) });
   const rows = revenue.data ?? [];
-  const sum = (k: "grossRevenue" | "totalRefunded" | "netRevenue") => rows.reduce((s, b) => s + Number(b[k]), 0);
+  const sum = (k: "grossRevenue" | "totalRefunded" | "netRevenue") => rows.reduce((s, b) => s + Number(b[k] ?? 0), 0);
 
   return (
     <PageBody>
@@ -46,7 +46,7 @@ export default function RevenueAnalyticsPage() {
             <ErrorState error={revenue.error} onRetry={() => revenue.refetch()} />
           ) : rows.length ? (
             <ChartContainer config={config} className="aspect-auto h-[320px] w-full">
-              <BarChart data={rows.map((b) => ({ bucket: b.bucket, net: Number(b.netRevenue), refunded: Number(b.totalRefunded) }))} margin={{ left: 4, right: 8, top: 8 }}>
+              <BarChart data={rows.map((b) => ({ bucket: b.bucket, net: Number(b.netRevenue ?? 0), refunded: Number(b.totalRefunded ?? 0) }))} margin={{ left: 4, right: 8, top: 8 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="bucket" tickLine={false} axisLine={false} tickMargin={8} minTickGap={24} tickFormatter={(v) => bucketLabel(v, groupBy)} />
                 <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, DEFAULT_CURRENCY, { compact: true })} />

@@ -14,7 +14,7 @@ import type { QueryParams } from "@/lib/api/query";
 import type { SuccessEnvelope } from "@/lib/api/types";
 import { usePermission } from "@/lib/auth/permission-context";
 import { useUrlState } from "@/hooks/use-url-state";
-import { formatDateTime, fullName, humanize, shortId } from "@/lib/format";
+import { formatDateTime, fullName, humanize, shortId, tidyIds } from "@/lib/format";
 
 /** Fields shared by audit and activity log rows. */
 interface LogRow {
@@ -86,7 +86,7 @@ export function LogViewer({
       header: actions ? "Resource" : "Details",
       cell: (l) =>
         l.description ? (
-          <span className="line-clamp-1 text-muted-foreground">{l.description}</span>
+          <span className="line-clamp-1 text-muted-foreground">{tidyIds(l.description)}</span>
         ) : (
           <span>
             {humanize(l.resource)}
@@ -138,7 +138,7 @@ export function LogViewer({
                   <dt className="text-muted-foreground">User agent</dt>
                   <dd className="break-all text-xs">{selected.userAgent ?? "—"}</dd>
                 </dl>
-                {selected.description ? <p>{selected.description}</p> : null}
+                {selected.description ? <p>{tidyIds(selected.description)}</p> : null}
                 {selected.metadata && Object.keys(selected.metadata).length ? (
                   <pre className="overflow-x-auto rounded-lg border bg-muted/40 p-3 font-mono text-xs">{JSON.stringify(selected.metadata, null, 2)}</pre>
                 ) : null}

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
-import { Activity, ChevronRight, ChevronsUpDown, LogOut, Monitor, Moon, Settings, Sun, UserRound } from "lucide-react";
+import { Activity, ChevronRight, ChevronsUpDown, LogOut, Monitor, Moon, Palette, Settings, Sun, UserRound } from "lucide-react";
+import { AppearanceDialog } from "@/features/appearance/appearance-dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -123,7 +124,7 @@ function NavEntry({ item, pathname, canSee }: { item: NavItem; pathname: string;
             <span>{item.label}</span>
           </Link>
         </SidebarMenuButton>
-        {item.badge ? <SidebarMenuBadge className="rounded-full border bg-background text-[10px] text-muted-foreground">{item.badge}</SidebarMenuBadge> : null}
+        {item.badge ? <SidebarMenuBadge className="rounded-full border border-sidebar-border bg-sidebar-accent text-[10px] text-sidebar-foreground/80">{item.badge}</SidebarMenuBadge> : null}
       </SidebarMenuItem>
     );
   }
@@ -164,8 +165,8 @@ function BrandMark({ variant }: { variant: Variant }) {
     <span
       className={
         variant === "platform"
-          ? "flex aspect-square size-8 items-center justify-center rounded-lg bg-foreground text-background"
-          : "flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-[color-mix(in_oklch,var(--primary)_60%,var(--chart-2))] text-primary-foreground shadow-sm"
+          ? "flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-foreground text-sidebar"
+          : "flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-sidebar-primary to-[color-mix(in_oklch,var(--sidebar-primary)_60%,var(--chart-2))] text-sidebar-primary-foreground shadow-sm"
       }
       aria-hidden
     >
@@ -197,7 +198,7 @@ function WorkspaceBlock({ variant }: { variant: Variant }) {
             <BrandMark variant={variant} />
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">{title}</span>
-              <span className="truncate text-xs text-muted-foreground">{subtitle}</span>
+              <span className="truncate text-xs text-sidebar-foreground/65">{subtitle}</span>
             </div>
           </Link>
         </SidebarMenuButton>
@@ -212,6 +213,7 @@ function NavUser({ variant }: { variant: Variant }) {
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  const [appearanceOpen, setAppearanceOpen] = React.useState(false);
 
   const name = fullName(user);
   const role = variant === "platform" ? "Platform admin" : humanize(roles[0]?.name ?? user?.roles?.[0]?.name ?? "member");
@@ -230,7 +232,7 @@ function NavUser({ variant }: { variant: Variant }) {
               <UserAvatar first={user?.firstName} last={user?.lastName} />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{name}</span>
-                <span className="truncate text-xs text-muted-foreground">{role}</span>
+                <span className="truncate text-xs text-sidebar-foreground/65">{role}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -275,12 +277,16 @@ function NavUser({ variant }: { variant: Variant }) {
                 <Monitor /> System
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
+            <DropdownMenuItem onSelect={() => setAppearanceOpen(true)}>
+              <Palette /> Appearance…
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={handleLogout} className="text-destructive focus:text-destructive">
               <LogOut /> Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <AppearanceDialog open={appearanceOpen} onOpenChange={setAppearanceOpen} />
       </SidebarMenuItem>
     </SidebarMenu>
   );

@@ -14,7 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from "@/components/ui/command";
 import { notificationsApi } from "@/lib/api/modules/notifications";
 import { usePermission } from "@/lib/auth/permission-context";
-import { formatRelative } from "@/lib/format";
+import { formatRelative, tidyIds } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useNavFilter } from "./app-sidebar";
 import type { NavGroup } from "./nav-config";
@@ -180,7 +180,7 @@ function NotificationsBell() {
                   <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", n.isRead ? "bg-transparent" : "bg-primary")} aria-hidden />
                   <div className="min-w-0 space-y-0.5">
                     <p className="truncate text-sm font-medium">{n.title}</p>
-                    <p className="line-clamp-2 text-xs text-muted-foreground">{n.message}</p>
+                    <p className="line-clamp-2 text-xs text-muted-foreground">{tidyIds(n.message)}</p>
                     <p className="text-[11px] text-muted-foreground/80">{formatRelative(n.createdAt)}</p>
                   </div>
                 </li>

@@ -88,8 +88,15 @@ export function ProtectedRoute({
   if (requiredScope && scope && scope !== requiredScope) {
     return (
       <ForbiddenExperience
-        title="Workspace mismatch"
-        description={`Your session scope ${scope} cannot access this workspace. ${requiredScope === "platform" ? "Platform routes require platform authentication." : "Tenant routes require tenant authentication."}`}
+        title={requiredScope === "platform" ? "Platform console only" : "Business workspace only"}
+        description={
+          requiredScope === "platform"
+            ? "This page is for the PulseOps platform team. You're signed in to a business workspace."
+            : "This page belongs to a business workspace. You're signed in to the platform console."
+        }
+        hint="Sign out and sign in with the matching account to open it."
+        backHref={scope === "platform" ? "/platform" : "/dashboard"}
+        backLabel={scope === "platform" ? "Back to the console" : "Back to dashboard"}
         showBack={false}
       />
     );

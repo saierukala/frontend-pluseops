@@ -78,3 +78,10 @@ export function humanize(value: string | null | undefined): string {
 export function shortId(id: string | null | undefined): string {
   return id ? id.slice(0, 8).toUpperCase() : "—";
 }
+
+const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+
+/** Server messages name records by full id ("Order 379f2c31-… created"); show the short #379F2C31 form people see elsewhere. */
+export function tidyIds(text: string | null | undefined): string {
+  return text ? text.replace(UUID, (id) => `#${shortId(id)}`) : "";
+}

@@ -7,7 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Building2, CheckCircle2, Store, KeyRound, LogOut, Monitor, ShieldCheck, Smartphone, UserRound } from "lucide-react";
+import { Building2, CheckCircle2, Store, KeyRound, LogOut, Monitor, Palette, ShieldCheck, Smartphone, UserRound } from "lucide-react";
+import { AppearanceSettings } from "@/features/appearance/appearance-settings";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,9 @@ export default function SettingsPage() {
           <TabsTrigger value="security">
             <ShieldCheck /> Security
           </TabsTrigger>
+          <TabsTrigger value="appearance">
+            <Palette /> Appearance
+          </TabsTrigger>
           {hasPermission("tenant:read") ? (
             <TabsTrigger value="workspace">
               <Building2 /> Workspace
@@ -63,6 +67,17 @@ export default function SettingsPage() {
         <TabsContent value="security" className="flex flex-col gap-6">
           <PasswordCard />
           <SessionsCard />
+        </TabsContent>
+        <TabsContent value="appearance" className="flex flex-col gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Appearance</CardTitle>
+              <CardDescription>Saved in this browser. Everyone else keeps their own look.</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <AppearanceSettings />
+            </CardContent>
+          </Card>
         </TabsContent>
         <TabsContent value="workspace" className="flex flex-col gap-6">
           <WorkspaceCard />

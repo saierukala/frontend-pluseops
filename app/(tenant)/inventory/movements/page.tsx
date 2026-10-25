@@ -27,6 +27,12 @@ const TYPE_TONES: Record<string, "info" | "success" | "warning" | "danger" | "br
   COUNT: "neutral",
 };
 
+
+// System reasons are codes like ORDER_CREATED; people type plain sentences, which stay as written
+function reasonLabel(reason: string) {
+  return /^[A-Z][A-Z_]+$/.test(reason) ? humanize(reason) : reason;
+}
+
 export default function MovementsPage() {
   const { get, set, page } = useUrlState();
   const type = get("type", ALL);
@@ -78,10 +84,11 @@ export default function MovementsPage() {
       cell: (m) =>
         m.referenceType === "ORDER" && m.referenceId ? (
           <Link href={`/orders/${m.referenceId}` as never} className="line-clamp-1 text-primary hover:underline">
-            {m.reason || "Order"}
+            Order #{m.referenceId.slice(0, 8).toUpperCase()}
+            {m.reason ? ` · ${reasonLabel(m.reason)}` : ""}
           </Link>
         ) : (
-          <span className="line-clamp-1 text-muted-foreground">{m.reason || "—"}</span>
+          <span className="line-clamp-1 text-muted-foreground">{m.reason ? reasonLabel(m.reason) : "—"}</span>
         ),
     },
   ];

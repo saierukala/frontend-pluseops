@@ -14,7 +14,7 @@ import { Can } from "@/components/auth/can";
 import { notificationsApi, type Notification } from "@/lib/api/modules/notifications";
 import { usePermission } from "@/lib/auth/permission-context";
 import { useUrlState } from "@/hooks/use-url-state";
-import { formatRelative } from "@/lib/format";
+import { formatRelative, tidyIds } from "@/lib/format";
 import { toastError } from "@/lib/api-errors";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -82,7 +82,7 @@ export default function NotificationsPage() {
                       <p className="truncate text-sm font-medium">{n.title}</p>
                       {!n.isRead ? <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-label="Unread" /> : null}
                     </div>
-                    <p className="text-sm text-muted-foreground">{n.message}</p>
+                    <p className="text-sm text-muted-foreground">{tidyIds(n.message)}</p>
                     <div className="flex items-center gap-3 pt-1 text-xs text-muted-foreground">
                       <span>{formatRelative(n.createdAt)}</span>
                       {href ? (

@@ -62,7 +62,7 @@ function RoleRow({
     } catch (err) {
       const apiErr = err as ApiError;
       if (apiErr.code === "ROLE_NAME_EXISTS" || apiErr.status === 409) setError("A role with this name already exists (409).");
-      else if (apiErr.code === "SYSTEM_ROLE_IMMUTABLE" || apiErr.status === 403) setError("System roles are immutable — cannot edit (403).");
+      else if (apiErr.code === "SYSTEM_ROLE_IMMUTABLE" || apiErr.status === 403) setError("Built-in roles can't be edited.");
       else if (apiErr.isValidation()) setError(apiErr.message || "Validation error (400).");
       else setError(apiErr.message || "Failed to update role.");
     } finally {
@@ -78,7 +78,7 @@ function RoleRow({
       onDeleted();
     } catch (err) {
       const apiErr = err as ApiError;
-      if (apiErr.code === "SYSTEM_ROLE_IMMUTABLE") toast.error("System roles cannot be deleted (403 SYSTEM_ROLE_IMMUTABLE).");
+      if (apiErr.code === "SYSTEM_ROLE_IMMUTABLE") toast.error("Built-in roles can't be deleted.");
       else if (apiErr.status === 404) toast.error("Role not found (404).");
       else toast.error(apiErr.message || "Delete failed");
     }
@@ -88,7 +88,7 @@ function RoleRow({
     // Only add new ids — backend is additive/idempotent; don't claim removal
     const toAdd = Array.from(selectedIds).filter((id) => !existingIds.has(id));
     if (toAdd.length === 0) {
-      toast.info("No new permissions to add — backend is additive and does not remove unchecked permissions.");
+      toast.info("Nothing new selected.");
       setPermsOpen(false);
       return;
     }
@@ -100,7 +100,7 @@ function RoleRow({
       onUpdated();
     } catch (err) {
       const apiErr = err as ApiError;
-      if (apiErr.code === "SYSTEM_ROLE_IMMUTABLE") toast.error("System role permissions cannot be modified (403).");
+      if (apiErr.code === "SYSTEM_ROLE_IMMUTABLE") toast.error("Built-in role permissions can't be changed.");
       else toast.error(apiErr.message || "Failed to assign permissions");
     } finally {
       setAssigning(false);
@@ -131,29 +131,29 @@ function RoleRow({
         <div className="flex items-center gap-1">
           <DialogRoot open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" disabled={isSystem} aria-label={`Edit ${role.name}`} title={isSystem ? "System roles are immutable (403)" : "Edit role"}>
+              <Button variant="ghost" size="sm" disabled={isSystem} aria-label={`Edit ${role.name}`} title={isSystem ? "Built-in roles can't be edited" : "Edit role"}>
                 <Pencil className="h-4 w-4" />
               </Button>
             </DialogTrigger>
             <DialogContent aria-describedby="edit-role-desc">
               <DialogHeader>
                 <DialogTitle>Edit role — {role.name}</DialogTitle>
-                <DialogDescription id="edit-role-desc">System roles cannot be edited. Backend returns 403 SYSTEM_ROLE_IMMUTABLE.</DialogDescription>
+                <DialogDescription id="edit-role-desc">Change the name or description of this role.</DialogDescription>
               </DialogHeader>
               {isSystem ? (
                 <Alert>
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>System role</AlertTitle>
-                  <AlertDescription>This role is immutable. Editing is blocked in the UI and rejected by the backend.</AlertDescription>
+                  <AlertDescription>Built-in roles keep their name and permissions.</AlertDescription>
                 </Alert>
               ) : null}
               <form onSubmit={handleUpdate} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor={`name-${role.id}`}>Name (^[a-z0-9_-]+$ 1-100)</Label>
+                  <Label htmlFor={`name-${role.id}`}>Name</Label>
                   <Input id={`name-${role.id}`} value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} disabled={isSystem} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor={`desc-${role.id}`}>Description (max 500)</Label>
+                  <Label htmlFor={`desc-${role.id}`}>Description</Label>
                   <Textarea id={`desc-${role.id}`} value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} rows={3} disabled={isSystem} />
                 </div>
                 {error ? <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert> : null}
@@ -171,7 +171,7 @@ function RoleRow({
 
           <DialogRoot open={permsOpen} onOpenChange={setPermsOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" disabled={isSystem} aria-label={`Manage permissions for ${role.name}`} title={isSystem ? "System role permissions immutable" : "Add permissions (additive)"}>
+              <Button variant="ghost" size="sm" disabled={isSystem} aria-label={`Manage permissions for ${role.name}`} title={isSystem ? "Built-in role permissions can't be changed" : "Add permissions"}>
                 <KeyRound className="h-4 w-4" />
               </Button>
             </DialogTrigger>
@@ -179,20 +179,20 @@ function RoleRow({
               <DialogHeader>
                 <DialogTitle>Add permissions — {role.name}</DialogTitle>
                 <DialogDescription id="perms-desc">
-                  This operation is <strong>additive & idempotent</strong> (POST /roles/:id/permissions). Unchecked permissions will <em>not</em> be removed — there is no permission-removal endpoint.
+                  Tick the permissions to add to this role. Permissions it already has stay as they are.
                 </DialogDescription>
               </DialogHeader>
               {isSystem ? (
                 <Alert>
                   <Lock className="h-4 w-4" />
                   <AlertTitle>Immutable role</AlertTitle>
-                  <AlertDescription>System role permissions cannot be modified (403 SYSTEM_ROLE_IMMUTABLE).</AlertDescription>
+                  <AlertDescription>Built-in role permissions can’t be changed. Create a custom role instead.</AlertDescription>
                 </Alert>
               ) : null}
               <Alert>
                 <Info className="h-4 w-4" />
                 <AlertTitle>How it works</AlertTitle>
-                <AlertDescription>Select permissions to <strong>add</strong>. Existing permissions are pre-checked and disabled. New selections will be sent as permissionIds[] and merged by the backend.</AlertDescription>
+                <AlertDescription>Permissions the role already has are ticked and can’t be unticked here.</AlertDescription>
               </Alert>
               <div className="space-y-6 py-2">
                 {TENANT_PERMISSION_GROUPS.map((group) => (
@@ -346,7 +346,7 @@ function RolesPageContent() {
     if (!userId.trim()) return;
     const toAdd = Array.from(assignRoleIds).filter((id) => !userRoles.some((r) => r.id === id));
     if (toAdd.length === 0) {
-      toast.info("No new roles to add — assignment is additive & idempotent. There is no role-removal endpoint.");
+      toast.info("Nothing new selected.");
       return;
     }
     setAssigningRoles(true);
@@ -383,18 +383,18 @@ function RolesPageContent() {
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Shield className="h-6 w-6 text-primary" aria-hidden="true" /> Roles & Permissions
           </h1>
-          <p className="text-sm text-muted-foreground">Manage tenant roles — system roles are immutable. Permissions are additive.</p>
+          <p className="text-sm text-muted-foreground">Decide what each person on your team can see and do.</p>
         </div>
         <DialogRoot open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button disabled={!canCreate} title={canCreate ? "Create role (role:create)" : "Requires role:create"}>
+            <Button disabled={!canCreate} title={canCreate ? "Create a custom role" : "You don’t have permission to create roles"}>
               <Plus className="mr-2 h-4 w-4" /> Create role
             </Button>
           </DialogTrigger>
           <DialogContent aria-describedby="create-desc">
             <DialogHeader>
               <DialogTitle>Create role</DialogTitle>
-              <DialogDescription id="create-desc">Name must match ^[a-z0-9_-]+$ 1-100. Backend returns 409 ROLE_NAME_EXISTS on duplicate.</DialogDescription>
+              <DialogDescription id="create-desc">Use lowercase letters, numbers, - or _ (for example “warehouse_staff”).</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="space-y-2">
@@ -420,7 +420,7 @@ function RolesPageContent() {
         <Alert>
           <Lock className="h-4 w-4" />
           <AlertTitle>Limited access</AlertTitle>
-          <AlertDescription>You can read roles (role:read) but need role:create to create new roles. Create button is disabled.</AlertDescription>
+          <AlertDescription>You can view roles, but your role doesn’t allow creating new ones.</AlertDescription>
         </Alert>
       ) : null}
 
@@ -428,7 +428,7 @@ function RolesPageContent() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">All roles <Badge variant="secondary">{roles.length}</Badge></CardTitle>
-          <CardDescription>Tenant-isolated. System roles (admin/manager/member) are immutable. Platform token → tenant RBAC is forbidden.</CardDescription>
+          <CardDescription>Admin, manager and member are built in. Create custom roles for anything in between.</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -460,24 +460,6 @@ function RolesPageContent() {
               </Table>
             </div>
           )}
-          {requestId ? <p className="mt-3 text-xs text-muted-foreground">Request ID: <code className="rounded bg-muted px-1">{requestId}</code></p> : null}
-        </CardContent>
-      </Card>
-
-      {/* Backend limitations */}
-      <Card className="border-dashed">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sm"><AlertTriangle className="h-4 w-4 text-amber-600" /> Backend capabilities & limitations</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm leading-6 text-muted-foreground">
-          <ul className="list-disc pl-5 space-y-1">
-            <li><code>POST /roles/:id/permissions</code> is additive & idempotent — no removal endpoint. UI does not fake removal.</li>
-            <li><code>POST /users/:id/roles</code> is additive & idempotent — no role-removal endpoint.</li>
-            <li>System roles (<code>admin</code>, <code>manager</code>, <code>member</code>) return 403 SYSTEM_ROLE_IMMUTABLE on edit/delete/permission assign — UI disables controls.</li>
-            <li>No <code>GET /auth/me/roles</code> or <code>/auth/me/permissions</code> — current user RBAC uses <code>GET /users/:id/roles</code> + permission union.</li>
-            <li>Tenant isolation is server-enforced — cross-tenant access returns 404 ROLE_NOT_FOUND / USER_NOT_FOUND.</li>
-            <li>409 ROLE_NAME_EXISTS, 400 VALIDATION_ERROR, 403, 404 are surfaced with requestId and retry.</li>
-          </ul>
         </CardContent>
       </Card>
 
@@ -486,7 +468,7 @@ function RolesPageContent() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" /> User role assignment</CardTitle>
           <CardDescription>
-            Assign roles to a user. Uses <code>GET /users/:id/roles</code> and <code>POST /users/:id/roles</code>. Additive only — there is no role removal endpoint; UI communicates this.
+            Give a team member more roles. Roles add up: a person can do everything any of their roles allows.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -513,8 +495,8 @@ function RolesPageContent() {
           ) : null}
           {!userRolesLoading && userId && (
             <div className="space-y-3 rounded-xl border p-4">
-              <div className="text-sm font-semibold flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> Assign additional roles (additive)</div>
-              <p className="text-xs text-muted-foreground">Checked roles will be sent as <code>roleIds[]</code>. Existing roles are pre-checked and disabled. No removal is performed.</p>
+              <div className="text-sm font-semibold flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> Assign additional roles</div>
+              <p className="text-xs text-muted-foreground">Roles the person already has are ticked. Tick more to add them.</p>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {roles.map((r) => {
                   const checked = assignRoleIds.has(r.id);
@@ -541,10 +523,10 @@ function RolesPageContent() {
                   );
                 })}
               </div>
-              <Button onClick={handleAssignUserRoles} disabled={assigningRoles || !perm.hasPermission("user:update")} title={perm.hasPermission("user:update") ? "" : "Requires user:update"}>
+              <Button onClick={handleAssignUserRoles} disabled={assigningRoles || !perm.hasPermission("user:update")} title={perm.hasPermission("user:update") ? "" : "You don’t have permission to change team members"}>
                 {assigningRoles ? "Assigning…" : "Assign selected roles"}
               </Button>
-              {!perm.hasPermission("user:update") ? <p className="text-xs text-amber-600">You lack user:update — assignment will be rejected with 403.</p> : null}
+              {!perm.hasPermission("user:update") ? <p className="text-xs text-amber-600">You need permission to update team members to assign roles.</p> : null}
             </div>
           )}
         </CardContent>

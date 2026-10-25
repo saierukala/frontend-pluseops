@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ForbiddenExperience } from "@/components/auth/forbidden-experience";
 import { Shield, AlertTriangle } from "lucide-react";
+import { formatDate, formatRelative, humanize } from "@/lib/format";
 
 function RoleDetailContent() {
   const params = useParams<{ id: string }>();
@@ -48,10 +49,9 @@ function RoleDetailContent() {
     if (error.status === 404) {
       return (
         <Card className="border-destructive/30">
-          <CardHeader><CardTitle>Role not found</CardTitle><CardDescription>404 ROLE_NOT_FOUND — cross-tenant access also returns 404 (tenant isolation).</CardDescription></CardHeader>
+          <CardHeader><CardTitle>Role not found</CardTitle><CardDescription>This role doesn’t exist or was deleted.</CardDescription></CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">{error.message}</p>
-            {error.requestId ? <p className="mt-2 text-xs">Request ID: <code className="bg-muted px-1">{error.requestId}</code></p> : null}
             <Button className="mt-4" variant="outline" onClick={() => router.push("/admin/roles")}>Back to roles</Button>
           </CardContent>
         </Card>
@@ -83,8 +83,8 @@ function RoleDetailContent() {
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Shield className="h-5 w-5" /></div>
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">{role.name} {role.isSystem ? <Badge variant="secondary">System — immutable</Badge> : <Badge variant="outline">Custom</Badge>}</h1>
-            <p className="text-sm text-muted-foreground">{role.description ?? "No description"} • {role.id.slice(0, 8)}… • {role.tenantId.slice(0, 8)}…</p>
+            <h1 className="text-2xl font-bold flex items-center gap-2">{role.name} {role.isSystem ? <Badge variant="secondary">Built-in</Badge> : <Badge variant="outline">Custom</Badge>}</h1>
+            <p className="text-sm text-muted-foreground">{role.description ?? "No description"}</p>
           </div>
         </div>
         <Badge variant="outline">{role.userCount ?? 0} users</Badge>
@@ -93,31 +93,37 @@ function RoleDetailContent() {
       {role.isSystem ? (
         <Alert>
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>System role — immutable</AlertTitle>
-          <AlertDescription>Backend returns 403 SYSTEM_ROLE_IMMUTABLE on edit/delete/permission assign. UI disables destructive controls.</AlertDescription>
+          <AlertTitle>Built-in role</AlertTitle>
+          <AlertDescription>Its name and permissions are fixed. Create a custom role if you need something different.</AlertDescription>
         </Alert>
       ) : null}
 
       <Card>
         <CardHeader>
           <CardTitle>Permissions ({role.permissions?.length ?? 0})</CardTitle>
-          <CardDescription>Tenant-isolated permissions unioned from this role. Add permissions via the list page (additive only).</CardDescription>
+          <CardDescription>What people with this role can do, grouped by area.</CardDescription>
         </CardHeader>
         <CardContent>
           {(role.permissions ?? []).length === 0 ? (
-            <p className="text-sm text-muted-foreground">No permissions assigned yet. Use the role list to add permissions (POST /roles/:id/permissions).</p>
+            <p className="text-sm text-muted-foreground">No permissions yet. Add them from the roles list.</p>
           ) : (
-            <div className="flex flex-wrap gap-2">
-              {role.permissions!.map((p) => (
-                <Badge key={p.id} variant="secondary" className="px-2 py-1 text-xs">
-                  {p.name} <span className="ml-1 text-muted-foreground">({p.resource}:{p.action})</span>
-                </Badge>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {Object.entries(Object.groupBy(role.permissions!, (p) => p.resource)).map(([resource, perms]) => (
+                <div key={resource} className="rounded-lg border p-3">
+                  <p className="text-sm font-medium">{humanize(resource)}</p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {(perms ?? []).map((p) => (
+                      <Badge key={p.id} variant="secondary" className="text-xs font-normal">
+                        {humanize(p.action)}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           )}
           <div className="mt-4 grid gap-2 text-xs text-muted-foreground">
-            <div>Role ID: <code className="bg-muted px-1">{role.id}</code></div>
-            <div>Created: {new Date(role.createdAt).toLocaleString()} • Updated: {new Date(role.updatedAt).toLocaleString()}</div>
+            <div>Created {formatDate(role.createdAt)} · Updated {formatRelative(role.updatedAt)}</div>
           </div>
         </CardContent>
       </Card>

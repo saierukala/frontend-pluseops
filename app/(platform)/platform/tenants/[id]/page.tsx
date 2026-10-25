@@ -7,7 +7,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/app/status-pill";
+import { formatDate, humanize } from "@/lib/format";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { platformApi } from "@/lib/api/modules/platform";
@@ -120,7 +121,7 @@ export default function TenantDetailPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{tenant.name}</h1>
-          <p className="text-sm text-muted-foreground">{tenant.slug} • {(tenant as unknown as { plan?: string }).plan ?? "free"} • {tenant.id.slice(0,8)}…</p>
+          <p className="text-sm text-muted-foreground"><span className="font-mono">{tenant.slug}</span> · {humanize((tenant as unknown as { plan?: string }).plan ?? "free")} plan</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={()=>load()} disabled={loading}>Refresh</Button>
@@ -136,9 +137,9 @@ export default function TenantDetailPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Tenant details</CardTitle>
-                <CardDescription>ID {tenant.id} • Created {new Date((tenant as unknown as { created_at?: string; createdAt?: string }).created_at ?? (tenant as unknown as { createdAt: string}).createdAt).toLocaleString()}</CardDescription>
+                <CardDescription>Created {formatDate((tenant as unknown as { created_at?: string; createdAt?: string }).created_at ?? (tenant as unknown as { createdAt: string }).createdAt)}</CardDescription>
               </div>
-              <Badge variant={tenant.status==="ACTIVE"?"default":tenant.status==="TRIAL"?"secondary":"outline"}>{tenant.status}</Badge>
+              <StatusPill status={tenant.status} label={humanize(tenant.status)} />
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -148,7 +149,7 @@ export default function TenantDetailPage() {
                   <div><div className="text-xs text-muted-foreground">Name</div><div className="text-sm font-medium">{tenant.name}</div></div>
                   <div><div className="text-xs text-muted-foreground">Slug</div><div className="text-sm font-mono">{tenant.slug}</div></div>
                   <div><div className="text-xs text-muted-foreground">Plan</div><div className="text-sm">{(tenant as unknown as {plan?:string}).plan ?? "free"}</div></div>
-                  <div><div className="text-xs text-muted-foreground">Status</div><div className="text-sm">{tenant.status}</div></div>
+                  <div><div className="text-xs text-muted-foreground">Status</div><div className="text-sm">{humanize(tenant.status)}</div></div>
                 </div>
                 <Button variant="outline" size="sm" onClick={()=>setEditMode(true)}>Edit tenant</Button>
               </>
@@ -176,10 +177,10 @@ export default function TenantDetailPage() {
               <div className="flex gap-2">
                 <Select
                   options={[
-                    { value: "ACTIVE", label: "ACTIVE" },
-                    { value: "TRIAL", label: "TRIAL" },
-                    { value: "SUSPENDED", label: "SUSPENDED" },
-                    { value: "CANCELLED", label: "CANCELLED" },
+                    { value: "ACTIVE", label: "Active" },
+                    { value: "TRIAL", label: "Trial" },
+                    { value: "SUSPENDED", label: "Suspended" },
+                    { value: "CANCELLED", label: "Cancelled" },
                   ]}
                   value={statusValue}
                   onValueChange={(v)=>setStatusValue(v as Tenant["status"])}
@@ -187,15 +188,15 @@ export default function TenantDetailPage() {
                 />
                 <Button onClick={handleStatus} disabled={statusSaving || statusValue===tenant.status}>{statusSaving?"Updating...":"Update status"}</Button>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">Suspending a tenant blocks tenant login (403 TENANT_INACTIVE) until reactivated.</p>
+              <p className="text-xs text-muted-foreground mt-2">Suspended or cancelled businesses can’t sign in until they’re active again.</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Create tenant admin</CardTitle>
-            <CardDescription>Creates initial admin for this tenant (platform:tenant:create).</CardDescription>
+            <CardTitle>Add an admin</CardTitle>
+            <CardDescription>Give another person full admin access to this business.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleCreateAdmin} className="space-y-3">
@@ -217,7 +218,7 @@ export default function TenantDetailPage() {
               <div className="space-y-2">
                 <Label htmlFor="adm-pass">Password</Label>
                 <Input id="adm-pass" type="password" value={adminForm.password} onChange={(e)=>setAdminForm({...adminForm, password:e.target.value})} required />
-                <p className="text-xs text-muted-foreground">Min 8, upper/lower/digit/special. Never shown after submission.</p>
+                <p className="text-xs text-muted-foreground">At least 8 characters with upper and lower case, a number and a symbol. It isn’t shown again.</p>
               </div>
               <Button type="submit" className="w-full" disabled={adminSaving}>{adminSaving?"Creating...":"Create admin"}</Button>
             </form>

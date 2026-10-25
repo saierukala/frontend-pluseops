@@ -51,7 +51,9 @@ export function VariantFormDialog({
 
   const save = useMutation({
     mutationFn: (v: Values) => {
-      const body = { sku: v.sku, barcode: v.barcode || null, price: v.price, costPrice: v.costPrice || null, status: v.status };
+      // Empty optional fields: left out when creating, null when editing (clears them)
+      const empty = variant ? null : undefined;
+      const body = { sku: v.sku, barcode: v.barcode || empty, price: v.price, costPrice: v.costPrice || empty, status: v.status };
       return variant ? variantsApi.update(productId, variant.id, body) : variantsApi.create(productId, body);
     },
     onSuccess: (saved) => {

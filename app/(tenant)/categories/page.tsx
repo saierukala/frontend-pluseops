@@ -152,7 +152,14 @@ function CategoryDialog({ open, onOpenChange, category, options }: { open: boole
 
   const save = useMutation({
     mutationFn: (v: Values) => {
-      const body = { name: v.name, slug: v.slug, description: v.description || undefined, parentId: v.parentId === NO_PARENT ? null : v.parentId, isActive: v.isActive };
+      const body = {
+        name: v.name,
+        slug: v.slug,
+        description: v.description || undefined,
+        // "No parent" is left out when creating and sent as null when editing (moves it back to the top level)
+        parentId: v.parentId === NO_PARENT ? (category ? null : undefined) : v.parentId,
+        isActive: v.isActive,
+      };
       return category ? categoriesApi.update(category.id, body) : categoriesApi.create(body);
     },
     onSuccess: (c) => {
@@ -193,7 +200,7 @@ function CategoryDialog({ open, onOpenChange, category, options }: { open: boole
       <Field label="Slug" htmlFor="c-slug" error={errors.slug?.message} hint="Used in URLs and integrations">
         <Input id="c-slug" className="font-mono" {...form.register("slug")} />
       </Field>
-      <Field label="Parent category">
+      <Field label="Parent category" error={form.formState.errors.parentId?.message}>
         <Controller control={form.control} name="parentId" render={({ field }) => <Select options={parentOptions} value={field.value} onValueChange={field.onChange} />} />
       </Field>
       <Field label="Description" htmlFor="c-desc" error={errors.description?.message}>

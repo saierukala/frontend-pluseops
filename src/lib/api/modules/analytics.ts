@@ -60,7 +60,8 @@ export const analyticsApi = {
   getOverview: (params?: AnalyticsRange) => get<AnalyticsOverview>("/analytics/overview", params),
   getSales: (params?: AnalyticsRange & { limit?: number }) => get<SalesBucket[]>("/analytics/sales", params),
   getRevenue: (params?: AnalyticsRange & { limit?: number }) => get<RevenueBucket[]>("/analytics/revenue", params),
-  getOrders: (params?: AnalyticsRange) => get<OrdersByStatus[]>("/analytics/orders", params),
+  // With groupBy the API answers per-day buckets instead; the status breakdown is ungrouped
+  getOrders: (params: AnalyticsRange = {}) => get<OrdersByStatus[]>("/analytics/orders", { ...params, groupBy: undefined }),
   getCustomers: (params?: AnalyticsRange & { limit?: number }) => get<TopCustomer[]>("/analytics/customers", params),
   getInventory: (params?: QueryParams) => get<unknown[]>("/analytics/inventory", params),
 };
