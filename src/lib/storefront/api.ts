@@ -134,7 +134,13 @@ export interface ShopOrder {
   taxTotal: string;
   shippingTotal: string;
   total: string;
-  items: Array<{ productName: string; variantName: string | null; sku: string; unitPrice: string; quantity: number; lineTotal: string }>;
+  /** Tax invoice (Phase 38) */
+  invoiceNumber?: string | null;
+  supplyType?: "INTRA" | "INTER" | null;
+  cgstTotal?: string;
+  sgstTotal?: string;
+  igstTotal?: string;
+  items: Array<{ productName: string; variantName: string | null; sku: string; unitPrice: string; quantity: number; lineTotal: string; hsnCode?: string | null; gstRatePercent?: number }>;
   shippingAddress: (Omit<ShopAddress, "id" | "isDefault"> & { addressId: string }) | null;
   billingAddress: (Omit<ShopAddress, "id" | "isDefault"> & { addressId: string }) | null;
   timeline: Array<{ status: string; at: string }>;

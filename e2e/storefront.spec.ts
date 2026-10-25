@@ -17,7 +17,8 @@ test("a new shopper signs up and checks out with GST in rupees", async ({ page }
   await expect(page.getByText("You're signed in, Esha")).toBeVisible();
 
   await page.goto(`/shop/${store}`);
-  await page.locator(`a[href*="/shop/${store}/products/"]`).first().click();
+  // A demo product on the workspace rate (18%); other tests add products with their own GST rates
+  await page.getByRole("link", { name: /Everyday Hoodie/ }).first().click();
   await page.getByRole("button", { name: "Add to cart" }).click();
 
   await page.goto(`/shop/${store}/cart`);

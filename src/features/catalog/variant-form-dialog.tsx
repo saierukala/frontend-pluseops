@@ -20,6 +20,7 @@ const schema = z.object({
   barcode: z.string().trim().max(100).optional(),
   price: money,
   costPrice: z.union([money, z.literal("")]).optional(),
+  mrp: z.union([money, z.literal("")]).optional(),
   status: z.enum(["ACTIVE", "DRAFT", "INACTIVE"]),
 });
 type Values = z.infer<typeof schema>;
@@ -45,6 +46,7 @@ export function VariantFormDialog({
       barcode: variant?.barcode ?? "",
       price: variant?.price ?? defaultPrice ?? "",
       costPrice: variant?.costPrice ?? "",
+      mrp: variant?.mrp ?? "",
       status: variant?.status ?? "ACTIVE",
     },
   });
@@ -53,7 +55,7 @@ export function VariantFormDialog({
     mutationFn: (v: Values) => {
       // Empty optional fields: left out when creating, null when editing (clears them)
       const empty = variant ? null : undefined;
-      const body = { sku: v.sku, barcode: v.barcode || empty, price: v.price, costPrice: v.costPrice || empty, status: v.status };
+      const body = { sku: v.sku, barcode: v.barcode || empty, price: v.price, costPrice: v.costPrice || empty, mrp: v.mrp || empty, status: v.status };
       return variant ? variantsApi.update(productId, variant.id, body) : variantsApi.create(productId, body);
     },
     onSuccess: (saved) => {
@@ -90,10 +92,13 @@ export function VariantFormDialog({
         <Field label="Price" htmlFor="v-price" error={errors.price?.message}>
           <Input id="v-price" inputMode="decimal" leftElement={<span className="text-xs">₹</span>} {...form.register("price")} />
         </Field>
-        <Field label="Cost" htmlFor="v-cost" error={errors.costPrice?.message} hint="Used for margin reporting">
-          <Input id="v-cost" inputMode="decimal" leftElement={<span className="text-xs">₹</span>} placeholder="Optional" {...form.register("costPrice")} />
+        <Field label="MRP" htmlFor="v-mrp" error={errors.mrp?.message} hint="Printed maximum retail price">
+          <Input id="v-mrp" inputMode="decimal" leftElement={<span className="text-xs">₹</span>} placeholder="Optional" {...form.register("mrp")} />
         </Field>
       </div>
+      <Field label="Cost" htmlFor="v-cost" error={errors.costPrice?.message} hint="Used for margin reporting">
+        <Input id="v-cost" inputMode="decimal" leftElement={<span className="text-xs">₹</span>} placeholder="Optional" {...form.register("costPrice")} />
+      </Field>
       <Field label="Status">
         <Controller
           control={form.control}

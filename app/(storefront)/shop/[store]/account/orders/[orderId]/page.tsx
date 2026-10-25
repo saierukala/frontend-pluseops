@@ -13,7 +13,8 @@ import { RequireShopper } from "@/features/storefront/require-shopper";
 import { formatShopAddress } from "@/features/storefront/address-form";
 import { useShop } from "@/features/storefront/shop-context";
 import { useCompletePayment } from "@/features/storefront/use-pay";
-import { gstLabel } from "@/features/orders/gst";
+import { gstLabel, gstSplit } from "@/features/orders/gst";
+import type { ShopOrder } from "@/lib/storefront/api";
 import { formatDateTime, humanize } from "@/lib/format";
 import { toastError } from "@/lib/api-errors";
 import { cn } from "@/lib/utils";
@@ -70,7 +71,10 @@ function Order() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="space-y-1">
           <h1 className="text-3xl font-semibold tracking-tight">Order #{o.number}</h1>
-          <p className="text-sm text-muted-foreground">Placed {formatDateTime(o.createdAt)}</p>
+          <p className="text-sm text-muted-foreground">
+            Placed {formatDateTime(o.createdAt)}
+            {o.invoiceNumber ? <span className="font-mono"> · Invoice {o.invoiceNumber}</span> : null}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <StatusPill status={o.status} />
@@ -101,7 +105,13 @@ function Order() {
           <dl className="flex flex-col gap-1.5 border-t p-4 text-sm">
             <Row label="Subtotal" value={money(o.subtotal, o.currency)} />
             {Number(o.discountTotal) ? <Row label="Discounts" value={`−${money(o.discountTotal, o.currency)}`} /> : null}
-            {Number(o.taxTotal) ? <Row label={gstLabel(Number(o.subtotal) - Number(o.discountTotal) > 0 ? Math.round((Number(o.taxTotal) / (Number(o.subtotal) - Number(o.discountTotal))) * 10000) / 100 : null)} value={money(o.taxTotal, o.currency)} /> : null}
+            {Number(o.taxTotal) ? <Row label={gstLabel(singleRate(o))} value={money(o.taxTotal, o.currency)} /> : null}
+            {gstSplit(o, (v) => money(v, o.currency)) ? (
+              <div className="-mt-1 text-right text-xs text-muted-foreground">
+                <dt className="sr-only">Tax split</dt>
+                <dd>{gstSplit(o, (v) => money(v, o.currency))}</dd>
+              </div>
+            ) : null}
             <Row label="Shipping" value={Number(o.shippingTotal) ? money(o.shippingTotal, o.currency) : "Free"} />
             <div className="mt-1 flex justify-between border-t pt-2 text-base font-semibold">
               <dt>Total</dt>
@@ -152,6 +162,12 @@ function Order() {
       </div>
     </div>
   );
+}
+
+/** The one GST rate the taxed lines used, or null when they differ. */
+function singleRate(o: ShopOrder): number | null {
+  const rates = new Set(o.items.filter((i) => (i.gstRatePercent ?? 0) > 0).map((i) => i.gstRatePercent));
+  return rates.size === 1 ? ([...rates][0] ?? null) : null;
 }
 
 function Row({ label, value }: { label: string; value: string }) {

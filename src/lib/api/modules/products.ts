@@ -5,7 +5,7 @@
  */
 
 import { apiClient } from "../client";
-import type { Product, Category } from "../types";
+import type { Product, Category, GstTaxability } from "../types";
 import type { QueryParams } from "../query";
 
 export interface ProductsQuery extends QueryParams {
@@ -22,6 +22,14 @@ export interface ProductsQuery extends QueryParams {
   sortOrder?: "asc" | "desc";
 }
 
+/** Phase 38 GST classification; gstRatePercent null = workspace rate. */
+export interface ProductGstFields {
+  hsnCode?: string | null;
+  gstRatePercent?: number | null;
+  gstTaxability?: GstTaxability;
+  unit?: string | null;
+}
+
 export const productsApi = {
   create(body: {
     name: string;
@@ -31,7 +39,7 @@ export const productsApi = {
     basePrice?: string;
     categories?: string[];
     primaryCategoryId?: string;
-  }): Promise<Product> {
+  } & ProductGstFields): Promise<Product> {
     return apiClient.post<Product>("/products", body);
   },
 
@@ -47,7 +55,7 @@ export const productsApi = {
     return apiClient.get<Product>(`/products/${id}`);
   },
 
-  update(id: string, body: Partial<{ name: string; description?: string; brand?: string; status?: Product["status"]; basePrice?: string | null }>): Promise<Product> {
+  update(id: string, body: Partial<{ name: string; description?: string; brand?: string; status?: Product["status"]; basePrice?: string | null }> & ProductGstFields): Promise<Product> {
     return apiClient.patch<Product>(`/products/${id}`, body);
   },
 

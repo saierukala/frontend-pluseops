@@ -16,6 +16,13 @@ export interface Customer {
   lastName: string;
   phone: string | null;
   metadata: Record<string, unknown>;
+  /** CONSUMER, or BUSINESS (GST-registered; company name and GSTIN go on the invoice). */
+  customerType?: CustomerType;
+  companyName?: string | null;
+  gstin?: string | null;
+  pan?: string | null;
+  /** Two-digit GST state code. */
+  stateCode?: string | null;
   /** Set when the customer has a storefront account. */
   emailVerifiedAt?: string | null;
   lastLoginAt?: string | null;
@@ -49,11 +56,18 @@ export type AddressBody = Omit<CustomerAddress, "id" | "isDefault"> & { isDefaul
 /** Immutable copy stored on an order when it was placed. */
 export type AddressSnapshot = Omit<CustomerAddress, "id" | "isDefault"> & { addressId: string };
 
+export type CustomerType = "CONSUMER" | "BUSINESS";
+
 export interface CustomerBody {
   email: string;
   firstName: string;
   lastName: string;
   phone?: string;
+  customerType?: CustomerType;
+  companyName?: string | null;
+  gstin?: string | null;
+  pan?: string | null;
+  stateCode?: string | null;
 }
 
 export const customersApi = {

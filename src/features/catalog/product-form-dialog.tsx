@@ -14,8 +14,11 @@ import { productsApi } from "@/lib/api/modules/products";
 import { categoriesApi } from "@/lib/api/modules/categories";
 import type { Product } from "@/lib/api/types";
 import { applyApiFieldErrors, toastError } from "@/lib/api-errors";
+import { GST_RATE_OPTIONS, TAXABILITY_OPTIONS } from "@/lib/gst";
 
 const NO_CATEGORY = "none";
+// "Workspace rate" leaves the product on the default GST rate from Settings
+const DEFAULT_RATE = "default";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Name is required").max(255),
@@ -28,7 +31,14 @@ const schema = z.object({
     .optional(),
   status: z.enum(["DRAFT", "ACTIVE", "INACTIVE", "ARCHIVED"]),
   categoryId: z.string(),
+  hsnCode: z.string().trim().regex(/^([0-9]{4,8})?$/, "HSN/SAC is 4 to 8 digits"),
+  gstRate: z.string(),
+  gstTaxability: z.enum(["TAXABLE", "NIL_RATED", "EXEMPT", "NON_GST"]),
+  unit: z.string().trim().max(10),
 });
+
+const RATE_OPTIONS = [{ value: DEFAULT_RATE, label: "Workspace rate" }, ...GST_RATE_OPTIONS.map((r) => ({ value: String(r), label: `${r}%` }))];
+const UNIT_OPTIONS = ["pcs", "kg", "g", "l", "ml", "m", "box", "pack", "dozen", "pair"].map((u) => ({ value: u, label: u }));
 type Values = z.infer<typeof schema>;
 
 export const PRODUCT_STATUS_OPTIONS = [
@@ -52,6 +62,10 @@ export function ProductFormDialog({ open, onOpenChange, product }: { open: boole
       basePrice: product?.basePrice ?? "",
       status: product?.status ?? "ACTIVE",
       categoryId: primary?.categoryId ?? NO_CATEGORY,
+      hsnCode: product?.hsnCode ?? "",
+      gstRate: product?.gstRatePercent === null || product?.gstRatePercent === undefined ? DEFAULT_RATE : String(Number(product.gstRatePercent)),
+      gstTaxability: product?.gstTaxability ?? "TAXABLE",
+      unit: product?.unit ?? "",
     },
   });
 
@@ -65,6 +79,10 @@ export function ProductFormDialog({ open, onOpenChange, product }: { open: boole
         basePrice: values.basePrice || undefined,
         status: values.status,
         ...(categoryId ? { categories: [categoryId], primaryCategoryId: categoryId } : {}),
+        hsnCode: values.hsnCode || (product ? null : undefined),
+        gstRatePercent: values.gstRate === DEFAULT_RATE ? (product ? null : undefined) : Number(values.gstRate),
+        gstTaxability: values.gstTaxability,
+        unit: values.unit || (product ? null : undefined),
       };
       if (!product) return productsApi.create(body);
       const updated = await productsApi.update(product.id, body);
@@ -113,6 +131,25 @@ export function ProductFormDialog({ open, onOpenChange, product }: { open: boole
         </Field>
         <Field label="Category">
           <Controller control={form.control} name="categoryId" render={({ field }) => <Select options={categoryOptions} value={field.value} onValueChange={field.onChange} />} />
+        </Field>
+      </div>
+      <div className="grid gap-4 rounded-lg border bg-muted/30 p-4 sm:grid-cols-2">
+        <p className="text-sm font-medium sm:col-span-2">GST</p>
+        <Field label="HSN / SAC code" htmlFor="p-hsn" error={errors.hsnCode?.message} hint="Printed on tax invoices">
+          <Input id="p-hsn" inputMode="numeric" maxLength={8} placeholder="e.g. 6109" {...form.register("hsnCode")} />
+        </Field>
+        <Field label="GST rate" htmlFor="p-gst">
+          <Controller control={form.control} name="gstRate" render={({ field }) => <Select id="p-gst" options={RATE_OPTIONS} value={field.value} onValueChange={field.onChange} />} />
+        </Field>
+        <Field label="Taxability">
+          <Controller
+            control={form.control}
+            name="gstTaxability"
+            render={({ field }) => <Select options={TAXABILITY_OPTIONS.map((t) => ({ value: t.value, label: t.label }))} value={field.value} onValueChange={(v) => field.onChange(v as Values["gstTaxability"])} />}
+          />
+        </Field>
+        <Field label="Unit">
+          <Controller control={form.control} name="unit" render={({ field }) => <Select options={UNIT_OPTIONS} value={field.value} onValueChange={field.onChange} placeholder="pcs" />} />
         </Field>
       </div>
       <Field label="Description" htmlFor="p-desc" error={errors.description?.message}>

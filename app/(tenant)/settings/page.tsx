@@ -21,6 +21,7 @@ import { StatusPill } from "@/components/app/status-pill";
 import { UserAvatar } from "@/components/layout/app-sidebar";
 import { authApi, type AuthSession } from "@/lib/api/modules/auth";
 import { WorkspaceSettingsCard } from "@/features/workspace/settings-card";
+import { TaxProfileCard } from "@/features/workspace/tax-profile-card";
 import { MaintenanceCard } from "@/features/workspace/maintenance-card";
 import { PaymentGatewayCard } from "@/features/workspace/payment-gateway-card";
 import { DomainsCard } from "@/features/workspace/domains-card";
@@ -82,6 +83,7 @@ export default function SettingsPage() {
         <TabsContent value="workspace" className="flex flex-col gap-6">
           <WorkspaceCard />
           <WorkspaceSettingsCard />
+          <TaxProfileCard />
           <MaintenanceCard />
         </TabsContent>
         <TabsContent value="store" className="flex flex-col gap-6">

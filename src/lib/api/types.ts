@@ -117,6 +117,12 @@ export interface Product {
   brand?: string | null;
   status: "ACTIVE" | "INACTIVE" | "DRAFT" | "ARCHIVED";
   basePrice?: string | null;
+  /** HSN (goods) or SAC (services) code printed on tax invoices. */
+  hsnCode?: string | null;
+  /** This product's GST %; null = the workspace rate. Decimal string from the API. */
+  gstRatePercent?: string | null;
+  gstTaxability?: GstTaxability;
+  unit?: string | null;
   createdAt: IsoDateString;
   updatedAt: IsoDateString;
   deletedAt?: IsoDateString | null;
@@ -124,6 +130,8 @@ export interface Product {
   variants?: ProductVariant[];
   _count?: { variants: number };
 }
+
+export type GstTaxability = "TAXABLE" | "NIL_RATED" | "EXEMPT" | "NON_GST";
 
 export interface ProductVariant {
   id: Uuid;
@@ -133,6 +141,8 @@ export interface ProductVariant {
   barcode?: string | null;
   price: string;
   costPrice?: string | null;
+  /** Printed maximum retail price. */
+  mrp?: string | null;
   status: "ACTIVE" | "INACTIVE" | "DRAFT";
   createdAt: IsoDateString;
   updatedAt: IsoDateString;

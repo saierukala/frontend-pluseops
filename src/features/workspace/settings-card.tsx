@@ -50,7 +50,7 @@ const schema = z.object({
   locale: z.string().trim().max(35),
   contactEmail: z.union([z.literal(""), z.string().trim().email("Enter a valid email")]),
   contactPhone: z.string().trim().max(30),
-  gstRatePercent: z.string().trim().regex(/^(d{1,3}(.d{1,2})?)?$/, "A percentage like 18 or 12.5").refine((v) => v === "" || Number(v) <= 100, "At most 100%"),
+  gstRatePercent: z.string().trim().regex(/^(\d{1,3}(\.\d{1,2})?)?$/, "A percentage like 18 or 12.5").refine((v) => v === "" || Number(v) <= 100, "At most 100%"),
 });
 type Values = z.infer<typeof schema>;
 

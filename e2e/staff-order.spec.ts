@@ -6,12 +6,13 @@ test("staff order is priced in rupees with 18% GST", async ({ page }) => {
   await expect(page).toHaveURL(/\/dashboard$/);
 
   await page.goto("/orders/new");
-  const pick = async (trigger: string) => {
+  const pick = async (trigger: string, option?: RegExp) => {
     await page.getByRole("combobox").filter({ hasText: trigger }).click();
-    await page.getByRole("option").first().click();
+    await (option ? page.getByRole("option", { name: option }) : page.getByRole("option")).first().click();
   };
   await pick("Search customers");
-  await pick("Search product or SKU");
+  // A demo product on the workspace rate (18%); other tests add products with their own GST rates
+  await pick("Search product or SKU", /HOOD-/);
   await expect(page.getByText("GST (18%)")).toBeVisible();
   await page.getByRole("button", { name: "Place order" }).click();
 

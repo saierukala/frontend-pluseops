@@ -21,6 +21,18 @@ export interface Order {
   metadata?: Record<string, unknown>;
   shippingAddress?: AddressSnapshot | null;
   billingAddress?: AddressSnapshot | null;
+  /** Tax invoice (Phase 38): PREFIX/2026-27/0001 */
+  invoiceNumber?: string | null;
+  invoiceDate?: string | null;
+  /** GST state code the goods go to. */
+  placeOfSupply?: string | null;
+  /** INTRA → CGST + SGST, INTER → IGST */
+  supplyType?: "INTRA" | "INTER" | null;
+  cgstTotal?: string;
+  sgstTotal?: string;
+  igstTotal?: string;
+  buyerSnapshot?: InvoiceParty | null;
+  sellerSnapshot?: InvoiceSeller | null;
   createdAt: string;
   updatedAt: string;
   customer?: { id: string; email: string; firstName: string; lastName: string };
@@ -53,6 +65,42 @@ export interface OrderItem {
   discount: string;
   tax: string;
   lineTotal: string;
+  hsnCode?: string | null;
+  gstRatePercent?: string;
+  taxableValue?: string;
+  cgst?: string;
+  sgst?: string;
+  igst?: string;
+}
+
+/** The buyer as frozen on the invoice. */
+export interface InvoiceParty {
+  type: "CONSUMER" | "BUSINESS";
+  name: string;
+  contactName?: string | null;
+  gstin?: string | null;
+  pan?: string | null;
+  stateCode?: string | null;
+  email?: string | null;
+  phone?: string | null;
+}
+
+/** The seller (this business) as frozen on the invoice. */
+export interface InvoiceSeller {
+  name: string | null;
+  tradeName?: string | null;
+  gstin?: string | null;
+  pan?: string | null;
+  registrationType?: string | null;
+  stateCode?: string | null;
+  stateName?: string | null;
+  address?: { line1: string; line2?: string | null; city: string; pincode: string } | null;
+  phone?: string | null;
+  email?: string | null;
+  bank?: { name: string; accountNumber?: string | null; ifsc?: string | null } | null;
+  upiId?: string | null;
+  signatory?: string | null;
+  terms?: string | null;
 }
 
 export interface OrderStatusHistory {

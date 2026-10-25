@@ -32,6 +32,31 @@ export interface WorkspaceSettings {
   gstRatePercent: number | null;
 }
 
+export type RegistrationType = "REGULAR" | "COMPOSITION" | "UNREGISTERED";
+
+/** The business's GST identity, printed on every tax invoice (Phase 38). */
+export interface TaxProfile {
+  legalName: string | null;
+  tradeName: string | null;
+  registrationType: RegistrationType | null;
+  gstin: string | null;
+  pan: string | null;
+  stateCode: string | null;
+  /** Read-only, from stateCode. */
+  stateName?: string | null;
+  address: { line1: string; line2?: string | null; city: string; pincode: string } | null;
+  phone: string | null;
+  email: string | null;
+  bankName: string | null;
+  accountNumber: string | null;
+  ifsc: string | null;
+  upiId: string | null;
+  signatory: string | null;
+  invoicePrefix: string | null;
+  invoiceTerms: string | null;
+  pricesIncludeTax: boolean | null;
+}
+
 export interface WorkspaceDomain {
   id: string;
   domain: string;
@@ -75,6 +100,13 @@ export const workspaceApi = {
   /** Only the keys sent change; null clears a setting. */
   updateSettings(body: Partial<WorkspaceSettings>): Promise<WorkspaceSettings> {
     return apiClient.patch<WorkspaceSettings>("/workspace/settings", body);
+  },
+  getTaxProfile(): Promise<TaxProfile> {
+    return apiClient.get<TaxProfile>("/workspace/tax-profile");
+  },
+  /** Only the keys sent change; null clears one. A GSTIN fills in the state and PAN. */
+  updateTaxProfile(body: Partial<Omit<TaxProfile, "stateName">>): Promise<TaxProfile> {
+    return apiClient.patch<TaxProfile>("/workspace/tax-profile", body);
   },
   listDomains(): Promise<WorkspaceDomain[]> {
     return apiClient.get<WorkspaceDomain[]>("/workspace/domains");

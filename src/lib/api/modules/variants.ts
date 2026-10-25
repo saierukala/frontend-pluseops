@@ -11,7 +11,7 @@ import type { QueryParams } from "../query";
 export const variantsApi = {
   create(
     productId: string,
-    body: { sku: string; barcode?: string | null; price: string; costPrice?: string | null; status?: ProductVariant["status"] }
+    body: { sku: string; barcode?: string | null; price: string; costPrice?: string | null; mrp?: string | null; status?: ProductVariant["status"] }
   ): Promise<ProductVariant> {
     return apiClient.post<ProductVariant>(`/products/${productId}/variants`, body);
   },
@@ -35,7 +35,7 @@ export const variantsApi = {
   update(
     productId: string,
     variantId: string,
-    body: Partial<{ sku: string; barcode?: string | null; price: string; costPrice?: string | null; status: ProductVariant["status"] }>
+    body: Partial<{ sku: string; barcode?: string | null; price: string; costPrice?: string | null; mrp?: string | null; status: ProductVariant["status"] }>
   ): Promise<ProductVariant> {
     return apiClient.patch<ProductVariant>(`/products/${productId}/variants/${variantId}`, body);
   },

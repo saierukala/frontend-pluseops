@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, Ban, CreditCard, Mail, MapPin, RotateCcw, UserRound } from "lucide-react";
+import { ArrowLeft, ArrowRight, Ban, CreditCard, FileText, Mail, MapPin, Printer, RotateCcw, UserRound } from "lucide-react";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,7 +18,7 @@ import { ConfirmDialog } from "@/components/app/confirm-dialog";
 import { EmptyState, ErrorState } from "@/components/app/states";
 import { UserAvatar } from "@/components/layout/app-sidebar";
 import { RecordPaymentDialog, RefundDialog } from "@/features/orders/payment-dialogs";
-import { gstLabel, orderGstRate } from "@/features/orders/gst";
+import { gstLabel, gstSplit, orderLinesRate } from "@/features/orders/gst";
 import { formatAddress } from "@/features/customers/address-dialog";
 import { ordersApi, ORDER_CANCELLABLE, ORDER_NEXT_STATUS } from "@/lib/api/modules/orders";
 import { paymentsApi, type Payment } from "@/lib/api/modules/payments";
@@ -107,10 +107,27 @@ export default function OrderDetailPage() {
       </Button>
       <PageHeader
         title={o ? <span className="font-mono">#{shortId(o.id)}</span> : <Skeleton className="h-8 w-40" />}
-        description={o ? <span className="flex flex-wrap items-center gap-2"><StatusPill status={o.status} /> Placed {formatDateTime(o.createdAt)}</span> : null}
+        description={
+          o ? (
+            <span className="flex flex-wrap items-center gap-2">
+              <StatusPill status={o.status} /> Placed {formatDateTime(o.createdAt)}
+              {o.invoiceNumber ? <span className="font-mono text-xs">· Invoice {o.invoiceNumber}</span> : null}
+            </span>
+          ) : null
+        }
         actions={
           o ? (
             <>
+              <Button variant="outline" asChild>
+                <Link href={`/print/invoice/${o.id}` as never} target="_blank">
+                  <FileText /> Invoice
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href={`/print/invoice/${o.id}?format=receipt` as never} target="_blank">
+                  <Printer /> Receipt
+                </Link>
+              </Button>
               {ORDER_CANCELLABLE.includes(o.status) && hasPermission("order:cancel") ? (
                 <Button variant="outline" onClick={() => setCancelling(true)}>
                   <Ban /> Cancel order
@@ -154,7 +171,11 @@ export default function OrderDetailPage() {
                       <TableRow key={item.id} className="hover:bg-transparent">
                         <TableCell className="py-3 pl-6">
                           <p className="font-medium">{item.productNameSnapshot}</p>
-                          <p className="font-mono text-xs text-muted-foreground">{item.skuSnapshot}</p>
+                          <p className="font-mono text-xs text-muted-foreground">
+                            {item.skuSnapshot}
+                            {item.hsnCode ? ` · HSN ${item.hsnCode}` : ""}
+                            {item.gstRatePercent !== undefined ? ` · ${Number(item.gstRatePercent)}% GST` : ""}
+                          </p>
                         </TableCell>
                         <TableCell className="tabular text-right">{item.quantity}</TableCell>
                         <TableCell className="tabular hidden text-right text-muted-foreground sm:table-cell">{formatMoney(item.unitPrice, o.currency)}</TableCell>
@@ -166,7 +187,13 @@ export default function OrderDetailPage() {
                 <dl className="ml-auto flex w-full max-w-xs flex-col gap-2 border-t px-6 py-4 text-sm">
                   <SummaryRow label="Subtotal" value={formatMoney(o.subtotal, o.currency)} />
                   {Number(o.discountTotal) ? <SummaryRow label="Discounts" value={`−${formatMoney(o.discountTotal, o.currency)}`} /> : null}
-                  {Number(o.taxTotal) ? <SummaryRow label={gstLabel(orderGstRate(o.metadata))} value={formatMoney(o.taxTotal, o.currency)} /> : null}
+                  {Number(o.taxTotal) ? <SummaryRow label={gstLabel(orderLinesRate(o))} value={formatMoney(o.taxTotal, o.currency)} /> : null}
+                  {gstSplit(o, (v) => formatMoney(v, o.currency)) ? (
+                    <div className="-mt-1 text-right text-xs text-muted-foreground">
+                      <dt className="sr-only">Tax split</dt>
+                      <dd>{gstSplit(o, (v) => formatMoney(v, o.currency))}</dd>
+                    </div>
+                  ) : null}
                   <SummaryRow label="Shipping" value={formatMoney(o.shippingTotal, o.currency)} />
                   <div className="mt-1 flex items-center justify-between border-t pt-3 text-base font-semibold">
                     <dt>Total</dt>
