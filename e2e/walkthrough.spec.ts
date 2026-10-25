@@ -285,6 +285,7 @@ test("5 · the business sees the shop order and sign-in stays safe", async ({ pa
 
   await test.step("the shop order arrives in the business's order list", async () => {
     await signIn(page, OWNER.email, OWNER.password);
+    await expect(page).toHaveURL(/\/dashboard$/);
     await page.goto("/orders");
     await expect(page.getByText(`${SHOPPER.first} ${SHOPPER.last}`).first()).toBeVisible();
     await expect(page.getByText("₹1,180.00").first()).toBeVisible();
