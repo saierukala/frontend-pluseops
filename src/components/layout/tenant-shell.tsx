@@ -5,10 +5,12 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
 import { SiteHeader } from "./site-header";
 import { tenantNavGroups } from "./nav-config";
+import { RealtimeBridge } from "@/lib/realtime/realtime-bridge";
 
 export function TenantShell({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
+      <RealtimeBridge />
       <AppSidebar kind="tenant" groups={tenantNavGroups} />
       <SidebarInset className="min-w-0">
         <SiteHeader kind="tenant" groups={tenantNavGroups} />

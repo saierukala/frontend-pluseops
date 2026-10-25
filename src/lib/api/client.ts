@@ -18,7 +18,7 @@
  */
 
 import { apiConfig } from "./config";
-import { tokenStore as defaultTokenStore, type TokenStore } from "./tokens";
+import { tokenStore as defaultTokenStore, REFRESH_IN_COOKIE, refreshTokenBody, refreshTransportInit, singleFlightRefresh, type TokenStore } from "./tokens";
 import {
   ApiError,
   NetworkError,
@@ -503,17 +503,44 @@ export class ApiClient {
     // Capture scope before refresh to detect scope switching
     const scopeBefore = this.tokenStore.getScope();
 
-    this.refreshPromise = (async () => {
+    this.refreshPromise = singleFlightRefresh<unknown>(() => this.runRefresh(refreshToken, scopeBefore)).then((result) => {
+      if (typeof result === "boolean") return result;
+      // Shared with an authApi.refresh() already in flight: store what it returned
+      const data = result as { accessToken?: string; refreshToken?: string; sessionId?: string; scope?: string; user?: unknown };
+      if (typeof data?.accessToken !== "string") return false;
+      this.tokenStore.setTokens({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken ?? REFRESH_IN_COOKIE,
+        scope: data.scope ?? scopeBefore ?? null,
+        sessionId: data.sessionId ?? null,
+        user: data.user ?? undefined,
+      });
+      return true;
+    });
+    const p = this.refreshPromise;
+    p.finally(() => {
+      queueMicrotask(() => {
+        if (this.refreshPromise === p) this.refreshPromise = null;
+      });
+    });
+    return p;
+  }
+
+  private async runRefresh(refreshToken: string, scopeBefore: string | null): Promise<boolean> {
+    {
       try {
         const url = `${this.baseUrl}/auth/refresh`;
+        const transport = refreshTransportInit();
         const res = await this.fetchImpl(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
             [apiConfig.headers.requestId]: generateRequestId(),
+            ...transport.headers,
           },
-          body: JSON.stringify({ refreshToken }),
+          credentials: transport.credentials,
+          body: JSON.stringify(refreshTokenBody(refreshToken)),
         });
 
         if (!res.ok) {
@@ -550,7 +577,8 @@ export class ApiClient {
         // Handle both envelope and direct shapes
         const data = (body as unknown as { data?: Record<string, unknown> })?.data ?? (body as unknown as Record<string, unknown>);
         const accessToken = (data as { accessToken?: string })?.accessToken;
-        const nextRefresh = (data as { refreshToken?: string })?.refreshToken;
+        // In cookie mode the rotated refresh token stays in the httpOnly cookie
+        const nextRefresh = (data as { refreshToken?: string })?.refreshToken ?? ((data as { refreshTokenTransport?: string })?.refreshTokenTransport === "cookie" ? REFRESH_IN_COOKIE : undefined);
         const sessionId = (data as { sessionId?: string })?.sessionId ?? null;
         const returnedScope = (data as { scope?: string })?.scope ?? (data as { user?: { scope?: string } })?.user?.scope ?? null;
         const user = (data as { user?: unknown })?.user ?? null;
@@ -618,15 +646,8 @@ export class ApiClient {
         });
         this.onAuthFailure?.(err);
         return false;
-      } finally {
-        const p = this.refreshPromise;
-        queueMicrotask(() => {
-          if (this.refreshPromise === p) this.refreshPromise = null;
-        });
       }
-    })();
-
-    return this.refreshPromise;
+    }
   }
 
   /**

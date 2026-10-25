@@ -8,6 +8,7 @@ import { apiClient } from "../client";
 export interface JobsStatus {
   enabled: boolean;
   workersStarted: boolean;
+  workerCount?: number;
   queues: string[];
 }
 

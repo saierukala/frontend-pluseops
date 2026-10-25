@@ -10,6 +10,10 @@ import { publicEnv } from "@/config/env";
 import { toApiError, ApiError, NetworkError } from "@/lib/api/errors";
 import { serializeQuery, type QueryParams } from "@/lib/api/query";
 import type { PaginationMeta } from "@/lib/api/pagination";
+import { REFRESH_IN_COOKIE, refreshTokenBody, refreshTransportInit } from "@/lib/api/tokens";
+
+// Shopper auth routes that issue, rotate or revoke a refresh token (cookie mode applies to these only)
+const TOKEN_PATHS = new Set(["/auth/login", "/auth/set-password", "/auth/refresh", "/auth/logout"]);
 
 // ─── Types (mirror storefront.* responses) ──────────────────────────────────
 
@@ -159,6 +163,7 @@ export interface StartedPayment {
 
 interface Session {
   accessToken: string;
+  /** The token itself, or REFRESH_IN_COOKIE when the store's httpOnly cookie holds it. */
   refreshToken: string;
   sessionId: string;
   customer: Shopper;
@@ -187,6 +192,11 @@ function writeSession(slug: string, session: Session | null) {
   window.dispatchEvent(new CustomEvent("pulseops:shopper-session", { detail: { slug } }));
 }
 
+/** In cookie mode the response carries no refresh token; remember that the cookie holds it. */
+function withStoredRefresh(session: Session): Session {
+  return { ...session, refreshToken: session.refreshToken ?? REFRESH_IN_COOKIE };
+}
+
 // ─── Client ─────────────────────────────────────────────────────────────────
 
 interface Envelope<T> {
@@ -210,6 +220,7 @@ export class StorefrontClient {
 
   private async send<T>(method: string, path: string, opts: { body?: unknown; params?: QueryParams; auth?: boolean; retried?: boolean } = {}): Promise<Envelope<T>> {
     const session = opts.auth ? this.session() : null;
+    const transport = TOKEN_PATHS.has(path) ? refreshTransportInit() : { headers: {} };
     let res: Response;
     try {
       res = await fetch(this.url(path, opts.params), {
@@ -218,7 +229,9 @@ export class StorefrontClient {
           Accept: "application/json",
           ...(opts.body !== undefined ? { "Content-Type": "application/json" } : {}),
           ...(session ? { Authorization: `Bearer ${session.accessToken}` } : {}),
+          ...transport.headers,
         },
+        credentials: transport.credentials,
         body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
       });
     } catch (cause) {
@@ -244,8 +257,8 @@ export class StorefrontClient {
         const session = this.session();
         if (!session) return false;
         try {
-          const res = await this.send<Session>("POST", "/auth/refresh", { body: { refreshToken: session.refreshToken } });
-          writeSession(this.slug, res.data);
+          const res = await this.send<Session>("POST", "/auth/refresh", { body: refreshTokenBody(session.refreshToken) });
+          writeSession(this.slug, withStoredRefresh(res.data));
           return true;
         } catch {
           return false;
@@ -269,18 +282,18 @@ export class StorefrontClient {
   forgotPassword = (email: string) => this.send<{ message: string; devToken?: string }>("POST", "/auth/forgot-password", { body: { email } }).then((r) => r.data);
   async setPassword(token: string, password: string) {
     const res = await this.send<Session>("POST", "/auth/set-password", { body: { token, password } });
-    writeSession(this.slug, res.data);
+    writeSession(this.slug, withStoredRefresh(res.data));
     return res.data.customer;
   }
   async login(email: string, password: string) {
     const res = await this.send<Session>("POST", "/auth/login", { body: { email, password } });
-    writeSession(this.slug, res.data);
+    writeSession(this.slug, withStoredRefresh(res.data));
     return res.data.customer;
   }
   async logout() {
     const session = this.session();
     writeSession(this.slug, null);
-    if (session) await this.send("POST", "/auth/logout", { body: { refreshToken: session.refreshToken } }).catch(() => undefined);
+    if (session) await this.send("POST", "/auth/logout", { body: refreshTokenBody(session.refreshToken) }).catch(() => undefined);
   }
 
   // Account

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,6 +20,7 @@ import { StatusPill } from "@/components/app/status-pill";
 import { UserAvatar } from "@/components/layout/app-sidebar";
 import { authApi, type AuthSession } from "@/lib/api/modules/auth";
 import { WorkspaceSettingsCard } from "@/features/workspace/settings-card";
+import { MaintenanceCard } from "@/features/workspace/maintenance-card";
 import { PaymentGatewayCard } from "@/features/workspace/payment-gateway-card";
 import { DomainsCard } from "@/features/workspace/domains-card";
 import { workspaceApi } from "@/lib/api/modules/tenants";
@@ -65,6 +67,7 @@ export default function SettingsPage() {
         <TabsContent value="workspace" className="flex flex-col gap-6">
           <WorkspaceCard />
           <WorkspaceSettingsCard />
+          <MaintenanceCard />
         </TabsContent>
         <TabsContent value="store" className="flex flex-col gap-6">
           <PaymentGatewayCard />
@@ -224,6 +227,7 @@ function deviceLabel(ua: string | null) {
 function SessionsCard() {
   const queryClient = useQueryClient();
   const { logout } = useAuth();
+  const router = useRouter();
   const [confirmAll, setConfirmAll] = React.useState(false);
   const sessions = useQuery({ queryKey: ["sessions"], queryFn: () => authApi.listSessions() });
   const revoke = useMutation({
@@ -238,7 +242,7 @@ function SessionsCard() {
     mutationFn: () => authApi.logoutAll(),
     onSuccess: async () => {
       await logout();
-      window.location.href = "/login";
+      router.replace("/login" as never);
     },
     onError: (e) => toastError(e),
   });

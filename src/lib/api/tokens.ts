@@ -9,6 +9,41 @@
  * Tokens are never logged or added to URLs.
  */
 
+/**
+ * Phase 36 cookie mode (NEXT_PUBLIC_REFRESH_TOKEN_TRANSPORT=cookie): the backend keeps the refresh token in an
+ * httpOnly cookie that JavaScript can't read. The store then holds this marker so "is there a session to refresh?"
+ * checks keep working, and refresh/logout send no token in the body.
+ */
+export const REFRESH_IN_COOKIE = "__httponly_cookie__";
+
+export const refreshViaCookie = process.env.NEXT_PUBLIC_REFRESH_TOKEN_TRANSPORT === "cookie";
+
+/** Headers + fetch options for /auth/login, /auth/refresh and /auth/logout in the configured transport. */
+export function refreshTransportInit(): { headers: Record<string, string>; credentials?: RequestCredentials } {
+  return refreshViaCookie ? { headers: { "X-Refresh-Token-Transport": "cookie" }, credentials: "include" } : { headers: {} };
+}
+
+/** Request body carrying the refresh token, or nothing when the cookie carries it. */
+export function refreshTokenBody(refreshToken: string | null | undefined): { refreshToken?: string } {
+  return refreshToken && refreshToken !== REFRESH_IN_COOKIE ? { refreshToken } : {};
+}
+
+/**
+ * App-wide single flight for refresh-token rotation. Refresh tokens rotate on every use and a replayed one
+ * revokes the whole session, so two refreshes must never race (e.g. the auth bootstrap running twice while
+ * the client's silent refresh fires). Every refresh path goes through here and concurrent callers share it.
+ */
+let refreshInFlight: Promise<unknown> | null = null;
+
+export function singleFlightRefresh<T>(run: () => Promise<T>): Promise<T> {
+  if (!refreshInFlight) {
+    refreshInFlight = run().finally(() => {
+      refreshInFlight = null;
+    });
+  }
+  return refreshInFlight as Promise<T>;
+}
+
 const ACCESS_KEY = "pulseops_access_token";
 const REFRESH_KEY = "pulseops_refresh_token";
 const SCOPE_KEY = "pulseops_scope";

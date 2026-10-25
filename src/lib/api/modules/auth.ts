@@ -6,6 +6,8 @@
  */
 
 import { apiClient } from "../client";
+import { REFRESH_IN_COOKIE, refreshTokenBody, refreshTransportInit, singleFlightRefresh, tokenStore } from "../tokens";
+import { UnauthorizedError } from "../errors";
 import type { User } from "../types";
 
 export interface RegisterBody {
@@ -45,20 +47,31 @@ export const authApi = {
     return apiClient.post<User>("/auth/register", body);
   },
 
-  login(body: LoginBody): Promise<LoginResponse> {
-    return apiClient.post<LoginResponse>("/auth/login", body, { skipAuthRefresh: true });
+  async login(body: LoginBody): Promise<LoginResponse> {
+    const data = await apiClient.post<LoginResponse>("/auth/login", body, { skipAuthRefresh: true, ...refreshTransportInit() });
+    return { ...data, refreshToken: data.refreshToken ?? REFRESH_IN_COOKIE };
   },
 
-  refresh(refreshToken: string): Promise<RefreshResponse> {
-    return apiClient.post<RefreshResponse>("/auth/refresh", { refreshToken }, { skipAuthRefresh: true });
+  async refresh(refreshToken: string): Promise<RefreshResponse> {
+    const result = await singleFlightRefresh<unknown>(async () => {
+      const data = await apiClient.post<RefreshResponse>("/auth/refresh", refreshTokenBody(refreshToken), { skipAuthRefresh: true, ...refreshTransportInit() });
+      return { ...data, refreshToken: data.refreshToken ?? REFRESH_IN_COOKIE };
+    });
+    if (typeof result !== "boolean") return result as RefreshResponse;
+    // Shared with the client's silent refresh, which already stored the new tokens
+    if (!result) throw new UnauthorizedError("Session expired", "INVALID_REFRESH_TOKEN");
+    const user = tokenStore.getStoredUser() as User;
+    return {
+      accessToken: tokenStore.getAccessToken() ?? "",
+      refreshToken: tokenStore.getRefreshToken() ?? REFRESH_IN_COOKIE,
+      sessionId: tokenStore.getSessionId() ?? "",
+      scope: (tokenStore.getScope() as RefreshResponse["scope"]) ?? "tenant",
+      user,
+    };
   },
 
   logout(refreshToken?: string): Promise<{ success: boolean; message: string }> {
-    return apiClient.post<{ success: boolean; message: string }>(
-      "/auth/logout",
-      refreshToken ? { refreshToken } : {},
-      { skipAuthRefresh: true }
-    );
+    return apiClient.post<{ success: boolean; message: string }>("/auth/logout", refreshTokenBody(refreshToken), { skipAuthRefresh: true, ...refreshTransportInit() });
   },
 
   forgotPassword(body: { email: string; tenantId?: string; tenantSlug?: string }): Promise<{ success: boolean; message: string; devToken?: string }> {
