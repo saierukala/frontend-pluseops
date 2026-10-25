@@ -18,6 +18,7 @@ import { ConfirmDialog } from "@/components/app/confirm-dialog";
 import { EmptyState, ErrorState } from "@/components/app/states";
 import { UserAvatar } from "@/components/layout/app-sidebar";
 import { RecordPaymentDialog, RefundDialog } from "@/features/orders/payment-dialogs";
+import { gstLabel, orderGstRate } from "@/features/orders/gst";
 import { formatAddress } from "@/features/customers/address-dialog";
 import { ordersApi, ORDER_CANCELLABLE, ORDER_NEXT_STATUS } from "@/lib/api/modules/orders";
 import { paymentsApi, type Payment } from "@/lib/api/modules/payments";
@@ -165,7 +166,7 @@ export default function OrderDetailPage() {
                 <dl className="ml-auto flex w-full max-w-xs flex-col gap-2 border-t px-6 py-4 text-sm">
                   <SummaryRow label="Subtotal" value={formatMoney(o.subtotal, o.currency)} />
                   {Number(o.discountTotal) ? <SummaryRow label="Discounts" value={`−${formatMoney(o.discountTotal, o.currency)}`} /> : null}
-                  {Number(o.taxTotal) ? <SummaryRow label="Tax" value={formatMoney(o.taxTotal, o.currency)} /> : null}
+                  {Number(o.taxTotal) ? <SummaryRow label={gstLabel(orderGstRate(o.metadata))} value={formatMoney(o.taxTotal, o.currency)} /> : null}
                   <SummaryRow label="Shipping" value={formatMoney(o.shippingTotal, o.currency)} />
                   <div className="mt-1 flex items-center justify-between border-t pt-3 text-base font-semibold">
                     <dt>Total</dt>

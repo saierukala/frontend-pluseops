@@ -8,7 +8,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/app/states";
 import { RequireShopper } from "@/features/storefront/require-shopper";
 import { ProductImage } from "@/features/storefront/product-card";
-import { useCart, useSetCartItem, useShop } from "@/features/storefront/shop-context";
+import { useCart, useCartTotals, useSetCartItem, useShop } from "@/features/storefront/shop-context";
+import { gstLabel } from "@/features/orders/gst";
 
 export default function CartPage() {
   return (
@@ -22,6 +23,7 @@ function Cart() {
   const { href, money } = useShop();
   const cart = useCart();
   const setItem = useSetCartItem();
+  const totals = useCartTotals(cart.data);
 
   if (cart.error) return <ErrorState error={cart.error} onRetry={() => cart.refetch()} />;
   if (!cart.data) return <Skeleton className="h-64 w-full rounded-2xl" />;
@@ -95,12 +97,20 @@ function Cart() {
               <dt className="text-muted-foreground">Items</dt>
               <dd className="tabular">{c.itemCount}</dd>
             </div>
-            <div className="flex justify-between text-base font-semibold">
-              <dt>Subtotal</dt>
-              <dd className="tabular">{money(c.subtotal, c.currency)}</dd>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Subtotal</dt>
+              <dd className="tabular">{money(totals.subtotal, c.currency)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">{gstLabel(totals.rate)}</dt>
+              <dd className="tabular">{money(totals.gst, c.currency)}</dd>
+            </div>
+            <div className="flex justify-between border-t pt-2 text-base font-semibold">
+              <dt>Estimated total</dt>
+              <dd className="tabular">{money(totals.total, c.currency)}</dd>
             </div>
           </dl>
-          <p className="text-xs text-muted-foreground">Shipping and taxes are calculated at checkout.</p>
+          <p className="text-xs text-muted-foreground">Prices exclude GST. Shipping, if any, is added at checkout.</p>
           {!c.readyForCheckout ? <p className="text-sm text-warning">Fix the highlighted items to continue.</p> : null}
           {c.readyForCheckout ? (
             <Button size="lg" className="rounded-full" asChild>

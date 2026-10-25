@@ -50,6 +50,7 @@ const schema = z.object({
   locale: z.string().trim().max(35),
   contactEmail: z.union([z.literal(""), z.string().trim().email("Enter a valid email")]),
   contactPhone: z.string().trim().max(30),
+  gstRatePercent: z.string().trim().regex(/^(d{1,3}(.d{1,2})?)?$/, "A percentage like 18 or 12.5").refine((v) => v === "" || Number(v) <= 100, "At most 100%"),
 });
 type Values = z.infer<typeof schema>;
 
@@ -59,9 +60,10 @@ const toForm = (s?: WorkspaceSettings): Values => ({
   locale: s?.locale ?? "",
   contactEmail: s?.contactEmail ?? "",
   contactPhone: s?.contactPhone ?? "",
+  gstRatePercent: s?.gstRatePercent === null || s?.gstRatePercent === undefined ? "" : String(s.gstRatePercent),
 });
 
-/** Currency, time zone, locale and public contact details (GET/PATCH /workspace/settings). */
+/** Currency, GST rate, time zone, locale and public contact details (GET/PATCH /workspace/settings). */
 export function WorkspaceSettingsCard() {
   const queryClient = useQueryClient();
   const { hasPermission } = usePermission();
@@ -78,7 +80,11 @@ export function WorkspaceSettingsCard() {
     mutationFn: (v: Values) => {
       const dirty = form.formState.dirtyFields;
       const body = Object.fromEntries(
-        (Object.keys(v) as Array<keyof Values>).filter((k) => dirty[k]).map((k) => [k, v[k].trim() === "" ? null : v[k].trim()])
+        (Object.keys(v) as Array<keyof Values>).filter((k) => dirty[k]).map((k) => {
+          const value = v[k].trim();
+          if (value === "") return [k, null];
+          return [k, k === "gstRatePercent" ? Number(value) : value];
+        })
       ) as Partial<WorkspaceSettings>;
       return workspaceApi.updateSettings(body);
     },
@@ -99,9 +105,9 @@ export function WorkspaceSettingsCard() {
       <form onSubmit={form.handleSubmit((v) => save.mutate(v))} noValidate>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe2 className="size-4" /> Regional & contact
+            <Globe2 className="size-4" /> Regional, tax & contact
           </CardTitle>
-          <CardDescription>Defaults for money, dates and the contact details shown to shoppers.</CardDescription>
+          <CardDescription>Defaults for money, GST, dates and the contact details shown to shoppers.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 pt-6 sm:grid-cols-2">
           {settings.isLoading ? (
@@ -114,9 +120,9 @@ export function WorkspaceSettingsCard() {
                   name="currency"
                   render={({ field }) =>
                     currencies.length ? (
-                      <ComboboxField value={field.value} onChange={(v) => form.setValue("currency", v, { shouldDirty: true })} options={currencies} placeholder="Not set" searchPlaceholder="Search currency (USD, INR…)" />
+                      <ComboboxField value={field.value} onChange={(v) => form.setValue("currency", v, { shouldDirty: true })} options={currencies} placeholder="Not set" searchPlaceholder="Search currency (INR, USD…)" />
                     ) : (
-                      <Input {...field} maxLength={3} placeholder="USD" disabled={!canEdit} />
+                      <Input {...field} maxLength={3} placeholder="INR" disabled={!canEdit} />
                     )
                   }
                 />
@@ -134,14 +140,17 @@ export function WorkspaceSettingsCard() {
                   }
                 />
               </Field>
-              <Field label="Locale" htmlFor="ws-locale" error={errors.locale?.message} hint="BCP 47 tag, e.g. en-US or en-IN">
-                <Input id="ws-locale" placeholder="en-US" disabled={!canEdit} {...form.register("locale")} />
+              <Field label="Locale" htmlFor="ws-locale" error={errors.locale?.message} hint="BCP 47 tag, e.g. en-IN">
+                <Input id="ws-locale" placeholder="en-IN" disabled={!canEdit} {...form.register("locale")} />
               </Field>
               <Field label="Contact email" htmlFor="ws-email" error={errors.contactEmail?.message}>
                 <Input id="ws-email" type="email" placeholder="support@yourstore.com" disabled={!canEdit} {...form.register("contactEmail")} />
               </Field>
               <Field label="Contact phone" htmlFor="ws-phone" error={errors.contactPhone?.message}>
                 <Input id="ws-phone" type="tel" disabled={!canEdit} {...form.register("contactPhone")} />
+              </Field>
+              <Field label="GST rate" htmlFor="ws-gst" error={errors.gstRatePercent?.message} hint="Charged on each order line after discount. Leave empty for the default 18%.">
+                <Input id="ws-gst" inputMode="decimal" placeholder="18" disabled={!canEdit} rightElement={<span className="text-xs">%</span>} {...form.register("gstRatePercent")} />
               </Field>
             </>
           )}

@@ -25,6 +25,8 @@ export interface Store {
   timezone: string | null;
   contactEmail: string | null;
   contactPhone: string | null;
+  /** Effective GST % for previews; checkout totals come from the server. */
+  gstRatePercent: number;
   onlinePayment: { provider: "razorpay"; enabled: boolean };
 }
 

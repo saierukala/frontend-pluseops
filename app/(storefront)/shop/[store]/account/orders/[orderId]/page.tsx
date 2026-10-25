@@ -13,6 +13,7 @@ import { RequireShopper } from "@/features/storefront/require-shopper";
 import { formatShopAddress } from "@/features/storefront/address-form";
 import { useShop } from "@/features/storefront/shop-context";
 import { useCompletePayment } from "@/features/storefront/use-pay";
+import { gstLabel } from "@/features/orders/gst";
 import { formatDateTime, humanize } from "@/lib/format";
 import { toastError } from "@/lib/api-errors";
 import { cn } from "@/lib/utils";
@@ -100,7 +101,7 @@ function Order() {
           <dl className="flex flex-col gap-1.5 border-t p-4 text-sm">
             <Row label="Subtotal" value={money(o.subtotal, o.currency)} />
             {Number(o.discountTotal) ? <Row label="Discounts" value={`−${money(o.discountTotal, o.currency)}`} /> : null}
-            {Number(o.taxTotal) ? <Row label="Tax" value={money(o.taxTotal, o.currency)} /> : null}
+            {Number(o.taxTotal) ? <Row label={gstLabel(Number(o.subtotal) - Number(o.discountTotal) > 0 ? Math.round((Number(o.taxTotal) / (Number(o.subtotal) - Number(o.discountTotal))) * 10000) / 100 : null)} value={money(o.taxTotal, o.currency)} /> : null}
             <Row label="Shipping" value={Number(o.shippingTotal) ? money(o.shippingTotal, o.currency) : "Free"} />
             <div className="mt-1 flex justify-between border-t pt-2 text-base font-semibold">
               <dt>Total</dt>

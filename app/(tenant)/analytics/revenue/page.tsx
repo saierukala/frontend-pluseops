@@ -13,7 +13,7 @@ import { KpiCard } from "@/components/app/kpi-card";
 import { EmptyState, ErrorState } from "@/components/app/states";
 import { RangeToggle, bucketLabel, useAnalyticsRange } from "@/features/analytics/range";
 import { analyticsApi } from "@/lib/api/modules/analytics";
-import { formatMoney, formatNumber } from "@/lib/format";
+import { formatMoney, formatNumber, DEFAULT_CURRENCY } from "@/lib/format";
 
 const config = {
   net: { label: "Net", color: "var(--chart-3)" },
@@ -49,7 +49,7 @@ export default function RevenueAnalyticsPage() {
               <BarChart data={rows.map((b) => ({ bucket: b.bucket, net: Number(b.netRevenue), refunded: Number(b.totalRefunded) }))} margin={{ left: 4, right: 8, top: 8 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="bucket" tickLine={false} axisLine={false} tickMargin={8} minTickGap={24} tickFormatter={(v) => bucketLabel(v, groupBy)} />
-                <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, "USD", { compact: true })} />
+                <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, DEFAULT_CURRENCY, { compact: true })} />
                 <ChartTooltip cursor={{ fill: "var(--muted)" }} content={<ChartTooltipContent labelFormatter={(v) => bucketLabel(v as string, groupBy, true)} />} />
                 <ChartLegend content={<ChartLegendContent />} />
                 <Bar dataKey="net" stackId="r" fill="var(--color-net)" maxBarSize={48} />

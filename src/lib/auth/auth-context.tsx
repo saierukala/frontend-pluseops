@@ -18,7 +18,11 @@ export interface AuthState {
 }
 
 export interface AuthContextValue extends AuthState {
-  login: (params: { email: string; password: string; scope?: AuthScope; tenantSlug?: string; tenantId?: string }) => Promise<void>;
+  /**
+   * Signs in and resolves to the session's scope. Without an explicit scope the backend finds the user's
+   * workspace from their email; platform administrators are signed in to the platform console instead.
+   */
+  login: (params: { email: string; password: string; scope?: AuthScope; tenantSlug?: string; tenantId?: string }) => Promise<AuthScope | null>;
   register: (data: { email: string; password: string; firstName: string; lastName: string; tenantId?: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<boolean>;
@@ -400,8 +404,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (scope) body.scope = scope;
         if (tenantSlug) body.tenantSlug = tenantSlug;
         if (tenantId) body.tenantId = tenantId;
-        const response = await authApi.login(body as unknown as Parameters<typeof authApi.login>[0]);
-        const returnedScope = (response as unknown as { scope?: AuthScope }).scope ?? scope ?? (response.user.scope as AuthScope | undefined) ?? null;
+        let response;
+        let requestedScope = scope;
+        try {
+          response = await authApi.login(body as unknown as Parameters<typeof authApi.login>[0]);
+        } catch (err) {
+          // Single sign-in form: the backend answers USE_PLATFORM_LOGIN (only after the password checks out)
+          // for platform-only accounts, so sign those in to the platform console instead
+          if (scope || !(err instanceof ApiError) || err.code !== "USE_PLATFORM_LOGIN") throw err;
+          requestedScope = "platform";
+          response = await authApi.login({ email, password, scope: "platform" });
+        }
+        const returnedScope = (response as unknown as { scope?: AuthScope }).scope ?? requestedScope ?? (response.user.scope as AuthScope | undefined) ?? null;
         tokenStore.setTokens({
           accessToken: response.accessToken,
           refreshToken: response.refreshToken,
@@ -410,6 +424,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           user: response.user,
         });
         setUser(response.user, returnedScope);
+        return returnedScope;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Login failed. Please check your credentials.";
         setError(message);

@@ -104,7 +104,7 @@ export function ProductFormDialog({ open, onOpenChange, product }: { open: boole
           <Input id="p-brand" placeholder="Northwind" {...form.register("brand")} />
         </Field>
         <Field label="Base price" htmlFor="p-price" error={errors.basePrice?.message} hint="Default for new variants">
-          <Input id="p-price" inputMode="decimal" placeholder="0.00" leftElement={<span className="text-xs">$</span>} {...form.register("basePrice")} />
+          <Input id="p-price" inputMode="decimal" placeholder="0.00" leftElement={<span className="text-xs">₹</span>} {...form.register("basePrice")} />
         </Field>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

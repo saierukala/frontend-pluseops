@@ -149,7 +149,7 @@ export function ShopFooter() {
           <StoreMark name={store.name} />
           <div>
             <p className="font-semibold">{store.name}</p>
-            <p className="text-muted-foreground">Prices in {store.currency ?? "USD"}</p>
+            <p className="text-muted-foreground">Prices in {store.currency ?? "INR"}</p>
           </div>
         </div>
         {store.contactEmail || store.contactPhone ? (

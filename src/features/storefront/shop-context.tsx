@@ -62,7 +62,7 @@ function useShopperSession(client: StorefrontClient): Shopper | null {
 export function ShopProvider({ slug, store, children }: { slug: string; store: Store; children: React.ReactNode }) {
   const client = React.useMemo(() => new StorefrontClient(slug), [slug]);
   const shopper = useShopperSession(client);
-  const currency = store.currency ?? "USD";
+  const currency = store.currency ?? "INR";
 
   const value = React.useMemo<ShopContextValue>(
     () => ({
@@ -84,6 +84,15 @@ export function ShopProvider({ slug, store, children }: { slug: string; store: S
 export function useCart() {
   const { client, slug, signedIn } = useShop();
   return useQuery<Cart>({ queryKey: ["shop", slug, "cart"], queryFn: () => client.getCart(), enabled: signedIn });
+}
+
+/** Cart subtotal plus estimated GST at the store's rate (the order total is computed server-side at checkout). */
+export function useCartTotals(cart: Cart | undefined) {
+  const { store } = useShop();
+  const rate = store.gstRatePercent ?? 18;
+  const subtotal = Number(cart?.subtotal ?? 0);
+  const gst = Math.round(subtotal * rate) / 100;
+  return { rate, subtotal, gst, total: subtotal + gst };
 }
 
 export function useSetCartItem() {

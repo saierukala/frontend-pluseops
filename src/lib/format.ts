@@ -5,16 +5,20 @@ import { formatDistanceToNowStrict } from "date-fns";
  * format for display — totals, taxes and refunds are always computed server-side.
  */
 
+/** PulseOps sells in India: rupees and Indian digit grouping (₹1,23,456.00) unless a record says otherwise. */
+export const DEFAULT_CURRENCY = "INR";
+const LOCALE = "en-IN";
+
 const moneyFormatters = new Map<string, Intl.NumberFormat>();
 
-export function formatMoney(value: string | number | null | undefined, currency = "USD", opts: { compact?: boolean } = {}): string {
+export function formatMoney(value: string | number | null | undefined, currency = DEFAULT_CURRENCY, opts: { compact?: boolean } = {}): string {
   if (value === null || value === undefined || value === "") return "—";
   const amount = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(amount)) return String(value);
   const key = `${currency}:${opts.compact ? "c" : "f"}`;
   let fmt = moneyFormatters.get(key);
   if (!fmt) {
-    fmt = new Intl.NumberFormat("en-US", {
+    fmt = new Intl.NumberFormat(LOCALE, {
       style: "currency",
       currency,
       ...(opts.compact ? { notation: "compact", maximumFractionDigits: 1 } : { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
@@ -24,7 +28,7 @@ export function formatMoney(value: string | number | null | undefined, currency 
   return fmt.format(amount);
 }
 
-const numberFormat = new Intl.NumberFormat("en-US");
+const numberFormat = new Intl.NumberFormat(LOCALE);
 export function formatNumber(value: number | null | undefined): string {
   return value === null || value === undefined ? "—" : numberFormat.format(value);
 }
@@ -36,8 +40,8 @@ function toDate(value: string | Date | null | undefined): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-const dateFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
-const dateTimeFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+const dateFormat = new Intl.DateTimeFormat(LOCALE, { month: "short", day: "numeric", year: "numeric" });
+const dateTimeFormat = new Intl.DateTimeFormat(LOCALE, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
 
 export function formatDate(value: string | Date | null | undefined): string {
   const d = toDate(value);

@@ -13,7 +13,7 @@ import { KpiCard } from "@/components/app/kpi-card";
 import { EmptyState, ErrorState } from "@/components/app/states";
 import { RangeToggle, bucketLabel, useAnalyticsRange } from "@/features/analytics/range";
 import { analyticsApi } from "@/lib/api/modules/analytics";
-import { formatMoney, formatNumber, humanize } from "@/lib/format";
+import { formatMoney, formatNumber, humanize, DEFAULT_CURRENCY } from "@/lib/format";
 
 const salesConfig = { sales: { label: "Sales", color: "var(--chart-1)" } } satisfies ChartConfig;
 const statusConfig = { count: { label: "Orders", color: "var(--chart-2)" } } satisfies ChartConfig;
@@ -60,7 +60,7 @@ export default function AnalyticsOverviewPage() {
                   </defs>
                   <CartesianGrid vertical={false} />
                   <XAxis dataKey="bucket" tickLine={false} axisLine={false} tickMargin={8} minTickGap={24} tickFormatter={(v) => bucketLabel(v, groupBy)} />
-                  <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, "USD", { compact: true })} />
+                  <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, DEFAULT_CURRENCY, { compact: true })} />
                   <ChartTooltip content={<ChartTooltipContent indicator="dot" labelFormatter={(v) => bucketLabel(v as string, groupBy, true)} formatter={(v) => <span className="tabular font-medium">{formatMoney(Number(v))}</span>} />} />
                   <Area dataKey="sales" type="monotone" fill="url(#analyticsSales)" stroke="var(--color-sales)" strokeWidth={2} dot={series.length < 3} />
                 </AreaChart>

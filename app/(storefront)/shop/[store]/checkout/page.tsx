@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RequireShopper } from "@/features/storefront/require-shopper";
 import { ShopAddressForm, formatShopAddress } from "@/features/storefront/address-form";
-import { useCart, useShop } from "@/features/storefront/shop-context";
+import { useCart, useCartTotals, useShop } from "@/features/storefront/shop-context";
+import { gstLabel } from "@/features/orders/gst";
 import { useCompletePayment } from "@/features/storefront/use-pay";
 import { errorMessage } from "@/lib/api-errors";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ function Checkout() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const cart = useCart();
+  const totals = useCartTotals(cart.data);
   const addresses = useQuery({ queryKey: ["shop", slug, "addresses"], queryFn: () => client.listAddresses() });
   const shipping = (addresses.data ?? []).filter((a) => a.type === "SHIPPING");
 
@@ -143,10 +145,20 @@ function Checkout() {
           ) : (
             <Skeleton className="h-16 w-full" />
           )}
-          <div className="flex justify-between border-t pt-3 text-base font-semibold">
-            <span>Subtotal</span>
-            <span className="tabular">{c ? money(c.subtotal, c.currency) : "—"}</span>
-          </div>
+          <dl className="flex flex-col gap-1.5 border-t pt-3 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Subtotal</dt>
+              <dd className="tabular">{c ? money(totals.subtotal, c.currency) : "—"}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">{gstLabel(totals.rate)}</dt>
+              <dd className="tabular">{c ? money(totals.gst, c.currency) : "—"}</dd>
+            </div>
+            <div className="flex justify-between border-t pt-2 text-base font-semibold">
+              <dt>Estimated total</dt>
+              <dd className="tabular">{c ? money(totals.total, c.currency) : "—"}</dd>
+            </div>
+          </dl>
           <p className="text-xs text-muted-foreground">Final totals are confirmed by {store.name} when you place the order.</p>
           {error ? (
             <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">

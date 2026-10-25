@@ -28,6 +28,8 @@ export interface WorkspaceSettings {
   locale: string | null;
   contactEmail: string | null;
   contactPhone: string | null;
+  /** GST % charged on new orders; null means the platform default (18). */
+  gstRatePercent: number | null;
 }
 
 export interface WorkspaceDomain {

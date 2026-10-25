@@ -17,6 +17,7 @@ import { PageBody, PageHeader } from "@/components/app/page-header";
 import { Field } from "@/components/app/form-dialog";
 import { ComboboxField } from "@/components/app/combobox-field";
 import { CustomerDialog } from "@/features/customers/customer-dialog";
+import { gstLabel, useGstRate } from "@/features/orders/gst";
 import { AddressDialog, formatAddress } from "@/features/customers/address-dialog";
 import { useVariantLookup, useWarehouseOptions } from "@/features/catalog/lookups";
 import { customersApi, type AddressType } from "@/lib/api/modules/customers";
@@ -92,7 +93,10 @@ export default function NewOrderPage() {
   }, [warehouses.defaultId, form]);
 
   // Preview only — the server derives authoritative totals, tax and reservations on submit
-  const estimate = items.reduce((sum, item) => sum + Number(variants.byId.get(item.variantId)?.variant.price ?? 0) * (Number(item.quantity) || 0), 0) + (Number(shipping) || 0);
+  const gstRate = useGstRate();
+  const itemsTotal = items.reduce((sum, item) => sum + Number(variants.byId.get(item.variantId)?.variant.price ?? 0) * (Number(item.quantity) || 0), 0);
+  const gstEstimate = Math.round(itemsTotal * gstRate) / 100;
+  const estimate = itemsTotal + gstEstimate + (Number(shipping) || 0);
 
   const create = useMutation({
     mutationFn: (v: Values) =>
@@ -227,14 +231,28 @@ export default function NewOrderPage() {
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <Field label="Shipping" htmlFor="shipping" error={errors.shippingTotal?.message}>
-                <Input id="shipping" inputMode="decimal" placeholder="0.00" className="tabular" leftElement={<span className="text-xs">$</span>} {...form.register("shippingTotal")} />
+                <Input id="shipping" inputMode="decimal" placeholder="0.00" className="tabular" leftElement={<span className="text-xs">₹</span>} {...form.register("shippingTotal")} />
               </Field>
+              <dl className="flex flex-col gap-1.5 border-t pt-4 text-sm">
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Items</dt>
+                  <dd className="tabular">{formatMoney(itemsTotal)}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">{gstLabel(gstRate)}</dt>
+                  <dd className="tabular">{formatMoney(gstEstimate)}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Shipping</dt>
+                  <dd className="tabular">{formatMoney(Number(shipping) || 0)}</dd>
+                </div>
+              </dl>
               <div className="flex items-baseline justify-between border-t pt-4">
                 <span className="text-sm text-muted-foreground">Estimated total</span>
                 <span className="tabular text-2xl font-semibold">{formatMoney(estimate)}</span>
               </div>
               <p className="flex gap-2 text-xs text-muted-foreground">
-                <Info className="mt-0.5 size-3.5 shrink-0" /> Final totals, discounts and tax are calculated by the server when the order is placed.
+                <Info className="mt-0.5 size-3.5 shrink-0" /> Final totals, discounts and GST are calculated by the server when the order is placed.
               </p>
               {serverError ? <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">{serverError}</p> : null}
               <Button type="submit" size="lg" loading={create.isPending} className="w-full">

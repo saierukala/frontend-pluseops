@@ -107,7 +107,7 @@ export function RefundDialog({ open, onOpenChange, payment, refundable }: { open
   return (
     <FormDialog open={open} onOpenChange={onOpenChange} title="Issue refund" description={`Up to ${formatMoney(refundable, payment.currency)} can still be refunded on this payment.`} submitLabel="Refund" pending={refund.isPending} onSubmit={form.handleSubmit((v) => refund.mutate(v))}>
       <Field label="Amount" htmlFor="rf-amount" error={errors.amount?.message}>
-        <Input id="rf-amount" inputMode="decimal" className="tabular" leftElement={<span className="text-xs">$</span>} {...form.register("amount")} />
+        <Input id="rf-amount" inputMode="decimal" className="tabular" leftElement={<span className="text-xs">₹</span>} {...form.register("amount")} />
       </Field>
       <Field label="Reason" htmlFor="rf-reason">
         <Controller control={form.control} name="reason" render={({ field }) => <Input id="rf-reason" placeholder="Damaged item, customer request…" {...field} />} />

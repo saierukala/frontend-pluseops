@@ -86,10 +86,10 @@ export function VariantFormDialog({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Price" htmlFor="v-price" error={errors.price?.message}>
-          <Input id="v-price" inputMode="decimal" leftElement={<span className="text-xs">$</span>} {...form.register("price")} />
+          <Input id="v-price" inputMode="decimal" leftElement={<span className="text-xs">₹</span>} {...form.register("price")} />
         </Field>
         <Field label="Cost" htmlFor="v-cost" error={errors.costPrice?.message} hint="Used for margin reporting">
-          <Input id="v-cost" inputMode="decimal" leftElement={<span className="text-xs">$</span>} placeholder="Optional" {...form.register("costPrice")} />
+          <Input id="v-cost" inputMode="decimal" leftElement={<span className="text-xs">₹</span>} placeholder="Optional" {...form.register("costPrice")} />
         </Field>
       </div>
       <Field label="Status">

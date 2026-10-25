@@ -11,7 +11,7 @@ import { PageBody, PageHeader } from "@/components/app/page-header";
 import { EmptyState, ErrorState } from "@/components/app/states";
 import { RangeToggle, bucketLabel, useAnalyticsRange } from "@/features/analytics/range";
 import { analyticsApi } from "@/lib/api/modules/analytics";
-import { formatMoney, formatNumber } from "@/lib/format";
+import { formatMoney, formatNumber, DEFAULT_CURRENCY } from "@/lib/format";
 
 const config = { sales: { label: "Sales", color: "var(--chart-1)" } } satisfies ChartConfig;
 
@@ -40,7 +40,7 @@ export default function SalesAnalyticsPage() {
               <BarChart data={rows.map((b) => ({ bucket: b.bucket, sales: Number(b.totalSales) }))} margin={{ left: 4, right: 8, top: 8 }}>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="bucket" tickLine={false} axisLine={false} tickMargin={8} minTickGap={24} tickFormatter={(v) => bucketLabel(v, groupBy)} />
-                <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, "USD", { compact: true })} />
+                <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, DEFAULT_CURRENCY, { compact: true })} />
                 <ChartTooltip cursor={{ fill: "var(--muted)" }} content={<ChartTooltipContent labelFormatter={(v) => bucketLabel(v as string, groupBy, true)} formatter={(v) => <span className="tabular font-medium">{formatMoney(Number(v))}</span>} />} />
                 <Bar dataKey="sales" fill="var(--color-sales)" radius={[6, 6, 0, 0]} maxBarSize={48} />
               </BarChart>

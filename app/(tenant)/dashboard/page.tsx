@@ -20,7 +20,7 @@ import { analyticsApi } from "@/lib/api/modules/analytics";
 import { ordersApi } from "@/lib/api/modules/orders";
 import { useAuth } from "@/lib/auth/auth-context";
 import { usePermission } from "@/lib/auth/permission-context";
-import { formatMoney, formatNumber, formatRelative, fullName, humanize, shortId } from "@/lib/format";
+import { formatMoney, formatNumber, formatRelative, fullName, humanize, shortId, DEFAULT_CURRENCY } from "@/lib/format";
 
 const RANGE_DAYS = 30;
 const ORDER_FLOW = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
@@ -127,7 +127,7 @@ export default function DashboardPage() {
                   </defs>
                   <CartesianGrid vertical={false} />
                   <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} minTickGap={28} tickFormatter={(v: string) => format(new Date(`${v}T00:00:00`), "MMM d")} />
-                  <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, "USD", { compact: true })} />
+                  <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={(v: number) => formatMoney(v, DEFAULT_CURRENCY, { compact: true })} />
                   <ChartTooltip
                     cursor={false}
                     content={<ChartTooltipContent indicator="dot" labelFormatter={(v) => format(new Date(`${v}T00:00:00`), "EEE, MMM d")} formatter={(value) => <span className="tabular font-medium">{formatMoney(Number(value))}</span>} />}

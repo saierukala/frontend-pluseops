@@ -45,7 +45,7 @@ export default function ShopHomePage() {
           <div className="relative max-w-xl space-y-3">
             <p className="text-sm font-medium text-primary">{signedIn ? `Welcome back, ${shopper?.firstName}` : "Welcome"}</p>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">{store.name}</h1>
-            <p className="text-base text-muted-foreground sm:text-lg">Browse the catalog and check out in a few steps. Prices in {store.currency ?? "USD"}.</p>
+            <p className="text-base text-muted-foreground sm:text-lg">Browse the catalog and check out in a few steps. Prices in {store.currency ?? "INR"}.</p>
           </div>
         </section>
       ) : null}
