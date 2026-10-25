@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   poweredByHeader: false,
   compress: true,
+  // Self-contained server bundle for the Docker image (only the files `next start` actually needs)
+  output: "standalone",
 
   // Keep App Router typed params/helpers accurate during build.
   typescript: {

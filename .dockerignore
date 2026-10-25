@@ -1,0 +1,17 @@
+node_modules
+.next
+out
+build
+coverage
+playwright-report
+test-results
+.git
+.github
+.env
+.env.local
+.env.*.local
+*.log
+dev.log
+docs/evidence
+scripts
+tsconfig.tsbuildinfo
