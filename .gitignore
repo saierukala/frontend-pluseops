@@ -51,3 +51,8 @@ next-env.d.ts
 # local dev server log and one-off browser verification scripts (contain test credentials)
 dev.log
 /scripts/
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
