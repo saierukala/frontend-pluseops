@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -43,6 +43,7 @@ type Values = z.infer<typeof schema>;
 function AddAdminDialog({ open, onOpenChange, roles }: { open: boolean; onOpenChange: (o: boolean) => void; roles: PlatformRole[] }) {
   const queryClient = useQueryClient();
   const form = useForm<Values>({ resolver: zodResolver(schema), defaultValues: { firstName: "", lastName: "", email: "", password: "", roleId: "" } });
+  const roleId = useWatch({ control: form.control, name: "roleId" });
   const save = useMutation({
     mutationFn: (v: Values) => platformApi.addAdmin({ ...v, roleId: v.roleId || undefined }),
     onSuccess: (a) => {
@@ -76,7 +77,7 @@ function AddAdminDialog({ open, onOpenChange, roles }: { open: boolean; onOpenCh
       </Field>
       <Field label="Role" error={errors.roleId?.message} hint="Defaults to the full platform admin role">
         <Select
-          value={form.watch("roleId") || undefined}
+          value={roleId || undefined}
           onValueChange={(v) => form.setValue("roleId", v)}
           placeholder="Default role"
           options={roles.map((r) => ({ value: r.id, label: humanize(r.name) }))}

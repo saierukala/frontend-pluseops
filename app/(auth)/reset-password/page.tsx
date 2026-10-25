@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -40,20 +40,14 @@ export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [tokenError, setTokenError] = React.useState(false);
 
   const token = searchParams.get("token");
-
-  React.useEffect(() => {
-    if (!token) {
-      setTokenError(true);
-    }
-  }, [token]);
+  const tokenError = !token;
 
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm<ResetPasswordForm>({
     resolver: zodResolver(resetPasswordSchema),
@@ -63,7 +57,7 @@ export default function ResetPasswordPage() {
     },
   });
 
-  const password = watch("password") ?? "";
+  const password = useWatch({ control, name: "password" }) ?? "";
 
   const onSubmit = async (data: ResetPasswordForm) => {
     if (!token) {

@@ -25,7 +25,6 @@ export default function VerifyEmailPage() {
     if (!token) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus("error");
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMessage("Invalid or missing verification token");
     }
   }, [token]);

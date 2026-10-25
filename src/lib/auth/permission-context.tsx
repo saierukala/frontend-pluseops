@@ -152,7 +152,6 @@ export function PermissionProvider({ children }: { children: React.ReactNode }) 
     }
     // Only tenant scope loads RBAC
     if (scope !== "tenant") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       // Platform: ready with empty tenant permissions (platform perms are separate)
       setState({
         roles: [],
@@ -272,7 +271,6 @@ export interface CanProps {
 }
 
 export function Can(_props: CanProps): boolean {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   void _props;
   // This is a hook-wrapped helper; must be called inside component
   // For non-hook usage, see useCan()

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -52,6 +52,7 @@ const toLimits = (v: Values): PlanLimits => Object.fromEntries(LIMIT_KEYS.map((k
 function PlanDialog({ open, onOpenChange, plan }: { open: boolean; onOpenChange: (o: boolean) => void; plan?: Plan }) {
   const queryClient = useQueryClient();
   const form = useForm<Values>({ resolver: zodResolver(schema), values: toForm(plan) });
+  const isActive = useWatch({ control: form.control, name: "isActive" });
   const save = useMutation({
     mutationFn: (v: Values) => {
       const body = { name: v.name, description: v.description || null, limits: toLimits(v), isActive: v.isActive };
@@ -93,7 +94,7 @@ function PlanDialog({ open, onOpenChange, plan }: { open: boolean; onOpenChange:
           <span className="font-medium">Available for new assignments</span>
           <span className="block text-xs text-muted-foreground">Tenants already on an inactive plan keep it.</span>
         </span>
-        <Switch checked={form.watch("isActive")} onCheckedChange={(c) => form.setValue("isActive", c, { shouldDirty: true })} />
+        <Switch checked={isActive} onCheckedChange={(c) => form.setValue("isActive", c, { shouldDirty: true })} />
       </label>
     </FormDialog>
   );
