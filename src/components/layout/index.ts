@@ -4,5 +4,4 @@ export * from "./app-sidebar";
 export * from "./site-header";
 export * from "./tenant-shell";
 export * from "./platform-shell";
-export * from "./storefront-shell";
 export * from "./placeholder";

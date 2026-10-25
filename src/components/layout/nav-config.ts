@@ -150,13 +150,3 @@ export const settingsNav = [
   { label: "Notifications", href: "/settings/notifications", icon: SlidersHorizontal },
 ] as const;
 
-export const storefrontNav = [
-  { label: "Store", href: "/store" },
-  { label: "Products", href: "/store/products" },
-  { label: "Categories", href: "/store/categories" },
-] as const;
-
-export const storefrontAccountNav = [
-  { label: "Account", href: "/account" },
-  { label: "Orders", href: "/account/orders" },
-] as const;

@@ -77,9 +77,9 @@ export default function ShellShowcasePage() {
                 </div>
                 <Link href={"/store" as unknown as never} className="inline-flex h-9 w-full items-center justify-center rounded-lg border bg-card px-3 text-sm font-medium hover:bg-accent">Open /store →</Link>
                 <div className="flex flex-wrap gap-1.5 text-xs">
-                  <Link href={"/store/products" as unknown as never} className="rounded-full border bg-card px-2.5 py-1 hover:bg-accent">/store/products</Link>
-                  <Link href={"/cart" as unknown as never} className="rounded-full bg-primary px-2.5 py-1 text-primary-foreground">/cart</Link>
-                  <Link href={"/account" as unknown as never} className="rounded-full border bg-card px-2.5 py-1 hover:bg-accent">/account</Link>
+                  <Link href={"/store" as unknown as never} className="rounded-full border bg-card px-2.5 py-1 hover:bg-accent">/store</Link>
+                  <Link href={"/store" as unknown as never} className="rounded-full bg-primary px-2.5 py-1 text-primary-foreground">/shop/acme/cart</Link>
+                  <Link href={"/store" as unknown as never} className="rounded-full border bg-card px-2.5 py-1 hover:bg-accent">/shop/acme/account</Link>
                 </div>
               </CardContent>
             </Card>
@@ -136,7 +136,7 @@ export default function ShellShowcasePage() {
                 ["/platform","Platform overview"],
                 ["/platform/tenants","Platform — Tenants"],
                 ["/store","Store home"],
-                ["/cart","Cart"],
+                ["/store","Cart"],
               ].map(([href,label]) => (
                 <Link key={href} href={href as unknown as never} className="rounded-lg border bg-background px-3 py-2 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
                   <span className="font-mono text-xs">{href}</span>

@@ -25,7 +25,24 @@ work, and the UI brief the rebuild follows.
 | Cached responses lost every timestamp (`createdAt: {}`) on cache hits — `stripSensitive` walked `Date`/`Decimal` objects | Cache service only walks plain objects now; regression test in `phase14-redis-caching.test.js` |
 | Global rate limit 100 req / 15 min starves an SPA in local dev | Local `.env` only: `RATE_LIMIT_MAX=5000`, `AUTH_RATE_LIMIT_MAX=200`. Production defaults unchanged |
 
-Still missing on the backend (UI shows "Coming soon", no fake data): platform subscriptions, platform user management, platform audit log, team invitations (admins can't create members directly — users self-register into a workspace), public storefront/catalog endpoints, and a Socket.IO client for live notifications (the bell polls every 60 s).
+Since then the backend shipped Phases 29–36 and the frontend covers them: platform console (plans, usage, admins, audit, support sessions), reports and schedules, message templates, Razorpay and custom domains, customer addresses, workspace settings, and the storefront.
+
+### Storefront (Phase 32)
+Shoppers use `/shop/<store-slug>`; `/store` resolves a custom domain (`GET /storefront/resolve`), then `NEXT_PUBLIC_DEFAULT_STORE`, then asks for the store name.
+
+| Screen | Endpoints |
+|---|---|
+| Catalog home (categories, search, sort, in-stock) | `GET /storefront/:store`, `/categories`, `/products` |
+| Product page | `GET /products/:productId` |
+| Sign in, create account, set password, forgot password | `POST /auth/login·register·set-password·forgot-password·refresh·logout` |
+| Cart | `GET /cart`, `PUT/DELETE /cart/items/:variantId` |
+| Checkout (address picker + inline add) | `GET/POST /account/addresses`, `POST /checkout` |
+| Account (orders, addresses, profile) | `GET /account/orders`, `/account/addresses` CRUD, `GET/PATCH /account` |
+| Order page + Pay now | `GET /account/orders/:id`, `POST /account/orders/:id/pay`, `POST /account/payments/:id/verify` (Razorpay web checkout) |
+
+Shopper sessions are stored per store (`localStorage` key `pulseops:shop:<slug>`) and never mix with staff tokens; a 401 triggers one single-flight refresh.
+
+Still open: a Socket.IO client for live notifications (the bell polls every 60 s), the Phase 36 httpOnly refresh-cookie mode, and team invitations (no backend endpoint).
 
 ## 2. API → screen integration matrix
 
