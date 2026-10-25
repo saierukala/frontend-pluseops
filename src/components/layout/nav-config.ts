@@ -1,5 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  ScanBarcode,
+  Wallet,
   Activity,
   BarChart3,
   Bell,
@@ -65,6 +67,8 @@ export const tenantNavGroups: NavGroup[] = [
   {
     label: "Commerce",
     items: [
+      { label: "Counter (POS)", href: "/pos", icon: ScanBarcode, requiredPermission: "pos:sell", keywords: ["billing", "till", "checkout", "barcode", "sell"] },
+      { label: "Cash register", href: "/cash-register", icon: Wallet, requiredPermission: "cash_register:read", keywords: ["drawer", "shift", "float", "cash"] },
       {
         label: "Orders",
         href: "/orders",

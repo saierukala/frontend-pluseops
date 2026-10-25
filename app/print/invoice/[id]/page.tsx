@@ -28,9 +28,15 @@ function PrintInvoice() {
   const o = order.data;
   const upiQr = useUpiQr(o);
 
+  const autoprint = useSearchParams().get("autoprint") === "1";
   React.useEffect(() => {
     if (o) document.title = `${o.invoiceNumber ?? "Invoice"} · ${o.sellerSnapshot?.name ?? "PulseOps"}`;
-  }, [o]);
+    // Opened from the counter: print straight away (after the UPI QR, if any, has had a moment to draw)
+    if (o && autoprint) {
+      const t = setTimeout(() => window.print(), 400);
+      return () => clearTimeout(t);
+    }
+  }, [o, autoprint]);
 
   if (order.isLoading) return <p className="p-8 text-sm text-muted-foreground">Loading invoice…</p>;
   if (!o) return <p className="p-8 text-sm text-destructive">This invoice could not be loaded.</p>;
